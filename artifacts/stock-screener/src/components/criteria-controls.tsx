@@ -68,9 +68,10 @@ function Slider({
   );
 }
 
-function formatMarketCapLabel(billions: number): string {
-  if (billions >= 1000) return `$${(billions / 1000).toFixed(1)}T`;
-  return `$${billions.toFixed(0)}B`;
+function formatMarketCapLabel(millions: number): string {
+  if (millions >= 1000000) return `$${(millions / 1000000).toFixed(1)}T`;
+  if (millions >= 1000) return `$${(millions / 1000).toFixed(0)}B`;
+  return `$${millions.toFixed(0)}M`;
 }
 
 export function CriteriaControls({
@@ -136,10 +137,10 @@ export function CriteriaControls({
           label="Max Market Cap"
           tooltip="Maximum market capitalization. Set lower to focus on mid or small caps. At $2T the filter is effectively off."
           value={maxMarketCap}
-          displayValue={maxMarketCap >= 2000 ? "Any" : formatMarketCapLabel(maxMarketCap)}
+          displayValue={maxMarketCap >= 2000000 ? "Any" : formatMarketCapLabel(maxMarketCap)}
           min={0}
-          max={2000}
-          step={10}
+          max={2000000}
+          step={10000}
           onChange={setMaxMarketCap}
           minLabel="$0"
           maxLabel="Any"

@@ -121,12 +121,12 @@ router.post("/screener/run", async (req, res) => {
       const dte = data.debtToEquity;
       const cr = data.currentRatio;
       const mcap = data.marketCap ?? 0;
-      const maxMarketCapRaw = maxMarketCap * 1e9;
+      const maxMarketCapRaw = maxMarketCap * 1e6;
 
       const pbPass = pb <= 0 || pb < maxPB;
       const dtePass = dte <= 0 || dte < maxDebtToEquity;
       const crPass = cr <= 0 || cr > minCurrentRatio;
-      const mcapPass = maxMarketCap >= 2000 || mcap <= maxMarketCapRaw;
+      const mcapPass = maxMarketCap >= 2000000 || mcap <= maxMarketCapRaw;
 
       if (pbPass && dtePass && crPass && mcapPass) {
         results.push(data);

@@ -10,7 +10,7 @@ export function useScreenerState() {
   const [maxPB, setMaxPB] = useState<number>(3);
   const [maxDebtToEquity, setMaxDebtToEquity] = useState<number>(100);
   const [minCurrentRatio, setMinCurrentRatio] = useState<number>(1.2);
-  const [maxMarketCap, setMaxMarketCap] = useState<number>(2000);
+  const [maxMarketCap, setMaxMarketCap] = useState<number>(2000000);
   const [newTicker, setNewTicker] = useState("");
 
   const addTicker = (e?: React.FormEvent) => {

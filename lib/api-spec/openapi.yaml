@@ -94,7 +94,7 @@ components:
           description: Minimum current ratio (default 1.2)
         maxMarketCap:
           type: number
-          description: Maximum market cap in billions USD (default 2000)
+          description: Maximum market cap in millions USD (default 2000000)
       required:
         - tickers
     ScreenerResult:
