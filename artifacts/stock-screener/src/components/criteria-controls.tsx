@@ -36,18 +36,18 @@ function Slider({
   maxLabel: string;
 }) {
   return (
-    <div className="space-y-3">
-      <div className="flex justify-between items-end">
-        <label className="text-sm font-medium text-foreground flex items-center gap-2">
+    <div className="space-y-1.5">
+      <div className="flex justify-between items-center">
+        <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
           {label}
           <div className="group relative cursor-help">
-            <Info className="w-3.5 h-3.5 text-muted-foreground" />
+            <Info className="w-3 h-3 text-muted-foreground" />
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2 bg-popover border border-border rounded-lg text-xs text-popover-foreground opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
               {tooltip}
             </div>
           </div>
         </label>
-        <div className="px-3 py-1 bg-background border border-border rounded-md font-mono text-primary font-bold text-sm">
+        <div className="px-2 py-0.5 bg-background border border-border rounded font-mono text-primary font-bold text-xs">
           {displayValue}
         </div>
       </div>
@@ -58,9 +58,9 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+        className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
       />
-      <div className="flex justify-between text-xs font-mono text-muted-foreground px-1">
+      <div className="flex justify-between text-[10px] font-mono text-muted-foreground/70 px-0.5">
         <span>{minLabel}</span>
         <span>{maxLabel}</span>
       </div>
@@ -85,18 +85,18 @@ export function CriteriaControls({
   setMaxMarketCap,
 }: CriteriaControlsProps) {
   return (
-    <div className="glass-panel rounded-2xl p-6 flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-          <SlidersHorizontal className="w-5 h-5 text-primary" />
+    <div className="glass-panel rounded-2xl p-4 flex flex-col gap-4">
+      <div className="flex items-center gap-2.5">
+        <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
+          <SlidersHorizontal className="w-4 h-4 text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Screener Criteria</h2>
-          <p className="text-sm text-muted-foreground">Define your strict agentic parameters.</p>
+          <h2 className="text-sm font-semibold text-foreground">Screener Criteria</h2>
+          <p className="text-xs text-muted-foreground">Define your agentic parameters.</p>
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Slider
           label="Max P/B Ratio"
           tooltip="Price-to-Book ratio compares market value to book value. Under 3 is often considered value territory."
