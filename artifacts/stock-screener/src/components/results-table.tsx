@@ -63,7 +63,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-4 text-right">Price</th>
               <th className="px-5 py-4 text-right">Day %</th>
               <th className="px-5 py-4 text-right">6M %</th>
-              <th className="px-5 py-4 text-right">Fwd P/E</th>
               <th className="px-5 py-4 text-right">P/B</th>
               <th className="px-5 py-4 text-right">Debt/Eq</th>
               <th className="px-5 py-4 text-right">Curr Ratio</th>
@@ -128,17 +127,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                     {stock.sixMonthChangePercent != null
                       ? `${stock.sixMonthChangePercent >= 0 ? "+" : ""}${(stock.sixMonthChangePercent * 100).toFixed(1)}%`
                       : "—"}
-                  </td>
-
-                  {/* P/E */}
-                  <td className={cn(
-                    "px-5 py-4 text-right tabular-nums",
-                    !stock.forwardPE || stock.forwardPE <= 0 ? "text-muted-foreground"
-                      : stock.forwardPE > 30 ? "text-destructive"
-                      : stock.forwardPE < 15 ? "text-success"
-                      : "text-foreground"
-                  )}>
-                    {stock.forwardPE && stock.forwardPE > 0 ? stock.forwardPE.toFixed(1) : '-'}
                   </td>
 
                   {/* P/B */}
