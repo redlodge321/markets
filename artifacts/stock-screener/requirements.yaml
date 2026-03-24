@@ -1,0 +1,15 @@
+packages:
+  "framer-motion": "For smooth layout animations and polished UI transitions"
+  "clsx": "For conditional class merging"
+  "tailwind-merge": "For merging tailwind classes safely"
+  "@radix-ui/react-icons": "For consistent icon usage"
+  "number-format.js": "For strict financial number formatting"
+
+images:
+  - path: "artifacts/stock-screener/public/images/hero-glow.png"
+    description: "A very subtle, extremely dark abstract mesh gradient with slight electric blue and neon green glowing edges, suitable for a dark mode finance dashboard background. Mostly black and transparent."
+    aspect_ratio: "16:9"
+
+notes:
+  - Assumes @workspace/api-client-react exports useRunScreener and useGetStockQuotes mutations that expect { data: RequestBody } format.
+  - Using JetBrains Mono for a professional finance terminal aesthetic.

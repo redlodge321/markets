@@ -1,6 +1,5 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
   description: API specification
@@ -10,6 +9,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: screener
+    description: Stock screener operations
 paths:
   /healthz:
     get:
@@ -24,6 +25,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /screener/run:
+    post:
+      operationId: runScreener
+      tags: [screener]
+      summary: Run the stock screener
+      description: Screens a list of tickers against P/E and profit margin criteria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScreenerRequest"
+      responses:
+        "200":
+          description: Screener results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScreenerResponse"
+  /screener/quote:
+    post:
+      operationId: getStockQuotes
+      tags: [screener]
+      summary: Get stock quotes for a list of tickers
+      description: Returns current price, P/E, and margin for each ticker without filtering
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuoteRequest"
+      responses:
+        "200":
+          description: Stock quotes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +72,130 @@ components:
           type: string
       required:
         - status
-
+    ScreenerRequest:
+      type: object
+      properties:
+        tickers:
+          type: array
+          items:
+            type: string
+          description: List of ticker symbols to screen
+        maxPE:
+          type: number
+          description: Maximum forward P/E ratio (default 30)
+        minMargin:
+          type: number
+          description: Minimum profit margin as a decimal (default 0.10)
+      required:
+        - tickers
+    ScreenerResult:
+      type: object
+      properties:
+        ticker:
+          type: string
+        companyName:
+          type: string
+        price:
+          type: number
+        forwardPE:
+          type: number
+        profitMargin:
+          type: number
+        sector:
+          type: string
+        marketCap:
+          type: number
+        fiftyTwoWeekHigh:
+          type: number
+        fiftyTwoWeekLow:
+          type: number
+      required:
+        - ticker
+        - companyName
+        - price
+        - forwardPE
+        - profitMargin
+    ScreenerResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScreenerResult"
+        screened:
+          type: integer
+          description: Total number of tickers screened
+        passed:
+          type: integer
+          description: Number of tickers that passed the filter
+        criteria:
+          type: object
+          properties:
+            maxPE:
+              type: number
+            minMargin:
+              type: number
+          required:
+            - maxPE
+            - minMargin
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              ticker:
+                type: string
+              error:
+                type: string
+            required:
+              - ticker
+              - error
+      required:
+        - results
+        - screened
+        - passed
+        - criteria
+        - errors
+    QuoteRequest:
+      type: object
+      properties:
+        tickers:
+          type: array
+          items:
+            type: string
+      required:
+        - tickers
+    StockQuote:
+      type: object
+      properties:
+        ticker:
+          type: string
+        companyName:
+          type: string
+        price:
+          type: number
+        forwardPE:
+          type: number
+        profitMargin:
+          type: number
+        sector:
+          type: string
+        marketCap:
+          type: number
+        fiftyTwoWeekHigh:
+          type: number
+        fiftyTwoWeekLow:
+          type: number
+        error:
+          type: string
+      required:
+        - ticker
+    QuoteResponse:
+      type: object
+      properties:
+        quotes:
+          type: array
+          items:
+            $ref: "#/components/schemas/StockQuote"
+      required:
+        - quotes

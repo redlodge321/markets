@@ -14,3 +14,72 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Screens a list of tickers against P/E and profit margin criteria
+ * @summary Run the stock screener
+ */
+export const RunScreenerBody = zod.object({
+  tickers: zod.array(zod.string()).describe("List of ticker symbols to screen"),
+  maxPE: zod
+    .number()
+    .optional()
+    .describe("Maximum forward P\/E ratio (default 30)"),
+  minMargin: zod
+    .number()
+    .optional()
+    .describe("Minimum profit margin as a decimal (default 0.10)"),
+});
+
+export const RunScreenerResponse = zod.object({
+  results: zod.array(
+    zod.object({
+      ticker: zod.string(),
+      companyName: zod.string(),
+      price: zod.number(),
+      forwardPE: zod.number(),
+      profitMargin: zod.number(),
+      sector: zod.string().optional(),
+      marketCap: zod.number().optional(),
+      fiftyTwoWeekHigh: zod.number().optional(),
+      fiftyTwoWeekLow: zod.number().optional(),
+    }),
+  ),
+  screened: zod.number().describe("Total number of tickers screened"),
+  passed: zod.number().describe("Number of tickers that passed the filter"),
+  criteria: zod.object({
+    maxPE: zod.number(),
+    minMargin: zod.number(),
+  }),
+  errors: zod.array(
+    zod.object({
+      ticker: zod.string(),
+      error: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * Returns current price, P/E, and margin for each ticker without filtering
+ * @summary Get stock quotes for a list of tickers
+ */
+export const GetStockQuotesBody = zod.object({
+  tickers: zod.array(zod.string()),
+});
+
+export const GetStockQuotesResponse = zod.object({
+  quotes: zod.array(
+    zod.object({
+      ticker: zod.string(),
+      companyName: zod.string().optional(),
+      price: zod.number().optional(),
+      forwardPE: zod.number().optional(),
+      profitMargin: zod.number().optional(),
+      sector: zod.string().optional(),
+      marketCap: zod.number().optional(),
+      fiftyTwoWeekHigh: zod.number().optional(),
+      fiftyTwoWeekLow: zod.number().optional(),
+      error: zod.string().optional(),
+    }),
+  ),
+});

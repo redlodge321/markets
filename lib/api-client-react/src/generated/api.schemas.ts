@@ -8,3 +8,65 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface ScreenerRequest {
+  /** List of ticker symbols to screen */
+  tickers: string[];
+  /** Maximum forward P/E ratio (default 30) */
+  maxPE?: number;
+  /** Minimum profit margin as a decimal (default 0.10) */
+  minMargin?: number;
+}
+
+export interface ScreenerResult {
+  ticker: string;
+  companyName: string;
+  price: number;
+  forwardPE: number;
+  profitMargin: number;
+  sector?: string;
+  marketCap?: number;
+  fiftyTwoWeekHigh?: number;
+  fiftyTwoWeekLow?: number;
+}
+
+export type ScreenerResponseCriteria = {
+  maxPE: number;
+  minMargin: number;
+};
+
+export type ScreenerResponseErrorsItem = {
+  ticker: string;
+  error: string;
+};
+
+export interface ScreenerResponse {
+  results: ScreenerResult[];
+  /** Total number of tickers screened */
+  screened: number;
+  /** Number of tickers that passed the filter */
+  passed: number;
+  criteria: ScreenerResponseCriteria;
+  errors: ScreenerResponseErrorsItem[];
+}
+
+export interface QuoteRequest {
+  tickers: string[];
+}
+
+export interface StockQuote {
+  ticker: string;
+  companyName?: string;
+  price?: number;
+  forwardPE?: number;
+  profitMargin?: number;
+  sector?: string;
+  marketCap?: number;
+  fiftyTwoWeekHigh?: number;
+  fiftyTwoWeekLow?: number;
+  error?: string;
+}
+
+export interface QuoteResponse {
+  quotes: StockQuote[];
+}

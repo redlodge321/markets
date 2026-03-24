@@ -5,18 +5,27 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  HealthStatus,
+  QuoteRequest,
+  QuoteResponse,
+  ScreenerRequest,
+  ScreenerResponse,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -99,3 +108,177 @@ export function useHealthCheck<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Screens a list of tickers against P/E and profit margin criteria
+ * @summary Run the stock screener
+ */
+export const getRunScreenerUrl = () => {
+  return `/api/screener/run`;
+};
+
+export const runScreener = async (
+  screenerRequest: ScreenerRequest,
+  options?: RequestInit,
+): Promise<ScreenerResponse> => {
+  return customFetch<ScreenerResponse>(getRunScreenerUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(screenerRequest),
+  });
+};
+
+export const getRunScreenerMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof runScreener>>,
+    TError,
+    { data: BodyType<ScreenerRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof runScreener>>,
+  TError,
+  { data: BodyType<ScreenerRequest> },
+  TContext
+> => {
+  const mutationKey = ["runScreener"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof runScreener>>,
+    { data: BodyType<ScreenerRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return runScreener(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RunScreenerMutationResult = NonNullable<
+  Awaited<ReturnType<typeof runScreener>>
+>;
+export type RunScreenerMutationBody = BodyType<ScreenerRequest>;
+export type RunScreenerMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Run the stock screener
+ */
+export const useRunScreener = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof runScreener>>,
+    TError,
+    { data: BodyType<ScreenerRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof runScreener>>,
+  TError,
+  { data: BodyType<ScreenerRequest> },
+  TContext
+> => {
+  return useMutation(getRunScreenerMutationOptions(options));
+};
+
+/**
+ * Returns current price, P/E, and margin for each ticker without filtering
+ * @summary Get stock quotes for a list of tickers
+ */
+export const getGetStockQuotesUrl = () => {
+  return `/api/screener/quote`;
+};
+
+export const getStockQuotes = async (
+  quoteRequest: QuoteRequest,
+  options?: RequestInit,
+): Promise<QuoteResponse> => {
+  return customFetch<QuoteResponse>(getGetStockQuotesUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(quoteRequest),
+  });
+};
+
+export const getGetStockQuotesMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getStockQuotes>>,
+    TError,
+    { data: BodyType<QuoteRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof getStockQuotes>>,
+  TError,
+  { data: BodyType<QuoteRequest> },
+  TContext
+> => {
+  const mutationKey = ["getStockQuotes"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof getStockQuotes>>,
+    { data: BodyType<QuoteRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return getStockQuotes(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GetStockQuotesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof getStockQuotes>>
+>;
+export type GetStockQuotesMutationBody = BodyType<QuoteRequest>;
+export type GetStockQuotesMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Get stock quotes for a list of tickers
+ */
+export const useGetStockQuotes = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getStockQuotes>>,
+    TError,
+    { data: BodyType<QuoteRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof getStockQuotes>>,
+  TError,
+  { data: BodyType<QuoteRequest> },
+  TContext
+> => {
+  return useMutation(getGetStockQuotesMutationOptions(options));
+};
