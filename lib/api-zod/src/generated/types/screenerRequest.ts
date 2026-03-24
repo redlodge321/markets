@@ -19,4 +19,8 @@ export interface ScreenerRequest {
   minCurrentRatio?: number;
   /** Maximum market cap in millions USD (default 2000000) */
   maxMarketCap?: number;
+  /** Filter by country name (case-insensitive, partial match). Empty means no filter. */
+  filterCountry?: string;
+  /** Filter by US state abbreviation or name (case-insensitive, partial match). Empty means no filter. */
+  filterState?: string;
 }

@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Info } from "lucide-react";
+import { SlidersHorizontal, Info, MapPin, X } from "lucide-react";
 import * as React from "react";
 
 interface CriteriaControlsProps {
@@ -10,6 +10,10 @@ interface CriteriaControlsProps {
   setMinCurrentRatio: (val: number) => void;
   maxMarketCap: number;
   setMaxMarketCap: (val: number) => void;
+  filterCountry: string;
+  setFilterCountry: (val: string) => void;
+  filterState: string;
+  setFilterState: (val: string) => void;
 }
 
 function Slider({
@@ -83,6 +87,10 @@ export function CriteriaControls({
   setMinCurrentRatio,
   maxMarketCap,
   setMaxMarketCap,
+  filterCountry,
+  setFilterCountry,
+  filterState,
+  setFilterState,
 }: CriteriaControlsProps) {
   return (
     <div className="glass-panel rounded-2xl p-4 flex flex-col gap-4">
@@ -145,6 +153,50 @@ export function CriteriaControls({
           minLabel="$0"
           maxLabel="Any"
         />
+      </div>
+
+      {/* Location filter */}
+      <div className="border-t border-border/40 pt-3 space-y-2.5">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-1">
+          <MapPin className="w-3 h-3" />
+          HQ Location Filter
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="relative">
+            <input
+              type="text"
+              value={filterCountry}
+              onChange={(e) => setFilterCountry(e.target.value)}
+              placeholder="Country (e.g. United States)"
+              className="w-full bg-background border border-border/50 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground/50 pr-7"
+            />
+            {filterCountry && (
+              <button
+                onClick={() => setFilterCountry("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <input
+              type="text"
+              value={filterState}
+              onChange={(e) => setFilterState(e.target.value)}
+              placeholder="State (e.g. CA, Texas)"
+              className="w-full bg-background border border-border/50 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground/50 pr-7"
+            />
+            {filterState && (
+              <button
+                onClick={() => setFilterState("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

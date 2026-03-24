@@ -25,6 +25,8 @@ export default function Dashboard() {
         maxDebtToEquity: state.maxDebtToEquity,
         minCurrentRatio: state.minCurrentRatio,
         maxMarketCap: state.maxMarketCap,
+        filterCountry: state.filterCountry || undefined,
+        filterState: state.filterState || undefined,
       },
     });
   };
@@ -173,6 +175,10 @@ export default function Dashboard() {
             setMinCurrentRatio={state.setMinCurrentRatio}
             maxMarketCap={state.maxMarketCap}
             setMaxMarketCap={state.setMaxMarketCap}
+            filterCountry={state.filterCountry}
+            setFilterCountry={state.setFilterCountry}
+            filterState={state.filterState}
+            setFilterState={state.setFilterState}
           />
         </div>
 

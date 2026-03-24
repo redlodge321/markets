@@ -25,7 +25,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
     defaultKeyStatistics?: { forwardPE?: number; priceToBook?: number };
     financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number };
     calendarEvents?: { earnings?: { earningsDate?: string[] } };
-    summaryProfile?: { sector?: string; industry?: string };
+    summaryProfile?: { sector?: string; industry?: string; country?: string; state?: string; city?: string };
   }>;
   search(
     query: string,
@@ -122,6 +122,9 @@ interface StockData {
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
+  country?: string;
+  state?: string;
+  city?: string;
 }
 
 async function fetchStockData(ticker: string): Promise<StockData | { error: string }> {
@@ -167,6 +170,9 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
     const companyName = price_data?.shortName ?? price_data?.longName ?? ticker;
     const sector = quote.summaryProfile?.sector;
     const industry = quote.summaryProfile?.industry;
+    const country = quote.summaryProfile?.country;
+    const state = quote.summaryProfile?.state;
+    const city = quote.summaryProfile?.city;
     const marketCap = price_data?.marketCap;
     const fiftyTwoWeekHigh = price_data?.fiftyTwoWeekHigh;
     const fiftyTwoWeekLow = price_data?.fiftyTwoWeekLow;
@@ -191,6 +197,9 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       nextEarningsDate,
       sector,
       industry,
+      country,
+      state,
+      city,
       marketCap,
       fiftyTwoWeekHigh,
       fiftyTwoWeekLow,
@@ -203,7 +212,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
 router.post("/screener/run", async (req, res) => {
   const body = RunScreenerBody.parse(req.body);
-  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, maxMarketCap = 2000 } = body;
+  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, maxMarketCap = 2000, filterCountry = "", filterState = "" } = body;
 
   const isFuture = (t: string) => t.includes("=");
   const equityTickers = tickers.filter((t) => !isFuture(t));
@@ -229,7 +238,11 @@ router.post("/screener/run", async (req, res) => {
       const dtePass = dte <= 0 || dte < maxDebtToEquity;
       const crPass = cr <= 0 || cr > minCurrentRatio;
       const mcapPass = maxMarketCap >= 2000000 || mcap <= maxMarketCapRaw;
-      if (pbPass && dtePass && crPass && mcapPass) results.push(data);
+      const countryFilter = (filterCountry ?? "").trim().toLowerCase();
+      const stateFilter = (filterState ?? "").trim().toLowerCase();
+      const countryPass = !countryFilter || (data.country ?? "").toLowerCase().includes(countryFilter);
+      const statePass = !stateFilter || (data.state ?? "").toLowerCase().includes(stateFilter);
+      if (pbPass && dtePass && crPass && mcapPass && countryPass && statePass) results.push(data);
     }),
     ...futureTickers.map(async (ticker) => {
       const fwdTicker = get3MonthTicker(ticker);

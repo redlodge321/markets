@@ -30,4 +30,7 @@ export interface ScreenerResult {
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
+  country?: string;
+  state?: string;
+  city?: string;
 }
