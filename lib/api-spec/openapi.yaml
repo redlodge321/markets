@@ -116,6 +116,9 @@ components:
           type: number
         currentRatio:
           type: number
+        nextEarningsDate:
+          type: string
+          description: ISO date string of next earnings date, or null if unavailable
         sector:
           type: string
         marketCap:
@@ -202,6 +205,9 @@ components:
           type: number
         currentRatio:
           type: number
+        nextEarningsDate:
+          type: string
+          description: ISO date string of next earnings date, or null if unavailable
         sector:
           type: string
         marketCap:

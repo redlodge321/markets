@@ -33,6 +33,8 @@ export interface ScreenerResult {
   profitMargin: number;
   debtToEquity: number;
   currentRatio: number;
+  /** ISO date string of next earnings date, or null if unavailable */
+  nextEarningsDate?: string;
   sector?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
@@ -72,6 +74,8 @@ export interface StockQuote {
   profitMargin?: number;
   debtToEquity?: number;
   currentRatio?: number;
+  /** ISO date string of next earnings date, or null if unavailable */
+  nextEarningsDate?: string;
   sector?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;

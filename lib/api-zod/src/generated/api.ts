@@ -54,6 +54,12 @@ export const RunScreenerResponse = zod.object({
       profitMargin: zod.number(),
       debtToEquity: zod.number(),
       currentRatio: zod.number(),
+      nextEarningsDate: zod
+        .string()
+        .optional()
+        .describe(
+          "ISO date string of next earnings date, or null if unavailable",
+        ),
       sector: zod.string().optional(),
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),
@@ -93,6 +99,12 @@ export const GetStockQuotesResponse = zod.object({
       profitMargin: zod.number().optional(),
       debtToEquity: zod.number().optional(),
       currentRatio: zod.number().optional(),
+      nextEarningsDate: zod
+        .string()
+        .optional()
+        .describe(
+          "ISO date string of next earnings date, or null if unavailable",
+        ),
       sector: zod.string().optional(),
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),

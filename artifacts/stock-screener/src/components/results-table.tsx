@@ -1,12 +1,23 @@
 import { motion } from "framer-motion";
 import { formatCurrency, formatPercent, formatMarketCap, cn } from "@/lib/utils";
 import type { ScreenerResult } from "@workspace/api-client-react/src/generated/api.schemas";
-import { TrendingDown, TrendingUp, Minus, ShieldCheck, ShieldAlert } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus, ShieldCheck, ShieldAlert, CalendarClock } from "lucide-react";
 
 interface ResultsTableProps {
   results: ScreenerResult[];
   isLoading: boolean;
   isQuotesMode?: boolean;
+}
+
+function formatEarningsDate(iso?: string | null): { label: string; daysAway: number | null } {
+  if (!iso) return { label: "—", daysAway: null };
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return { label: "—", daysAway: null };
+  const now = new Date();
+  const diffMs = date.getTime() - now.getTime();
+  const daysAway = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  const label = date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return { label, daysAway };
 }
 
 export function ResultsTable({ results, isLoading, isQuotesMode = false }: ResultsTableProps) {
@@ -55,6 +66,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-4 text-right">Curr Ratio</th>
               <th className="px-5 py-4 text-right">Margin</th>
               <th className="px-5 py-4 text-center">Health</th>
+              <th className="px-5 py-4 text-right">Next Earnings</th>
               <th className="px-5 py-4 text-right">Mkt Cap</th>
             </tr>
           </thead>
@@ -63,6 +75,8 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               const isStrongBalance =
                 (stock.debtToEquity <= 0 || stock.debtToEquity < 100) &&
                 (stock.currentRatio <= 0 || stock.currentRatio > 1.5);
+              const { label: earningsLabel, daysAway } = formatEarningsDate(stock.nextEarningsDate);
+              const earningsSoon = daysAway !== null && daysAway >= 0 && daysAway <= 30;
 
               return (
                 <motion.tr
@@ -77,7 +91,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                       {stock.ticker}
                     </div>
                   </td>
-                  <td className="px-5 py-4 font-sans text-muted-foreground truncate max-w-[160px]" title={stock.companyName}>
+                  <td className="px-5 py-4 font-sans text-muted-foreground truncate max-w-[150px]" title={stock.companyName}>
                     {stock.companyName || '-'}
                   </td>
                   <td className="px-5 py-4 text-right text-foreground">
@@ -150,6 +164,26 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-muted/30 text-muted-foreground border border-border/50">
                         <ShieldAlert className="w-3 h-3" /> Watch
                       </span>
+                    )}
+                  </td>
+
+                  {/* Next Earnings */}
+                  <td className="px-5 py-4 text-right whitespace-nowrap">
+                    {daysAway !== null ? (
+                      <div className={cn(
+                        "inline-flex items-center gap-1.5",
+                        earningsSoon ? "text-yellow-400" : "text-muted-foreground"
+                      )}>
+                        {earningsSoon && <CalendarClock className="w-3.5 h-3.5 flex-shrink-0" />}
+                        <span className="font-sans text-xs">{earningsLabel}</span>
+                        {earningsSoon && (
+                          <span className="text-[10px] font-mono bg-yellow-400/10 border border-yellow-400/20 px-1 rounded">
+                            {daysAway}d
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
                     )}
                   </td>
 

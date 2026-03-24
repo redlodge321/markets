@@ -23,6 +23,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
     };
     defaultKeyStatistics?: { forwardPE?: number; priceToBook?: number };
     financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number };
+    calendarEvents?: { earnings?: { earningsDate?: string[] } };
   }>;
 };
 
@@ -35,6 +36,7 @@ interface StockData {
   profitMargin: number;
   debtToEquity: number;
   currentRatio: number;
+  nextEarningsDate?: string;
   sector?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
@@ -44,7 +46,7 @@ interface StockData {
 async function fetchStockData(ticker: string): Promise<StockData | { error: string }> {
   try {
     const quote = await yf.quoteSummary(ticker, {
-      modules: ["price", "defaultKeyStatistics", "financialData"],
+      modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents"],
     });
 
     const price_data = quote.price;
@@ -57,6 +59,11 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
     const profitMargin = financial?.profitMargins ?? null;
     const debtToEquity = financial?.debtToEquity ?? null;
     const currentRatio = financial?.currentRatio ?? null;
+    const earningsDates = quote.calendarEvents?.earnings?.earningsDate;
+    const nextEarningsRaw = earningsDates && earningsDates.length > 0 ? earningsDates[0] : undefined;
+    const nextEarningsDate = nextEarningsRaw
+      ? (nextEarningsRaw instanceof Date ? nextEarningsRaw.toISOString() : String(nextEarningsRaw))
+      : undefined;
     const companyName = price_data?.shortName ?? price_data?.longName ?? ticker;
     const sector = price_data?.sector;
     const marketCap = price_data?.marketCap;
@@ -76,6 +83,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       profitMargin: profitMargin ?? 0,
       debtToEquity: debtToEquity ?? 0,
       currentRatio: currentRatio ?? 0,
+      nextEarningsDate,
       sector,
       marketCap,
       fiftyTwoWeekHigh,
