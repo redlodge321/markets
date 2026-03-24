@@ -17,6 +17,7 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  GetTopByMarketCapBody,
   HealthStatus,
   QuoteRequest,
   QuoteResponse,
@@ -24,6 +25,7 @@ import type {
   ScreenerResponse,
   TickerSearchRequest,
   TickerSearchResponse,
+  TopMarketCapResponse,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -283,6 +285,93 @@ export const useGetStockQuotes = <
   TContext
 > => {
   return useMutation(getGetStockQuotesMutationOptions(options));
+};
+
+/**
+ * Returns up to 1000 US equity tickers sorted by market cap descending using Yahoo Finance screener
+ * @summary Get top US stocks by market cap
+ */
+export const getGetTopByMarketCapUrl = () => {
+  return `/api/screener/top-marketcap`;
+};
+
+export const getTopByMarketCap = async (
+  getTopByMarketCapBody: GetTopByMarketCapBody,
+  options?: RequestInit,
+): Promise<TopMarketCapResponse> => {
+  return customFetch<TopMarketCapResponse>(getGetTopByMarketCapUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(getTopByMarketCapBody),
+  });
+};
+
+export const getGetTopByMarketCapMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getTopByMarketCap>>,
+    TError,
+    { data: BodyType<GetTopByMarketCapBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof getTopByMarketCap>>,
+  TError,
+  { data: BodyType<GetTopByMarketCapBody> },
+  TContext
+> => {
+  const mutationKey = ["getTopByMarketCap"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof getTopByMarketCap>>,
+    { data: BodyType<GetTopByMarketCapBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return getTopByMarketCap(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GetTopByMarketCapMutationResult = NonNullable<
+  Awaited<ReturnType<typeof getTopByMarketCap>>
+>;
+export type GetTopByMarketCapMutationBody = BodyType<GetTopByMarketCapBody>;
+export type GetTopByMarketCapMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Get top US stocks by market cap
+ */
+export const useGetTopByMarketCap = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getTopByMarketCap>>,
+    TError,
+    { data: BodyType<GetTopByMarketCapBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof getTopByMarketCap>>,
+  TError,
+  { data: BodyType<GetTopByMarketCapBody> },
+  TContext
+> => {
+  return useMutation(getGetTopByMarketCapMutationOptions(options));
 };
 
 /**

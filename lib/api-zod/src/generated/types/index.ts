@@ -7,6 +7,7 @@
  */
 
 export * from "./commodityResult";
+export * from "./getTopByMarketCapBody";
 export * from "./healthStatus";
 export * from "./quoteRequest";
 export * from "./quoteResponse";
@@ -19,3 +20,5 @@ export * from "./stockQuote";
 export * from "./tickerSearchRequest";
 export * from "./tickerSearchResponse";
 export * from "./tickerSearchResult";
+export * from "./topMarketCapResponse";
+export * from "./topStock";

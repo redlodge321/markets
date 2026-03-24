@@ -128,6 +128,18 @@ export interface QuoteResponse {
   quotes: StockQuote[];
 }
 
+export interface TopStock {
+  ticker: string;
+  name: string;
+  marketCap?: number;
+  price?: number;
+}
+
+export interface TopMarketCapResponse {
+  stocks: TopStock[];
+  total: number;
+}
+
 export interface TickerSearchRequest {
   /** Company name or partial ticker to search for */
   query: string;
@@ -143,3 +155,5 @@ export interface TickerSearchResult {
 export interface TickerSearchResponse {
   results: TickerSearchResult[];
 }
+
+export type GetTopByMarketCapBody = { [key: string]: unknown };

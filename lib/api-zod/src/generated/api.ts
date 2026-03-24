@@ -194,6 +194,24 @@ export const GetStockQuotesResponse = zod.object({
 });
 
 /**
+ * Returns up to 1000 US equity tickers sorted by market cap descending using Yahoo Finance screener
+ * @summary Get top US stocks by market cap
+ */
+export const GetTopByMarketCapBody = zod.object({}).passthrough();
+
+export const GetTopByMarketCapResponse = zod.object({
+  stocks: zod.array(
+    zod.object({
+      ticker: zod.string(),
+      name: zod.string(),
+      marketCap: zod.number().optional(),
+      price: zod.number().optional(),
+    }),
+  ),
+  total: zod.number(),
+});
+
+/**
  * Returns matching ticker symbols for a given company name query
  * @summary Search for ticker symbols by company name
  */

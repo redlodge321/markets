@@ -33,6 +33,14 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
   ): Promise<{
     quotes?: Array<{ symbol: string; shortname?: string; exchange?: string; quoteType?: string; isYahooFinance?: boolean }>;
   }>;
+  screener(
+    opts: Record<string, unknown>,
+    queryOpts?: { validateResult?: boolean }
+  ): Promise<{
+    quotes?: Array<{ symbol: string; shortName?: string; longName?: string; marketCap?: number; regularMarketPrice?: number }>;
+    total?: number;
+    count?: number;
+  }>;
 };
 
 interface CommodityData {
@@ -294,6 +302,51 @@ router.post("/screener/quote", async (req, res) => {
 
   const response = GetStockQuotesResponse.parse({ quotes });
   res.json(response);
+});
+
+router.post("/screener/top-marketcap", async (req, res) => {
+  const SCREENS = [
+    "most_actives",
+    "undervalued_large_caps",
+    "growth_technology_stocks",
+    "undervalued_growth_stocks",
+    "portfolio_anchors",
+    "aggressive_small_caps",
+    "day_gainers",
+    "solid_large_growth_funds",
+  ];
+
+  try {
+    const pages = await Promise.all(
+      SCREENS.map((scrId) =>
+        yf.screener({ scrIds: scrId, count: 250, region: "us", lang: "en-US" }, { validateResult: false })
+          .catch(() => ({ quotes: [] }))
+      )
+    );
+
+    const seen = new Set<string>();
+    const stocks: Array<{ ticker: string; name: string; marketCap?: number; price?: number }> = [];
+
+    for (const page of pages) {
+      for (const q of page?.quotes ?? []) {
+        if (!q.symbol || seen.has(q.symbol)) continue;
+        seen.add(q.symbol);
+        stocks.push({
+          ticker: q.symbol,
+          name: q.shortName ?? q.longName ?? q.symbol,
+          marketCap: q.marketCap,
+          price: q.regularMarketPrice,
+        });
+      }
+    }
+
+    stocks.sort((a, b) => (b.marketCap ?? 0) - (a.marketCap ?? 0));
+
+    res.json({ stocks, total: stocks.length });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ error: message });
+  }
 });
 
 router.post("/screener/search", async (req, res) => {

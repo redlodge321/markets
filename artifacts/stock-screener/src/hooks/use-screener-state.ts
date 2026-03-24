@@ -44,6 +44,7 @@ export function useScreenerState() {
 
   return {
     tickers,
+    setTickers,
     commodityTickers,
     maxPB,
     setMaxPB,

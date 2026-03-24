@@ -1,7 +1,7 @@
-import { X, Plus, Activity, Search, Loader2 } from "lucide-react";
+import { X, Plus, Activity, Search, Loader2, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useSearchTickers } from "@workspace/api-client-react";
+import { useSearchTickers, useGetTopByMarketCap } from "@workspace/api-client-react";
 import type { TickerSearchResult } from "@workspace/api-client-react/src/generated/api.schemas";
 
 interface TickerManagerProps {
@@ -10,6 +10,7 @@ interface TickerManagerProps {
   setNewTicker: (val: string) => void;
   addTicker: (e?: React.FormEvent, directSymbol?: string) => void;
   removeTicker: (symbol: string) => void;
+  setTickers: (tickers: string[]) => void;
 }
 
 export function TickerManager({
@@ -18,6 +19,7 @@ export function TickerManager({
   setNewTicker,
   addTicker,
   removeTicker,
+  setTickers,
 }: TickerManagerProps) {
   const [suggestions, setSuggestions] = useState<TickerSearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -27,6 +29,7 @@ export function TickerManager({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const searchMutation = useSearchTickers();
+  const top1000Mutation = useGetTopByMarketCap();
 
   const runSearch = useCallback((query: string) => {
     if (query.length < 2) {
@@ -87,6 +90,17 @@ export function TickerManager({
     }
   };
 
+  const handleLoadTop1000 = () => {
+    top1000Mutation.mutate(
+      { data: {} },
+      {
+        onSuccess: (data) => {
+          setTickers(data.stocks.map((s) => s.ticker));
+        },
+      }
+    );
+  };
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -103,14 +117,31 @@ export function TickerManager({
 
   return (
     <div className="glass-panel rounded-2xl p-6 flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-          <Activity className="w-5 h-5 text-primary" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+            <Activity className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Stock Universe</h2>
+            <p className="text-sm text-muted-foreground">Search by name or enter a ticker symbol.</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">Stock Universe</h2>
-          <p className="text-sm text-muted-foreground">Search by name or enter a ticker symbol.</p>
-        </div>
+
+        <button
+          type="button"
+          onClick={handleLoadTop1000}
+          disabled={top1000Mutation.isPending}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+          title="Load the top 1,000 US stocks by market cap"
+        >
+          {top1000Mutation.isPending ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <TrendingUp className="w-3.5 h-3.5" />
+          )}
+          {top1000Mutation.isPending ? "Loading…" : "Top 1000"}
+        </button>
       </div>
 
       <div className="flex flex-col gap-4">

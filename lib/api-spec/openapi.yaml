@@ -63,6 +63,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/QuoteResponse"
+  /screener/top-marketcap:
+    post:
+      operationId: getTopByMarketCap
+      tags: [screener]
+      summary: Get top US stocks by market cap
+      description: Returns up to 1000 US equity tickers sorted by market cap descending using Yahoo Finance screener
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Top stocks by market cap
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopMarketCapResponse"
   /screener/search:
     post:
       operationId: searchTickers
@@ -320,6 +339,32 @@ components:
             $ref: "#/components/schemas/StockQuote"
       required:
         - quotes
+    TopStock:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        marketCap:
+          type: number
+        price:
+          type: number
+      required:
+        - ticker
+        - name
+    TopMarketCapResponse:
+      type: object
+      properties:
+        stocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopStock"
+        total:
+          type: integer
+      required:
+        - stocks
+        - total
     TickerSearchRequest:
       type: object
       properties:

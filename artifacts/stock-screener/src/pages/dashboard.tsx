@@ -166,6 +166,7 @@ export default function Dashboard() {
             setNewTicker={state.setNewTicker}
             addTicker={state.addTicker}
             removeTicker={state.removeTicker}
+            setTickers={state.setTickers}
           />
           <CriteriaControls
             maxPB={state.maxPB}
