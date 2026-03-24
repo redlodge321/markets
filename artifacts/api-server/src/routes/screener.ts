@@ -345,6 +345,21 @@ router.post("/screener/top-marketcap", async (req, res) => {
   }
 });
 
+router.post("/screener/search-futures", async (req, res) => {
+  const { query } = SearchTickersBody.parse(req.body);
+  const raw = await yf.search(query, { quotesCount: 12, newsCount: 0 });
+  const results = (raw.quotes ?? [])
+    .filter((q) => q.isYahooFinance && (q.quoteType === "FUTURE" || q.quoteType === "CURRENCY"))
+    .slice(0, 8)
+    .map((q) => ({
+      symbol: q.symbol,
+      shortname: q.shortname,
+      exchange: q.exchange,
+      quoteType: q.quoteType,
+    }));
+  res.json(SearchTickersResponse.parse({ results }));
+});
+
 router.post("/screener/search", async (req, res) => {
   const { query } = SearchTickersBody.parse(req.body);
   const raw = await yf.search(query, { quotesCount: 8, newsCount: 0 });

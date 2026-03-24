@@ -200,6 +200,24 @@ export const GetTopByMarketCapResponse = zod.object({
 });
 
 /**
+ * @summary Search for futures/commodity ticker symbols by name
+ */
+export const SearchFuturesBody = zod.object({
+  query: zod.string().describe("Company name or partial ticker to search for"),
+});
+
+export const SearchFuturesResponse = zod.object({
+  results: zod.array(
+    zod.object({
+      symbol: zod.string(),
+      shortname: zod.string().optional(),
+      exchange: zod.string().optional(),
+      quoteType: zod.string().optional(),
+    }),
+  ),
+});
+
+/**
  * Returns matching ticker symbols for a given company name query
  * @summary Search for ticker symbols by company name
  */

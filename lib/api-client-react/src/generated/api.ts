@@ -375,6 +375,92 @@ export const useGetTopByMarketCap = <
 };
 
 /**
+ * @summary Search for futures/commodity ticker symbols by name
+ */
+export const getSearchFuturesUrl = () => {
+  return `/api/screener/search-futures`;
+};
+
+export const searchFutures = async (
+  tickerSearchRequest: TickerSearchRequest,
+  options?: RequestInit,
+): Promise<TickerSearchResponse> => {
+  return customFetch<TickerSearchResponse>(getSearchFuturesUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(tickerSearchRequest),
+  });
+};
+
+export const getSearchFuturesMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof searchFutures>>,
+    TError,
+    { data: BodyType<TickerSearchRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof searchFutures>>,
+  TError,
+  { data: BodyType<TickerSearchRequest> },
+  TContext
+> => {
+  const mutationKey = ["searchFutures"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof searchFutures>>,
+    { data: BodyType<TickerSearchRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return searchFutures(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SearchFuturesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof searchFutures>>
+>;
+export type SearchFuturesMutationBody = BodyType<TickerSearchRequest>;
+export type SearchFuturesMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Search for futures/commodity ticker symbols by name
+ */
+export const useSearchFutures = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof searchFutures>>,
+    TError,
+    { data: BodyType<TickerSearchRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof searchFutures>>,
+  TError,
+  { data: BodyType<TickerSearchRequest> },
+  TContext
+> => {
+  return useMutation(getSearchFuturesMutationOptions(options));
+};
+
+/**
  * Returns matching ticker symbols for a given company name query
  * @summary Search for ticker symbols by company name
  */

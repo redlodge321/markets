@@ -82,6 +82,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TopMarketCapResponse"
+  /screener/search-futures:
+    post:
+      operationId: searchFutures
+      tags: [screener]
+      summary: Search for futures/commodity ticker symbols by name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TickerSearchRequest"
+      responses:
+        "200":
+          description: Futures search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TickerSearchResponse"
   /screener/search:
     post:
       operationId: searchTickers
