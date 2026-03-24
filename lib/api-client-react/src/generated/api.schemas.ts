@@ -33,6 +33,10 @@ export interface ScreenerResult {
   profitMargin: number;
   debtToEquity: number;
   currentRatio: number;
+  /** Price-to-Free-Cash-Flow ratio (marketCap / freeCashflow TTM) */
+  pfcfRatio?: number;
+  /** Trailing twelve months free cash flow in USD */
+  freeCashflow?: number;
   /** ISO date string of next earnings date, or null if unavailable */
   nextEarningsDate?: string;
   sector?: string;
@@ -74,6 +78,10 @@ export interface StockQuote {
   profitMargin?: number;
   debtToEquity?: number;
   currentRatio?: number;
+  /** Price-to-Free-Cash-Flow ratio */
+  pfcfRatio?: number;
+  /** Trailing twelve months free cash flow in USD */
+  freeCashflow?: number;
   /** ISO date string of next earnings date, or null if unavailable */
   nextEarningsDate?: string;
   sector?: string;

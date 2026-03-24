@@ -63,6 +63,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-4 text-right">P/B</th>
               <th className="px-5 py-4 text-right">Debt/Eq</th>
               <th className="px-5 py-4 text-right">Curr Ratio</th>
+              <th className="px-5 py-4 text-right">P/FCF</th>
               <th className="px-5 py-4 text-right">Margin</th>
               <th className="px-5 py-4 text-center">Health</th>
               <th className="px-5 py-4 text-right">Next Earnings</th>
@@ -136,6 +137,17 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                       : "text-foreground"
                   )}>
                     {stock.currentRatio && stock.currentRatio > 0 ? stock.currentRatio.toFixed(2) + 'x' : '-'}
+                  </td>
+
+                  {/* P/FCF */}
+                  <td className={cn(
+                    "px-5 py-4 text-right tabular-nums",
+                    !stock.pfcfRatio ? "text-muted-foreground"
+                      : stock.pfcfRatio > 40 ? "text-destructive"
+                      : stock.pfcfRatio < 15 ? "text-success"
+                      : "text-foreground"
+                  )}>
+                    {stock.pfcfRatio ? stock.pfcfRatio.toFixed(1) : '—'}
                   </td>
 
                   {/* Profit Margin */}

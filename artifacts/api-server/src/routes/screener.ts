@@ -22,7 +22,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
       fiftyTwoWeekLow?: number;
     };
     defaultKeyStatistics?: { forwardPE?: number; priceToBook?: number };
-    financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number };
+    financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number };
     calendarEvents?: { earnings?: { earningsDate?: string[] } };
   }>;
 };
@@ -36,6 +36,8 @@ interface StockData {
   profitMargin: number;
   debtToEquity: number;
   currentRatio: number;
+  pfcfRatio?: number;
+  freeCashflow?: number;
   nextEarningsDate?: string;
   sector?: string;
   marketCap?: number;
@@ -59,6 +61,9 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
     const profitMargin = financial?.profitMargins ?? null;
     const debtToEquity = financial?.debtToEquity ?? null;
     const currentRatio = financial?.currentRatio ?? null;
+    const freeCashflow = financial?.freeCashflow ?? null;
+    const mcapRaw = price_data?.marketCap ?? null;
+    const pfcfRatio = freeCashflow && freeCashflow > 0 && mcapRaw ? mcapRaw / freeCashflow : null;
     const earningsDates = quote.calendarEvents?.earnings?.earningsDate;
     const nextEarningsRaw = earningsDates && earningsDates.length > 0 ? earningsDates[0] : undefined;
     const nextEarningsDate = nextEarningsRaw
@@ -83,6 +88,8 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       profitMargin: profitMargin ?? 0,
       debtToEquity: debtToEquity ?? 0,
       currentRatio: currentRatio ?? 0,
+      pfcfRatio: pfcfRatio ?? undefined,
+      freeCashflow: freeCashflow ?? undefined,
       nextEarningsDate,
       sector,
       marketCap,

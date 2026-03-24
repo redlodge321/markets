@@ -116,6 +116,12 @@ components:
           type: number
         currentRatio:
           type: number
+        pfcfRatio:
+          type: number
+          description: Price-to-Free-Cash-Flow ratio (marketCap / freeCashflow TTM)
+        freeCashflow:
+          type: number
+          description: Trailing twelve months free cash flow in USD
         nextEarningsDate:
           type: string
           description: ISO date string of next earnings date, or null if unavailable
@@ -205,6 +211,12 @@ components:
           type: number
         currentRatio:
           type: number
+        pfcfRatio:
+          type: number
+          description: Price-to-Free-Cash-Flow ratio
+        freeCashflow:
+          type: number
+          description: Trailing twelve months free cash flow in USD
         nextEarningsDate:
           type: string
           description: ISO date string of next earnings date, or null if unavailable

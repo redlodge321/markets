@@ -54,6 +54,16 @@ export const RunScreenerResponse = zod.object({
       profitMargin: zod.number(),
       debtToEquity: zod.number(),
       currentRatio: zod.number(),
+      pfcfRatio: zod
+        .number()
+        .optional()
+        .describe(
+          "Price-to-Free-Cash-Flow ratio (marketCap \/ freeCashflow TTM)",
+        ),
+      freeCashflow: zod
+        .number()
+        .optional()
+        .describe("Trailing twelve months free cash flow in USD"),
       nextEarningsDate: zod
         .string()
         .optional()
@@ -99,6 +109,14 @@ export const GetStockQuotesResponse = zod.object({
       profitMargin: zod.number().optional(),
       debtToEquity: zod.number().optional(),
       currentRatio: zod.number().optional(),
+      pfcfRatio: zod
+        .number()
+        .optional()
+        .describe("Price-to-Free-Cash-Flow ratio"),
+      freeCashflow: zod
+        .number()
+        .optional()
+        .describe("Trailing twelve months free cash flow in USD"),
       nextEarningsDate: zod
         .string()
         .optional()
