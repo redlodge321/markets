@@ -1,13 +1,15 @@
 import { useState } from "react";
 
 const INITIAL_UNIVERSE = [
-  "AAPL", "MSFT", "GOOGL", "AMZN", 
+  "AAPL", "MSFT", "GOOGL", "AMZN",
   "TSLA", "META", "NVDA", "BRK-B",
-  "GC=F", "CL=F", "HG=F", "NG=F"
 ];
+
+const INITIAL_COMMODITY_UNIVERSE = ["GC=F", "CL=F", "HG=F", "NG=F"];
 
 export function useScreenerState() {
   const [tickers, setTickers] = useState<string[]>(INITIAL_UNIVERSE);
+  const [commodityTickers, setCommodityTickers] = useState<string[]>(INITIAL_COMMODITY_UNIVERSE);
   const [maxPB, setMaxPB] = useState<number>(3);
   const [maxDebtToEquity, setMaxDebtToEquity] = useState<number>(100);
   const [minCurrentRatio, setMinCurrentRatio] = useState<number>(1.2);
@@ -27,8 +29,20 @@ export function useScreenerState() {
     setTickers((prev) => prev.filter((t) => t !== symbolToRemove));
   };
 
+  const addCommodityTicker = (symbol: string) => {
+    const sym = symbol.trim().toUpperCase();
+    if (sym && !commodityTickers.includes(sym)) {
+      setCommodityTickers((prev) => [...prev, sym]);
+    }
+  };
+
+  const removeCommodityTicker = (symbol: string) => {
+    setCommodityTickers((prev) => prev.filter((t) => t !== symbol));
+  };
+
   return {
     tickers,
+    commodityTickers,
     maxPB,
     setMaxPB,
     maxDebtToEquity,
@@ -41,5 +55,7 @@ export function useScreenerState() {
     setNewTicker,
     addTicker,
     removeTicker,
+    addCommodityTicker,
+    removeCommodityTicker,
   };
 }

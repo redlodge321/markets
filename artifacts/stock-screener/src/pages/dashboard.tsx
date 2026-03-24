@@ -4,6 +4,7 @@ import { TickerManager } from "@/components/ticker-manager";
 import { CriteriaControls } from "@/components/criteria-controls";
 import { ResultsTable } from "@/components/results-table";
 import { CommodityTable } from "@/components/commodity-table";
+import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,7 +20,7 @@ export default function Dashboard() {
     setViewMode("screener");
     screenerMutation.mutate({
       data: {
-        tickers: state.tickers,
+        tickers: [...state.tickers, ...state.commodityTickers],
         maxPB: state.maxPB,
         maxDebtToEquity: state.maxDebtToEquity,
         minCurrentRatio: state.minCurrentRatio,
@@ -157,6 +158,17 @@ export default function Dashboard() {
         {/* Commodity Watchlist */}
         {viewMode === "screener" && (
           <CommodityTable commodities={commodityResults} isLoading={isLoading} />
+        )}
+
+        {/* Commodity Universe Manager */}
+        {viewMode === "screener" && (
+          <div className="mb-8">
+            <CommodityTickerManager
+              tickers={state.commodityTickers}
+              addTicker={state.addCommodityTicker}
+              removeTicker={state.removeCommodityTicker}
+            />
+          </div>
         )}
 
         {/* Controls Grid */}
