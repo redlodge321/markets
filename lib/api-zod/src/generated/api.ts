@@ -41,18 +41,6 @@ export const RunScreenerBody = zod.object({
     .number()
     .optional()
     .describe("Maximum market cap in millions USD (default 2000000)"),
-  filterCountry: zod
-    .string()
-    .optional()
-    .describe(
-      "Filter by country name (case-insensitive, partial match). Empty means no filter.",
-    ),
-  filterState: zod
-    .string()
-    .optional()
-    .describe(
-      "Filter by US state abbreviation or name (case-insensitive, partial match). Empty means no filter.",
-    ),
 });
 
 export const RunScreenerResponse = zod.object({

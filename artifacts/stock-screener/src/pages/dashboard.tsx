@@ -5,7 +5,6 @@ import { CriteriaControls } from "@/components/criteria-controls";
 import { ResultsTable } from "@/components/results-table";
 import { CommodityTable } from "@/components/commodity-table";
 import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
-import { LocationFilter } from "@/components/location-filter";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,8 +25,6 @@ export default function Dashboard() {
         maxDebtToEquity: state.maxDebtToEquity,
         minCurrentRatio: state.minCurrentRatio,
         maxMarketCap: state.maxMarketCap,
-        filterCountry: state.filterCountry || undefined,
-        filterState: state.filterState || undefined,
       },
     });
   };
@@ -183,16 +180,6 @@ export default function Dashboard() {
               state.setMinCurrentRatio(0.5);
               state.setMaxMarketCap(2000000);
             }}
-          />
-        </div>
-
-        {/* HQ Location Filter — standalone full-width */}
-        <div className="mb-8">
-          <LocationFilter
-            filterCountry={state.filterCountry}
-            setFilterCountry={state.setFilterCountry}
-            filterState={state.filterState}
-            setFilterState={state.setFilterState}
           />
         </div>
 

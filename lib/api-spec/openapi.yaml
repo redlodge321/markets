@@ -133,12 +133,6 @@ components:
         maxMarketCap:
           type: number
           description: Maximum market cap in millions USD (default 2000000)
-        filterCountry:
-          type: string
-          description: Filter by country name (case-insensitive, partial match). Empty means no filter.
-        filterState:
-          type: string
-          description: Filter by US state abbreviation or name (case-insensitive, partial match). Empty means no filter.
       required:
         - tickers
     ScreenerResult:

@@ -220,7 +220,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
 router.post("/screener/run", async (req, res) => {
   const body = RunScreenerBody.parse(req.body);
-  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, maxMarketCap = 2000, filterCountry = "", filterState = "" } = body;
+  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, maxMarketCap = 2000 } = body;
 
   const isFuture = (t: string) => t.includes("=");
   const equityTickers = tickers.filter((t) => !isFuture(t));
@@ -246,11 +246,7 @@ router.post("/screener/run", async (req, res) => {
       const dtePass = dte <= 0 || dte < maxDebtToEquity;
       const crPass = cr <= 0 || cr > minCurrentRatio;
       const mcapPass = maxMarketCap >= 2000000 || mcap <= maxMarketCapRaw;
-      const countryFilter = (filterCountry ?? "").trim().toLowerCase();
-      const stateFilter = (filterState ?? "").trim().toLowerCase();
-      const countryPass = !countryFilter || (data.country ?? "").toLowerCase().includes(countryFilter);
-      const statePass = !stateFilter || (data.state ?? "").toLowerCase().includes(stateFilter);
-      if (pbPass && dtePass && crPass && mcapPass && countryPass && statePass) results.push(data);
+      if (pbPass && dtePass && crPass && mcapPass) results.push(data);
     }),
     ...futureTickers.map(async (ticker) => {
       const fwdTicker = get3MonthTicker(ticker);
