@@ -48,15 +48,14 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                 <th className="px-5 py-4 text-left">Contract</th>
                 <th className="px-5 py-4 text-right">Price</th>
                 <th className="px-5 py-4 text-right">Day %</th>
-                <th className="px-5 py-4 text-right">Day High</th>
-                <th className="px-5 py-4 text-right">Day Low</th>
+                <th className="px-5 py-4 text-right">6M %</th>
                 <th className="px-5 py-4 text-right">Prev Close</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground font-mono text-xs tracking-widest uppercase">
+                  <td colSpan={5} className="px-5 py-12 text-center text-muted-foreground font-mono text-xs tracking-widest uppercase">
                     Fetching commodity data...
                   </td>
                 </tr>
@@ -95,14 +94,17 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                       {formatPct(c.dayChangePercent)}
                     </td>
 
-                    {/* Day High */}
-                    <td className="px-5 py-4 text-right tabular-nums text-muted-foreground">
-                      {c.dayHigh != null ? formatCurrency(c.dayHigh) : "—"}
-                    </td>
-
-                    {/* Day Low */}
-                    <td className="px-5 py-4 text-right tabular-nums text-muted-foreground">
-                      {c.dayLow != null ? formatCurrency(c.dayLow) : "—"}
+                    {/* 6M % */}
+                    <td className={cn(
+                      "px-5 py-4 text-right tabular-nums font-medium",
+                      c.sixMonthChangePercent == null ? "text-muted-foreground"
+                        : c.sixMonthChangePercent > 0 ? "text-success"
+                        : c.sixMonthChangePercent < 0 ? "text-destructive"
+                        : "text-muted-foreground"
+                    )}>
+                      {c.sixMonthChangePercent != null
+                        ? `${c.sixMonthChangePercent >= 0 ? "+" : ""}${(c.sixMonthChangePercent * 100).toFixed(1)}%`
+                        : "—"}
                     </td>
 
                     {/* Prev Close */}

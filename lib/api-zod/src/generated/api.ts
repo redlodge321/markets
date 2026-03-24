@@ -96,8 +96,10 @@ export const RunScreenerResponse = zod.object({
         .number()
         .optional()
         .describe("Day change as a decimal (e.g. 0.002 = +0.2%)"),
-      dayHigh: zod.number().optional(),
-      dayLow: zod.number().optional(),
+      sixMonthChangePercent: zod
+        .number()
+        .optional()
+        .describe("6-month price change as a decimal"),
       prevClose: zod.number().optional(),
     }),
   ),

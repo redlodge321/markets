@@ -181,10 +181,9 @@ components:
         dayChangePercent:
           type: number
           description: Day change as a decimal (e.g. 0.002 = +0.2%)
-        dayHigh:
+        sixMonthChangePercent:
           type: number
-        dayLow:
-          type: number
+          description: 6-month price change as a decimal
         prevClose:
           type: number
       required:

@@ -40,24 +40,39 @@ interface CommodityData {
   name: string;
   price: number;
   dayChangePercent?: number;
-  dayHigh?: number;
-  dayLow?: number;
+  sixMonthChangePercent?: number;
   prevClose?: number;
 }
 
 async function fetchCommodityData(ticker: string): Promise<CommodityData | { error: string }> {
   try {
-    const quote = await yf.quoteSummary(ticker, { modules: ["price"] });
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const [quote, chartData] = await Promise.all([
+      yf.quoteSummary(ticker, { modules: ["price"] }),
+      yf.chart(ticker, { period1: sixMonthsAgo, period2: new Date(), interval: '1mo' }).catch(() => null),
+    ]);
+
     const p = quote.price;
     const price = p?.regularMarketPrice;
     if (!price) return { error: "No price data" };
+
+    let sixMonthChangePercent: number | undefined;
+    if (chartData?.quotes && chartData.quotes.length >= 2) {
+      const first = chartData.quotes[0]?.close;
+      const last = chartData.quotes[chartData.quotes.length - 1]?.close;
+      if (first && last && first > 0) {
+        sixMonthChangePercent = (last - first) / first;
+      }
+    }
+
     return {
       ticker: ticker.toUpperCase(),
       name: p?.shortName ?? p?.longName ?? ticker,
       price,
       dayChangePercent: p?.regularMarketChangePercent ?? undefined,
-      dayHigh: p?.regularMarketDayHigh ?? undefined,
-      dayLow: p?.regularMarketDayLow ?? undefined,
+      sixMonthChangePercent,
       prevClose: p?.regularMarketPreviousClose ?? undefined,
     };
   } catch (err: unknown) {

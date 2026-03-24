@@ -12,7 +12,7 @@ export interface CommodityResult {
   price: number;
   /** Day change as a decimal (e.g. 0.002 = +0.2%) */
   dayChangePercent?: number;
-  dayHigh?: number;
-  dayLow?: number;
+  /** 6-month price change as a decimal */
+  sixMonthChangePercent?: number;
   prevClose?: number;
 }
