@@ -144,7 +144,7 @@ export default function Dashboard() {
         <section className="mb-8">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-bold text-foreground">
-              {viewMode === "screener" ? "Screener Results" : "Live Quotes"}
+              {viewMode === "screener" ? "Equity Screen" : "Live Quotes"}
             </h3>
           </div>
           
