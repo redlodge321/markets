@@ -128,20 +128,32 @@ export function TickerManager({
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleLoadTop1000}
-          disabled={top1000Mutation.isPending}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-          title="Load the top 1,000 US stocks by market cap"
-        >
-          {top1000Mutation.isPending ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <TrendingUp className="w-3.5 h-3.5" />
-          )}
-          {top1000Mutation.isPending ? "Loading…" : "Top 1000"}
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleLoadTop1000}
+            disabled={top1000Mutation.isPending}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Load the top 1,000 US stocks by market cap"
+          >
+            {top1000Mutation.isPending ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <TrendingUp className="w-3.5 h-3.5" />
+            )}
+            {top1000Mutation.isPending ? "Loading…" : "Top 1000"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setTickers([])}
+            disabled={tickers.length === 0}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border border-border/50 bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Clear all tickers from universe"
+          >
+            <X className="w-3.5 h-3.5" />
+            Clear
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">
