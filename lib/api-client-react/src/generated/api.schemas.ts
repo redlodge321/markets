@@ -96,3 +96,19 @@ export interface StockQuote {
 export interface QuoteResponse {
   quotes: StockQuote[];
 }
+
+export interface TickerSearchRequest {
+  /** Company name or partial ticker to search for */
+  query: string;
+}
+
+export interface TickerSearchResult {
+  symbol: string;
+  shortname?: string;
+  exchange?: string;
+  quoteType?: string;
+}
+
+export interface TickerSearchResponse {
+  results: TickerSearchResult[];
+}

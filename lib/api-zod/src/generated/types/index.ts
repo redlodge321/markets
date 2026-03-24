@@ -15,3 +15,6 @@ export * from "./screenerResponseCriteria";
 export * from "./screenerResponseErrorsItem";
 export * from "./screenerResult";
 export * from "./stockQuote";
+export * from "./tickerSearchRequest";
+export * from "./tickerSearchResponse";
+export * from "./tickerSearchResult";

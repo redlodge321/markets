@@ -22,6 +22,8 @@ import type {
   QuoteResponse,
   ScreenerRequest,
   ScreenerResponse,
+  TickerSearchRequest,
+  TickerSearchResponse,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -281,4 +283,91 @@ export const useGetStockQuotes = <
   TContext
 > => {
   return useMutation(getGetStockQuotesMutationOptions(options));
+};
+
+/**
+ * Returns matching ticker symbols for a given company name query
+ * @summary Search for ticker symbols by company name
+ */
+export const getSearchTickersUrl = () => {
+  return `/api/screener/search`;
+};
+
+export const searchTickers = async (
+  tickerSearchRequest: TickerSearchRequest,
+  options?: RequestInit,
+): Promise<TickerSearchResponse> => {
+  return customFetch<TickerSearchResponse>(getSearchTickersUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(tickerSearchRequest),
+  });
+};
+
+export const getSearchTickersMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof searchTickers>>,
+    TError,
+    { data: BodyType<TickerSearchRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof searchTickers>>,
+  TError,
+  { data: BodyType<TickerSearchRequest> },
+  TContext
+> => {
+  const mutationKey = ["searchTickers"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof searchTickers>>,
+    { data: BodyType<TickerSearchRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return searchTickers(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SearchTickersMutationResult = NonNullable<
+  Awaited<ReturnType<typeof searchTickers>>
+>;
+export type SearchTickersMutationBody = BodyType<TickerSearchRequest>;
+export type SearchTickersMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Search for ticker symbols by company name
+ */
+export const useSearchTickers = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof searchTickers>>,
+    TError,
+    { data: BodyType<TickerSearchRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof searchTickers>>,
+  TError,
+  { data: BodyType<TickerSearchRequest> },
+  TContext
+> => {
+  return useMutation(getSearchTickersMutationOptions(options));
 };

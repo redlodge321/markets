@@ -13,9 +13,9 @@ export function useScreenerState() {
   const [maxMarketCap, setMaxMarketCap] = useState<number>(2000000);
   const [newTicker, setNewTicker] = useState("");
 
-  const addTicker = (e?: React.FormEvent) => {
+  const addTicker = (e?: React.FormEvent, directSymbol?: string) => {
     e?.preventDefault();
-    const symbol = newTicker.trim().toUpperCase();
+    const symbol = (directSymbol ?? newTicker).trim().toUpperCase();
     if (symbol && !tickers.includes(symbol)) {
       setTickers((prev) => [...prev, symbol]);
       setNewTicker("");

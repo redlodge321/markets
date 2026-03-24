@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import YahooFinanceCtor from "yahoo-finance2";
-import { RunScreenerBody, RunScreenerResponse, GetStockQuotesBody, GetStockQuotesResponse } from "@workspace/api-zod";
+import { RunScreenerBody, RunScreenerResponse, GetStockQuotesBody, GetStockQuotesResponse, SearchTickersBody, SearchTickersResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 
@@ -25,6 +25,12 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
     financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number };
     calendarEvents?: { earnings?: { earningsDate?: string[] } };
     summaryProfile?: { sector?: string; industry?: string };
+  }>;
+  search(
+    query: string,
+    opts?: { quotesCount?: number; newsCount?: number }
+  ): Promise<{
+    quotes?: Array<{ symbol: string; shortname?: string; exchange?: string; quoteType?: string; isYahooFinance?: boolean }>;
   }>;
 };
 
@@ -170,6 +176,21 @@ router.post("/screener/quote", async (req, res) => {
 
   const response = GetStockQuotesResponse.parse({ quotes });
   res.json(response);
+});
+
+router.post("/screener/search", async (req, res) => {
+  const { query } = SearchTickersBody.parse(req.body);
+  const raw = await yf.search(query, { quotesCount: 8, newsCount: 0 });
+  const results = (raw.quotes ?? [])
+    .filter((q) => q.isYahooFinance && q.quoteType === "EQUITY")
+    .slice(0, 6)
+    .map((q) => ({
+      symbol: q.symbol,
+      shortname: q.shortname,
+      exchange: q.exchange,
+      quoteType: q.quoteType,
+    }));
+  res.json(SearchTickersResponse.parse({ results }));
 });
 
 export default router;
