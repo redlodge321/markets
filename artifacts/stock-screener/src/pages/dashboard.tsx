@@ -4,7 +4,7 @@ import { TickerManager } from "@/components/ticker-manager";
 import { CriteriaControls } from "@/components/criteria-controls";
 import { ResultsTable } from "@/components/results-table";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
-import { Zap, LayoutGrid, TerminalSquare, AlertTriangle, Play, RefreshCcw } from "lucide-react";
+import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Dashboard() {
@@ -194,19 +194,6 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-          
-          <button
-            onClick={viewMode === "screener" ? handleRunScreener : handleGetQuotes}
-            disabled={isLoading || state.tickers.length === 0}
-            className="w-full sm:w-auto bg-foreground text-background hover:bg-white hover:scale-[1.02] active:scale-[0.98] px-8 py-3 rounded-lg font-bold transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
-          >
-            {isLoading ? (
-              <RefreshCcw className="w-4 h-4 animate-spin" />
-            ) : (
-              <Play className="w-4 h-4 fill-current" />
-            )}
-            {isLoading ? "Executing..." : "Execute Query"}
-          </button>
         </div>
 
       </div>
