@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Info } from "lucide-react";
+import { SlidersHorizontal, Info, X } from "lucide-react";
 import * as React from "react";
 
 interface CriteriaControlsProps {
@@ -10,6 +10,7 @@ interface CriteriaControlsProps {
   setMinCurrentRatio: (val: number) => void;
   maxMarketCap: number;
   setMaxMarketCap: (val: number) => void;
+  onClear: () => void;
 }
 
 function Slider({
@@ -83,17 +84,26 @@ export function CriteriaControls({
   setMinCurrentRatio,
   maxMarketCap,
   setMaxMarketCap,
+  onClear,
 }: CriteriaControlsProps) {
   return (
     <div className="glass-panel rounded-2xl p-4 flex flex-col gap-4">
-      <div className="flex items-center gap-2.5">
-        <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
-          <SlidersHorizontal className="w-4 h-4 text-primary" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
+            <SlidersHorizontal className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">Screener Criteria</h2>
+            <p className="text-xs text-muted-foreground">Define your agentic parameters.</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">Screener Criteria</h2>
-          <p className="text-xs text-muted-foreground">Define your agentic parameters.</p>
-        </div>
+        <button
+          onClick={onClear}
+          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 px-2 py-1 rounded border border-border/40 hover:border-border transition-colors"
+        >
+          <X className="w-3 h-3" /> Clear
+        </button>
       </div>
 
       <div className="space-y-4">
