@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { formatCurrency, formatPercent, formatMarketCap, cn } from "@/lib/utils";
+import { formatCurrency, formatMarketCap, cn } from "@/lib/utils";
 import type { ScreenerResult } from "@workspace/api-client-react/src/generated/api.schemas";
-import { TrendingDown, TrendingUp, Minus, ShieldCheck, ShieldAlert, CalendarClock } from "lucide-react";
+import { Minus, ShieldCheck, ShieldAlert, CalendarClock } from "lucide-react";
 
 interface ResultsTableProps {
   results: ScreenerResult[];
@@ -66,7 +66,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-4 text-right">Debt/Eq</th>
               <th className="px-5 py-4 text-right">Curr Ratio</th>
               <th className="px-5 py-4 text-right">P/FCF</th>
-              <th className="px-5 py-4 text-right">Margin</th>
               <th className="px-5 py-4 text-center">Health</th>
               <th className="px-5 py-4 text-right">Next Earnings</th>
               <th className="px-5 py-4 text-right">Mkt Cap</th>
@@ -156,18 +155,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                       : "text-foreground"
                   )}>
                     {stock.pfcfRatio ? stock.pfcfRatio.toFixed(1) : '—'}
-                  </td>
-
-                  {/* Profit Margin */}
-                  <td className={cn(
-                    "px-5 py-4 text-right tabular-nums flex items-center justify-end gap-1",
-                    stock.profitMargin > 0.20 ? "text-success"
-                      : stock.profitMargin < 0.05 ? "text-destructive"
-                      : "text-foreground"
-                  )}>
-                    {stock.profitMargin > 0.20 && <TrendingUp className="w-3 h-3 opacity-70" />}
-                    {stock.profitMargin < 0.05 && <TrendingDown className="w-3 h-3 opacity-70" />}
-                    {formatPercent(stock.profitMargin)}
                   </td>
 
                   {/* Health Badge */}
