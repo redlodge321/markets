@@ -37,10 +37,10 @@ export const RunScreenerBody = zod.object({
     .number()
     .optional()
     .describe("Minimum current ratio (default 1.2)"),
-  minMargin: zod
+  minMarketCap: zod
     .number()
     .optional()
-    .describe("Minimum profit margin as a decimal (default 0.10)"),
+    .describe("Minimum market cap in billions USD (default 10)"),
 });
 
 export const RunScreenerResponse = zod.object({

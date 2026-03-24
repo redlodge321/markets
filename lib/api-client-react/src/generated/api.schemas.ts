@@ -20,8 +20,8 @@ export interface ScreenerRequest {
   maxDebtToEquity?: number;
   /** Minimum current ratio (default 1.2) */
   minCurrentRatio?: number;
-  /** Minimum profit margin as a decimal (default 0.10) */
-  minMargin?: number;
+  /** Minimum market cap in billions USD (default 10) */
+  minMarketCap?: number;
 }
 
 export interface ScreenerResult {

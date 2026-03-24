@@ -97,7 +97,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
 router.post("/screener/run", async (req, res) => {
   const body = RunScreenerBody.parse(req.body);
-  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, minMargin = 0.10 } = body;
+  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, minMarketCap = 10 } = body;
 
   const results: StockData[] = [];
   const errors: { ticker: string; error: string }[] = [];
@@ -111,16 +111,17 @@ router.post("/screener/run", async (req, res) => {
       }
 
       const pb = data.priceToBook;
-      const margin = data.profitMargin;
       const dte = data.debtToEquity;
       const cr = data.currentRatio;
+      const mcap = data.marketCap ?? 0;
+      const minMarketCapRaw = minMarketCap * 1e9;
 
       const pbPass = pb <= 0 || pb < maxPB;
-      const marginPass = margin > minMargin;
       const dtePass = dte <= 0 || dte < maxDebtToEquity;
       const crPass = cr <= 0 || cr > minCurrentRatio;
+      const mcapPass = minMarketCap === 0 || mcap >= minMarketCapRaw;
 
-      if (pbPass && marginPass && dtePass && crPass) {
+      if (pbPass && dtePass && crPass && mcapPass) {
         results.push(data);
       }
     })
@@ -132,7 +133,7 @@ router.post("/screener/run", async (req, res) => {
     results,
     screened: tickers.length,
     passed: results.length,
-    criteria: { maxPE: 0, minMargin },
+    criteria: { maxPE: 0, minMargin: 0 },
     errors,
   });
 

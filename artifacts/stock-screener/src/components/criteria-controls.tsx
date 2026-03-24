@@ -8,8 +8,8 @@ interface CriteriaControlsProps {
   setMaxDebtToEquity: (val: number) => void;
   minCurrentRatio: number;
   setMinCurrentRatio: (val: number) => void;
-  minMargin: number;
-  setMinMargin: (val: number) => void;
+  minMarketCap: number;
+  setMinMarketCap: (val: number) => void;
 }
 
 function Slider({
@@ -68,6 +68,11 @@ function Slider({
   );
 }
 
+function formatMarketCapLabel(billions: number): string {
+  if (billions >= 1000) return `$${(billions / 1000).toFixed(1)}T`;
+  return `$${billions.toFixed(0)}B`;
+}
+
 export function CriteriaControls({
   maxPB,
   setMaxPB,
@@ -75,8 +80,8 @@ export function CriteriaControls({
   setMaxDebtToEquity,
   minCurrentRatio,
   setMinCurrentRatio,
-  minMargin,
-  setMinMargin,
+  minMarketCap,
+  setMinMarketCap,
 }: CriteriaControlsProps) {
   return (
     <div className="glass-panel rounded-2xl p-6 flex flex-col gap-6">
@@ -128,16 +133,16 @@ export function CriteriaControls({
           maxLabel="5x"
         />
         <Slider
-          label="Min Profit Margin"
-          tooltip="Net income divided by revenue. Higher indicates stronger profitability."
-          value={minMargin}
-          displayValue={`${(minMargin * 100).toFixed(0)}%`}
+          label="Min Market Cap"
+          tooltip="Minimum market capitalization. Filters out smaller companies — large caps ($10B+) tend to have more liquidity and stability."
+          value={minMarketCap}
+          displayValue={formatMarketCapLabel(minMarketCap)}
           min={0}
-          max={0.5}
-          step={0.01}
-          onChange={setMinMargin}
-          minLabel="0%"
-          maxLabel="50%"
+          max={2000}
+          step={10}
+          onChange={setMinMarketCap}
+          minLabel="$0"
+          maxLabel="$2T"
         />
       </div>
     </div>

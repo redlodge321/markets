@@ -92,9 +92,9 @@ components:
         minCurrentRatio:
           type: number
           description: Minimum current ratio (default 1.2)
-        minMargin:
+        minMarketCap:
           type: number
-          description: Minimum profit margin as a decimal (default 0.10)
+          description: Minimum market cap in billions USD (default 10)
       required:
         - tickers
     ScreenerResult:
