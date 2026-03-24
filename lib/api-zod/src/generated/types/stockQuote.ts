@@ -12,6 +12,8 @@ export interface StockQuote {
   price?: number;
   /** Regular market day change as a decimal (e.g. -0.023 = -2.3%) */
   dayChangePercent?: number;
+  /** 6-month price change as a decimal (e.g. -0.275 = -27.5%) */
+  sixMonthChangePercent?: number;
   forwardPE?: number;
   priceToBook?: number;
   profitMargin?: number;

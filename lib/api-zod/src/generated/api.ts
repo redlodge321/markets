@@ -55,6 +55,10 @@ export const RunScreenerResponse = zod.object({
         .describe(
           "Regular market day change as a decimal (e.g. -0.023 = -2.3%)",
         ),
+      sixMonthChangePercent: zod
+        .number()
+        .optional()
+        .describe("6-month price change as a decimal (e.g. -0.275 = -27.5%)"),
       forwardPE: zod.number(),
       priceToBook: zod.number(),
       profitMargin: zod.number(),
@@ -117,6 +121,10 @@ export const GetStockQuotesResponse = zod.object({
         .describe(
           "Regular market day change as a decimal (e.g. -0.023 = -2.3%)",
         ),
+      sixMonthChangePercent: zod
+        .number()
+        .optional()
+        .describe("6-month price change as a decimal (e.g. -0.275 = -27.5%)"),
       forwardPE: zod.number().optional(),
       priceToBook: zod.number().optional(),
       profitMargin: zod.number().optional(),

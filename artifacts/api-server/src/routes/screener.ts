@@ -40,6 +40,7 @@ interface StockData {
   companyName: string;
   price: number;
   dayChangePercent?: number;
+  sixMonthChangePercent?: number;
   forwardPE: number;
   priceToBook: number;
   profitMargin: number;
@@ -57,9 +58,15 @@ interface StockData {
 
 async function fetchStockData(ticker: string): Promise<StockData | { error: string }> {
   try {
-    const quote = await yf.quoteSummary(ticker, {
-      modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents", "summaryProfile"],
-    });
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const [quote, chartData] = await Promise.all([
+      yf.quoteSummary(ticker, {
+        modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents", "summaryProfile"],
+      }),
+      yf.chart(ticker, { period1: sixMonthsAgo, period2: new Date(), interval: '1mo' }).catch(() => null),
+    ]);
 
     const price_data = quote.price;
     const financial = quote.financialData;
@@ -67,6 +74,15 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
     const price = price_data?.regularMarketPrice ?? null;
     const dayChangePercent = price_data?.regularMarketChangePercent ?? undefined;
+
+    let sixMonthChangePercent: number | undefined;
+    if (chartData?.quotes && chartData.quotes.length >= 2) {
+      const first = chartData.quotes[0]?.close;
+      const last = chartData.quotes[chartData.quotes.length - 1]?.close;
+      if (first && last && first > 0) {
+        sixMonthChangePercent = (last - first) / first;
+      }
+    }
     const forwardPE = keyStats?.forwardPE ?? null;
     const priceToBook = keyStats?.priceToBook ?? null;
     const profitMargin = financial?.profitMargins ?? null;
@@ -96,6 +112,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       companyName: companyName ?? ticker,
       price,
       dayChangePercent,
+      sixMonthChangePercent,
       forwardPE: forwardPE ?? 0,
       priceToBook: priceToBook ?? 0,
       profitMargin: profitMargin ?? 0,

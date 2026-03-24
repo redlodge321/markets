@@ -128,6 +128,9 @@ components:
         dayChangePercent:
           type: number
           description: Regular market day change as a decimal (e.g. -0.023 = -2.3%)
+        sixMonthChangePercent:
+          type: number
+          description: 6-month price change as a decimal (e.g. -0.275 = -27.5%)
         forwardPE:
           type: number
         priceToBook:
@@ -228,6 +231,9 @@ components:
         dayChangePercent:
           type: number
           description: Regular market day change as a decimal (e.g. -0.023 = -2.3%)
+        sixMonthChangePercent:
+          type: number
+          description: 6-month price change as a decimal (e.g. -0.275 = -27.5%)
         forwardPE:
           type: number
         priceToBook:
