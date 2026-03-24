@@ -18,6 +18,14 @@ export default function Dashboard() {
 
   const handleRunScreener = () => {
     setViewMode("screener");
+    state.saveLastRun({
+      tickers: state.tickers,
+      commodityTickers: state.commodityTickers,
+      maxPB: state.maxPB,
+      maxDebtToEquity: state.maxDebtToEquity,
+      minCurrentRatio: state.minCurrentRatio,
+      maxMarketCap: state.maxMarketCap,
+    });
     screenerMutation.mutate({
       data: {
         tickers: [...state.tickers, ...state.commodityTickers],
