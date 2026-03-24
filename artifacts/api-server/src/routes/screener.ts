@@ -97,7 +97,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
 router.post("/screener/run", async (req, res) => {
   const body = RunScreenerBody.parse(req.body);
-  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, minMarketCap = 10 } = body;
+  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, maxMarketCap = 2000 } = body;
 
   const results: StockData[] = [];
   const errors: { ticker: string; error: string }[] = [];
@@ -114,12 +114,12 @@ router.post("/screener/run", async (req, res) => {
       const dte = data.debtToEquity;
       const cr = data.currentRatio;
       const mcap = data.marketCap ?? 0;
-      const minMarketCapRaw = minMarketCap * 1e9;
+      const maxMarketCapRaw = maxMarketCap * 1e9;
 
       const pbPass = pb <= 0 || pb < maxPB;
       const dtePass = dte <= 0 || dte < maxDebtToEquity;
       const crPass = cr <= 0 || cr > minCurrentRatio;
-      const mcapPass = minMarketCap === 0 || mcap >= minMarketCapRaw;
+      const mcapPass = maxMarketCap >= 2000 || mcap <= maxMarketCapRaw;
 
       if (pbPass && dtePass && crPass && mcapPass) {
         results.push(data);

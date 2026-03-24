@@ -37,10 +37,10 @@ export const RunScreenerBody = zod.object({
     .number()
     .optional()
     .describe("Minimum current ratio (default 1.2)"),
-  minMarketCap: zod
+  maxMarketCap: zod
     .number()
     .optional()
-    .describe("Minimum market cap in billions USD (default 10)"),
+    .describe("Maximum market cap in billions USD (default 2000)"),
 });
 
 export const RunScreenerResponse = zod.object({

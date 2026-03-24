@@ -22,7 +22,7 @@ export default function Dashboard() {
         maxPB: state.maxPB,
         maxDebtToEquity: state.maxDebtToEquity,
         minCurrentRatio: state.minCurrentRatio,
-        minMarketCap: state.minMarketCap,
+        maxMarketCap: state.maxMarketCap,
       },
     });
   };
@@ -167,8 +167,8 @@ export default function Dashboard() {
             setMaxDebtToEquity={state.setMaxDebtToEquity}
             minCurrentRatio={state.minCurrentRatio}
             setMinCurrentRatio={state.setMinCurrentRatio}
-            minMarketCap={state.minMarketCap}
-            setMinMarketCap={state.setMinMarketCap}
+            maxMarketCap={state.maxMarketCap}
+            setMaxMarketCap={state.setMaxMarketCap}
           />
         </div>
 

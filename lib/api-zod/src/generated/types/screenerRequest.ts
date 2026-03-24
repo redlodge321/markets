@@ -17,6 +17,6 @@ export interface ScreenerRequest {
   maxDebtToEquity?: number;
   /** Minimum current ratio (default 1.2) */
   minCurrentRatio?: number;
-  /** Minimum market cap in billions USD (default 10) */
-  minMarketCap?: number;
+  /** Maximum market cap in billions USD (default 2000) */
+  maxMarketCap?: number;
 }

@@ -8,8 +8,8 @@ interface CriteriaControlsProps {
   setMaxDebtToEquity: (val: number) => void;
   minCurrentRatio: number;
   setMinCurrentRatio: (val: number) => void;
-  minMarketCap: number;
-  setMinMarketCap: (val: number) => void;
+  maxMarketCap: number;
+  setMaxMarketCap: (val: number) => void;
 }
 
 function Slider({
@@ -80,8 +80,8 @@ export function CriteriaControls({
   setMaxDebtToEquity,
   minCurrentRatio,
   setMinCurrentRatio,
-  minMarketCap,
-  setMinMarketCap,
+  maxMarketCap,
+  setMaxMarketCap,
 }: CriteriaControlsProps) {
   return (
     <div className="glass-panel rounded-2xl p-6 flex flex-col gap-6">
@@ -133,16 +133,16 @@ export function CriteriaControls({
           maxLabel="5x"
         />
         <Slider
-          label="Min Market Cap"
-          tooltip="Minimum market capitalization. Filters out smaller companies — large caps ($10B+) tend to have more liquidity and stability."
-          value={minMarketCap}
-          displayValue={formatMarketCapLabel(minMarketCap)}
+          label="Max Market Cap"
+          tooltip="Maximum market capitalization. Set lower to focus on mid or small caps. At $2T the filter is effectively off."
+          value={maxMarketCap}
+          displayValue={maxMarketCap >= 2000 ? "Any" : formatMarketCapLabel(maxMarketCap)}
           min={0}
           max={2000}
           step={10}
-          onChange={setMinMarketCap}
+          onChange={setMaxMarketCap}
           minLabel="$0"
-          maxLabel="$2T"
+          maxLabel="Any"
         />
       </div>
     </div>
