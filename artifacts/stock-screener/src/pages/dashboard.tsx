@@ -3,6 +3,7 @@ import { useScreenerState } from "@/hooks/use-screener-state";
 import { TickerManager } from "@/components/ticker-manager";
 import { CriteriaControls } from "@/components/criteria-controls";
 import { ResultsTable } from "@/components/results-table";
+import { CommodityTable } from "@/components/commodity-table";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,6 +49,8 @@ export default function Dashboard() {
   const currentResults = viewMode === "screener" 
     ? screenerMutation.data?.results || [] 
     : quotesMutation.data?.quotes || [];
+
+  const commodityResults = screenerMutation.data?.commodities || [];
     
   const errors = viewMode === "screener" ? screenerMutation.data?.errors || [] : [];
   
@@ -136,7 +139,7 @@ export default function Dashboard() {
           )}
         </AnimatePresence>
 
-        {/* Results Table */}
+        {/* Equity Results Table */}
         <section className="mb-8">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-bold text-foreground">
@@ -150,6 +153,11 @@ export default function Dashboard() {
             isQuotesMode={viewMode === "quotes"} 
           />
         </section>
+
+        {/* Commodity Watchlist */}
+        {viewMode === "screener" && (
+          <CommodityTable commodities={commodityResults} isLoading={isLoading} />
+        )}
 
         {/* Controls Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

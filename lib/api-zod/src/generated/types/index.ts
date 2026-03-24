@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./commodityResult";
 export * from "./healthStatus";
 export * from "./quoteRequest";
 export * from "./quoteResponse";

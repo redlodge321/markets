@@ -5,12 +5,14 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { CommodityResult } from "./commodityResult";
 import type { ScreenerResponseCriteria } from "./screenerResponseCriteria";
 import type { ScreenerResponseErrorsItem } from "./screenerResponseErrorsItem";
 import type { ScreenerResult } from "./screenerResult";
 
 export interface ScreenerResponse {
   results: ScreenerResult[];
+  commodities: CommodityResult[];
   /** Total number of tickers screened */
   screened: number;
   /** Number of tickers that passed the filter */

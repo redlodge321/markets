@@ -50,6 +50,17 @@ export interface ScreenerResult {
   fiftyTwoWeekLow?: number;
 }
 
+export interface CommodityResult {
+  ticker: string;
+  name: string;
+  price: number;
+  /** Day change as a decimal (e.g. 0.002 = +0.2%) */
+  dayChangePercent?: number;
+  dayHigh?: number;
+  dayLow?: number;
+  prevClose?: number;
+}
+
 export type ScreenerResponseCriteria = {
   maxPE: number;
   minMargin: number;
@@ -62,6 +73,7 @@ export type ScreenerResponseErrorsItem = {
 
 export interface ScreenerResponse {
   results: ScreenerResult[];
+  commodities: CommodityResult[];
   /** Total number of tickers screened */
   screened: number;
   /** Number of tickers that passed the filter */

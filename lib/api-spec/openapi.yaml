@@ -169,6 +169,28 @@ components:
         - profitMargin
         - debtToEquity
         - currentRatio
+    CommodityResult:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        dayChangePercent:
+          type: number
+          description: Day change as a decimal (e.g. 0.002 = +0.2%)
+        dayHigh:
+          type: number
+        dayLow:
+          type: number
+        prevClose:
+          type: number
+      required:
+        - ticker
+        - name
+        - price
     ScreenerResponse:
       type: object
       properties:
@@ -176,6 +198,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ScreenerResult"
+        commodities:
+          type: array
+          items:
+            $ref: "#/components/schemas/CommodityResult"
         screened:
           type: integer
           description: Total number of tickers screened
@@ -206,6 +232,7 @@ components:
               - error
       required:
         - results
+        - commodities
         - screened
         - passed
         - criteria

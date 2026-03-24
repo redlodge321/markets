@@ -35,6 +35,37 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
   }>;
 };
 
+interface CommodityData {
+  ticker: string;
+  name: string;
+  price: number;
+  dayChangePercent?: number;
+  dayHigh?: number;
+  dayLow?: number;
+  prevClose?: number;
+}
+
+async function fetchCommodityData(ticker: string): Promise<CommodityData | { error: string }> {
+  try {
+    const quote = await yf.quoteSummary(ticker, { modules: ["price"] });
+    const p = quote.price;
+    const price = p?.regularMarketPrice;
+    if (!price) return { error: "No price data" };
+    return {
+      ticker: ticker.toUpperCase(),
+      name: p?.shortName ?? p?.longName ?? ticker,
+      price,
+      dayChangePercent: p?.regularMarketChangePercent ?? undefined,
+      dayHigh: p?.regularMarketDayHigh ?? undefined,
+      dayLow: p?.regularMarketDayLow ?? undefined,
+      prevClose: p?.regularMarketPreviousClose ?? undefined,
+    };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { error: message };
+  }
+}
+
 interface StockData {
   ticker: string;
   companyName: string;
@@ -137,38 +168,47 @@ router.post("/screener/run", async (req, res) => {
   const body = RunScreenerBody.parse(req.body);
   const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, maxMarketCap = 2000 } = body;
 
+  const isFuture = (t: string) => t.includes("=");
+  const equityTickers = tickers.filter((t) => !isFuture(t));
+  const futureTickers = tickers.filter((t) => isFuture(t));
+
   const results: StockData[] = [];
+  const commodities: CommodityData[] = [];
   const errors: { ticker: string; error: string }[] = [];
 
-  await Promise.all(
-    tickers.map(async (ticker) => {
+  await Promise.all([
+    ...equityTickers.map(async (ticker) => {
       const data = await fetchStockData(ticker);
       if ("error" in data) {
         errors.push({ ticker: ticker.toUpperCase(), error: data.error });
         return;
       }
-
       const pb = data.priceToBook;
       const dte = data.debtToEquity;
       const cr = data.currentRatio;
       const mcap = data.marketCap ?? 0;
       const maxMarketCapRaw = maxMarketCap * 1e6;
-
       const pbPass = pb <= 0 || pb < maxPB;
       const dtePass = dte <= 0 || dte < maxDebtToEquity;
       const crPass = cr <= 0 || cr > minCurrentRatio;
       const mcapPass = maxMarketCap >= 2000000 || mcap <= maxMarketCapRaw;
-
-      if (pbPass && dtePass && crPass && mcapPass) {
-        results.push(data);
+      if (pbPass && dtePass && crPass && mcapPass) results.push(data);
+    }),
+    ...futureTickers.map(async (ticker) => {
+      const data = await fetchCommodityData(ticker);
+      if ("error" in data) {
+        errors.push({ ticker: ticker.toUpperCase(), error: data.error });
+      } else {
+        commodities.push(data);
       }
-    })
-  );
+    }),
+  ]);
 
   results.sort((a, b) => a.forwardPE - b.forwardPE);
 
   const response = RunScreenerResponse.parse({
     results,
+    commodities,
     screened: tickers.length,
     passed: results.length,
     criteria: { maxPE: 0, minMargin: 0 },

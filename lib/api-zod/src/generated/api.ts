@@ -87,6 +87,20 @@ export const RunScreenerResponse = zod.object({
       fiftyTwoWeekLow: zod.number().optional(),
     }),
   ),
+  commodities: zod.array(
+    zod.object({
+      ticker: zod.string(),
+      name: zod.string(),
+      price: zod.number(),
+      dayChangePercent: zod
+        .number()
+        .optional()
+        .describe("Day change as a decimal (e.g. 0.002 = +0.2%)"),
+      dayHigh: zod.number().optional(),
+      dayLow: zod.number().optional(),
+      prevClose: zod.number().optional(),
+    }),
+  ),
   screened: zod.number().describe("Total number of tickers screened"),
   passed: zod.number().describe("Number of tickers that passed the filter"),
   criteria: zod.object({
