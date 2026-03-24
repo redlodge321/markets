@@ -50,6 +50,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-6 py-4">Company</th>
               <th className="px-6 py-4 text-right">Price</th>
               <th className="px-6 py-4 text-right">Fwd P/E</th>
+              <th className="px-6 py-4 text-right">P/B</th>
               <th className="px-6 py-4 text-right">Profit Margin</th>
               <th className="px-6 py-4">Sector</th>
               <th className="px-6 py-4 text-right">Market Cap</th>
@@ -75,16 +76,26 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                 <td className="px-6 py-4 text-right text-foreground">
                   {formatCurrency(stock.price)}
                 </td>
-                
-                {/* P/E Column - Conditional formatting roughly based on >30 bad, <15 good */}
+
+                {/* P/E Column */}
                 <td className={cn(
                   "px-6 py-4 text-right tabular-nums",
                   stock.forwardPE > 30 ? "text-destructive" : stock.forwardPE < 15 ? "text-success" : "text-foreground"
                 )}>
                   {stock.forwardPE ? stock.forwardPE.toFixed(2) : '-'}
                 </td>
-                
-                {/* Margin Column - Conditional formatting > 20% excellent, < 5% bad */}
+
+                {/* P/B Column */}
+                <td className={cn(
+                  "px-6 py-4 text-right tabular-nums",
+                  !stock.priceToBook || stock.priceToBook <= 0
+                    ? "text-muted-foreground"
+                    : stock.priceToBook > 5 ? "text-destructive" : stock.priceToBook < 1.5 ? "text-success" : "text-foreground"
+                )}>
+                  {stock.priceToBook && stock.priceToBook > 0 ? stock.priceToBook.toFixed(2) + 'x' : '-'}
+                </td>
+
+                {/* Margin Column */}
                 <td className={cn(
                   "px-6 py-4 text-right tabular-nums flex items-center justify-end gap-1.5",
                   stock.profitMargin > 0.20 ? "text-success" : stock.profitMargin < 0.05 ? "text-destructive" : "text-foreground"
@@ -93,7 +104,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                   {stock.profitMargin < 0.05 && <TrendingDown className="w-3 h-3 opacity-70" />}
                   {formatPercent(stock.profitMargin)}
                 </td>
-                
+
                 <td className="px-6 py-4 text-muted-foreground truncate max-w-[150px]">
                   {stock.sector || '-'}
                 </td>

@@ -11,6 +11,7 @@ export interface StockQuote {
   companyName?: string;
   price?: number;
   forwardPE?: number;
+  priceToBook?: number;
   profitMargin?: number;
   sector?: string;
   marketCap?: number;

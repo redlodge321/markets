@@ -25,6 +25,10 @@ export const RunScreenerBody = zod.object({
     .number()
     .optional()
     .describe("Maximum forward P\/E ratio (default 30)"),
+  maxPB: zod
+    .number()
+    .optional()
+    .describe("Maximum price-to-book ratio (default 3)"),
   minMargin: zod
     .number()
     .optional()
@@ -38,6 +42,7 @@ export const RunScreenerResponse = zod.object({
       companyName: zod.string(),
       price: zod.number(),
       forwardPE: zod.number(),
+      priceToBook: zod.number(),
       profitMargin: zod.number(),
       sector: zod.string().optional(),
       marketCap: zod.number().optional(),
@@ -74,6 +79,7 @@ export const GetStockQuotesResponse = zod.object({
       companyName: zod.string().optional(),
       price: zod.number().optional(),
       forwardPE: zod.number().optional(),
+      priceToBook: zod.number().optional(),
       profitMargin: zod.number().optional(),
       sector: zod.string().optional(),
       marketCap: zod.number().optional(),

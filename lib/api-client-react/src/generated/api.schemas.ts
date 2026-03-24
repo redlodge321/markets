@@ -14,6 +14,8 @@ export interface ScreenerRequest {
   tickers: string[];
   /** Maximum forward P/E ratio (default 30) */
   maxPE?: number;
+  /** Maximum price-to-book ratio (default 3) */
+  maxPB?: number;
   /** Minimum profit margin as a decimal (default 0.10) */
   minMargin?: number;
 }
@@ -23,6 +25,7 @@ export interface ScreenerResult {
   companyName: string;
   price: number;
   forwardPE: number;
+  priceToBook: number;
   profitMargin: number;
   sector?: string;
   marketCap?: number;
@@ -59,6 +62,7 @@ export interface StockQuote {
   companyName?: string;
   price?: number;
   forwardPE?: number;
+  priceToBook?: number;
   profitMargin?: number;
   sector?: string;
   marketCap?: number;

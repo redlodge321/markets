@@ -20,6 +20,7 @@ export default function Dashboard() {
       data: {
         tickers: state.tickers,
         maxPE: state.maxPE,
+        maxPB: state.maxPB,
         minMargin: state.minMargin,
       },
     });
@@ -120,6 +121,8 @@ export default function Dashboard() {
           <CriteriaControls 
             maxPE={state.maxPE}
             setMaxPE={state.setMaxPE}
+            maxPB={state.maxPB}
+            setMaxPB={state.setMaxPB}
             minMargin={state.minMargin}
             setMinMargin={state.setMinMargin}
           />

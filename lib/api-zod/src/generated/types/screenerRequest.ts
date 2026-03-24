@@ -11,6 +11,8 @@ export interface ScreenerRequest {
   tickers: string[];
   /** Maximum forward P/E ratio (default 30) */
   maxPE?: number;
+  /** Maximum price-to-book ratio (default 3) */
+  maxPB?: number;
   /** Minimum profit margin as a decimal (default 0.10) */
   minMargin?: number;
 }

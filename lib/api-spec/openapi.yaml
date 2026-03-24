@@ -83,6 +83,9 @@ components:
         maxPE:
           type: number
           description: Maximum forward P/E ratio (default 30)
+        maxPB:
+          type: number
+          description: Maximum price-to-book ratio (default 3)
         minMargin:
           type: number
           description: Minimum profit margin as a decimal (default 0.10)
@@ -99,6 +102,8 @@ components:
           type: number
         forwardPE:
           type: number
+        priceToBook:
+          type: number
         profitMargin:
           type: number
         sector:
@@ -114,6 +119,7 @@ components:
         - companyName
         - price
         - forwardPE
+        - priceToBook
         - profitMargin
     ScreenerResponse:
       type: object
@@ -175,6 +181,8 @@ components:
         price:
           type: number
         forwardPE:
+          type: number
+        priceToBook:
           type: number
         profitMargin:
           type: number

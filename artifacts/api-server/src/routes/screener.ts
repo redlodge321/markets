@@ -21,7 +21,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
       fiftyTwoWeekHigh?: number;
       fiftyTwoWeekLow?: number;
     };
-    defaultKeyStatistics?: { forwardPE?: number };
+    defaultKeyStatistics?: { forwardPE?: number; priceToBook?: number };
     financialData?: { profitMargins?: number };
   }>;
 };
@@ -31,6 +31,7 @@ interface StockData {
   companyName: string;
   price: number;
   forwardPE: number;
+  priceToBook: number;
   profitMargin: number;
   sector?: string;
   marketCap?: number;
@@ -50,6 +51,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
     const price = price_data?.regularMarketPrice ?? null;
     const forwardPE = keyStats?.forwardPE ?? null;
+    const priceToBook = keyStats?.priceToBook ?? null;
     const profitMargin = financial?.profitMargins ?? null;
     const companyName = price_data?.shortName ?? price_data?.longName ?? ticker;
     const sector = price_data?.sector;
@@ -66,6 +68,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       companyName: companyName ?? ticker,
       price,
       forwardPE: forwardPE ?? 0,
+      priceToBook: priceToBook ?? 0,
       profitMargin: profitMargin ?? 0,
       sector,
       marketCap,
@@ -80,7 +83,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
 router.post("/screener/run", async (req, res) => {
   const body = RunScreenerBody.parse(req.body);
-  const { tickers, maxPE = 30, minMargin = 0.10 } = body;
+  const { tickers, maxPE = 30, maxPB = 3, minMargin = 0.10 } = body;
 
   const results: StockData[] = [];
   const errors: { ticker: string; error: string }[] = [];
@@ -94,9 +97,14 @@ router.post("/screener/run", async (req, res) => {
       }
 
       const pe = data.forwardPE;
+      const pb = data.priceToBook;
       const margin = data.profitMargin;
 
-      if (pe > 0 && pe < maxPE && margin > minMargin) {
+      const pePass = pe > 0 && pe < maxPE;
+      const pbPass = pb <= 0 || pb < maxPB;
+      const marginPass = margin > minMargin;
+
+      if (pePass && pbPass && marginPass) {
         results.push(data);
       }
     })
@@ -125,7 +133,7 @@ router.post("/screener/quote", async (req, res) => {
     tickers.map(async (ticker) => {
       const data = await fetchStockData(ticker);
       if ("error" in data) {
-        quotes.push({ ticker: ticker.toUpperCase(), companyName: ticker, price: 0, forwardPE: 0, profitMargin: 0, error: data.error });
+        quotes.push({ ticker: ticker.toUpperCase(), companyName: ticker, price: 0, forwardPE: 0, priceToBook: 0, profitMargin: 0, error: data.error });
       } else {
         quotes.push(data);
       }
