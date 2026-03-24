@@ -125,11 +125,11 @@ export function CriteriaControls({
           value={maxDebtToEquity}
           displayValue={`${maxDebtToEquity.toFixed(0)}%`}
           min={0}
-          max={300}
+          max={1000}
           step={10}
           onChange={setMaxDebtToEquity}
           minLabel="0%"
-          maxLabel="300%"
+          maxLabel="1000%"
         />
         <Slider
           label="Min Current Ratio"

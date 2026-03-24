@@ -178,7 +178,7 @@ export default function Dashboard() {
             setMaxMarketCap={state.setMaxMarketCap}
             onClear={() => {
               state.setMaxPB(20);
-              state.setMaxDebtToEquity(300);
+              state.setMaxDebtToEquity(1000);
               state.setMinCurrentRatio(0.5);
               state.setMaxMarketCap(2000000);
             }}
