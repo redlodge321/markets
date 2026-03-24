@@ -155,6 +155,17 @@ export default function Dashboard() {
           />
         </section>
 
+        {/* Stock Universe — immediately below Equity Screen */}
+        <div className="mb-8">
+          <TickerManager 
+            tickers={state.tickers}
+            newTicker={state.newTicker}
+            setNewTicker={state.setNewTicker}
+            addTicker={state.addTicker}
+            removeTicker={state.removeTicker}
+          />
+        </div>
+
         {/* Commodity Watchlist */}
         {viewMode === "screener" && (
           <CommodityTable commodities={commodityResults} isLoading={isLoading} />
@@ -171,15 +182,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Controls Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <TickerManager 
-            tickers={state.tickers}
-            newTicker={state.newTicker}
-            setNewTicker={state.setNewTicker}
-            addTicker={state.addTicker}
-            removeTicker={state.removeTicker}
-          />
+        {/* Criteria Controls */}
+        <div className="mb-8">
           <CriteriaControls
             maxPB={state.maxPB}
             setMaxPB={state.setMaxPB}
