@@ -2,7 +2,8 @@ import { useState } from "react";
 
 const INITIAL_UNIVERSE = [
   "AAPL", "MSFT", "GOOGL", "AMZN", 
-  "TSLA", "META", "NVDA", "BRK-B"
+  "TSLA", "META", "NVDA", "BRK-B",
+  "GC=F", "CL=F", "HG=F", "NG=F"
 ];
 
 export function useScreenerState() {
