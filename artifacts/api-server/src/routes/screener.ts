@@ -23,9 +23,25 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
       fiftyTwoWeekLow?: number;
     };
     defaultKeyStatistics?: { forwardPE?: number; priceToBook?: number };
-    financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number };
+    financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number; totalRevenue?: number };
     calendarEvents?: { earnings?: { earningsDate?: string[] } };
     summaryProfile?: { sector?: string; industry?: string; country?: string; state?: string; city?: string };
+    balanceSheetHistory?: {
+      balanceSheetStatements?: Array<{
+        totalAssets?: number;
+        totalCurrentAssets?: number;
+        totalCurrentLiabilities?: number;
+        retainedEarnings?: number;
+        totalLiab?: number;
+      }>;
+    };
+    incomeStatementHistory?: {
+      incomeStatementHistory?: Array<{
+        totalRevenue?: number;
+        ebit?: number;
+        operatingIncome?: number;
+      }>;
+    };
   }>;
   search(
     query: string,
@@ -130,6 +146,7 @@ interface StockData {
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
+  altmanZScore?: number;
   country?: string;
   state?: string;
   city?: string;
@@ -142,7 +159,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
     const [quote, chartData] = await Promise.all([
       yf.quoteSummary(ticker, {
-        modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents", "summaryProfile"],
+        modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents", "summaryProfile", "balanceSheetHistory", "incomeStatementHistory"],
       }),
       yf.chart(ticker, { period1: sixMonthsAgo, period2: new Date(), interval: '1mo' }).catch(() => null),
     ]);
@@ -185,6 +202,32 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
     const fiftyTwoWeekHigh = price_data?.fiftyTwoWeekHigh;
     const fiftyTwoWeekLow = price_data?.fiftyTwoWeekLow;
 
+    // Altman Z-score (public company model)
+    // Z = 1.2*X1 + 1.4*X2 + 3.3*X3 + 0.6*X4 + 1.0*X5
+    // X1 = Working Capital / Total Assets
+    // X2 = Retained Earnings / Total Assets
+    // X3 = EBIT / Total Assets
+    // X4 = Market Cap / Total Liabilities
+    // X5 = Revenue / Total Assets
+    let altmanZScore: number | undefined;
+    const bs = quote.balanceSheetHistory?.balanceSheetStatements?.[0];
+    const is = quote.incomeStatementHistory?.incomeStatementHistory?.[0];
+    const totalAssets = bs?.totalAssets;
+    const totalLiab = bs?.totalLiab;
+    if (totalAssets && totalAssets > 0 && totalLiab && totalLiab > 0) {
+      const workingCapital = (bs?.totalCurrentAssets ?? 0) - (bs?.totalCurrentLiabilities ?? 0);
+      const retainedEarnings = bs?.retainedEarnings ?? 0;
+      const ebit = is?.ebit ?? is?.operatingIncome ?? 0;
+      const revenue = is?.totalRevenue ?? financial?.totalRevenue ?? 0;
+      const mcap = mcapRaw ?? 0;
+      const x1 = workingCapital / totalAssets;
+      const x2 = retainedEarnings / totalAssets;
+      const x3 = ebit / totalAssets;
+      const x4 = mcap / totalLiab;
+      const x5 = revenue / totalAssets;
+      altmanZScore = 1.2 * x1 + 1.4 * x2 + 3.3 * x3 + 0.6 * x4 + 1.0 * x5;
+    }
+
     if (price === null || price === undefined) {
       return { error: "Could not fetch price data" };
     }
@@ -211,6 +254,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       marketCap,
       fiftyTwoWeekHigh,
       fiftyTwoWeekLow,
+      altmanZScore,
     };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);

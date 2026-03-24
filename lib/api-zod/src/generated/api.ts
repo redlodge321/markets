@@ -85,6 +85,12 @@ export const RunScreenerResponse = zod.object({
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),
       fiftyTwoWeekLow: zod.number().optional(),
+      altmanZScore: zod
+        .number()
+        .optional()
+        .describe(
+          "Altman Z-score: >2.99 safe zone, 1.81-2.99 grey zone, <1.81 distress zone",
+        ),
       country: zod.string().optional(),
       state: zod.string().optional(),
       city: zod.string().optional(),

@@ -48,6 +48,8 @@ export interface ScreenerResult {
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
+  /** Altman Z-score: >2.99 safe zone, 1.81-2.99 grey zone, <1.81 distress zone */
+  altmanZScore?: number;
   country?: string;
   state?: string;
   city?: string;
