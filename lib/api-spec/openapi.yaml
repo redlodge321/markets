@@ -86,6 +86,12 @@ components:
         maxPB:
           type: number
           description: Maximum price-to-book ratio (default 3)
+        maxDebtToEquity:
+          type: number
+          description: Maximum debt-to-equity ratio as a percentage (default 100)
+        minCurrentRatio:
+          type: number
+          description: Minimum current ratio (default 1.2)
         minMargin:
           type: number
           description: Minimum profit margin as a decimal (default 0.10)
@@ -106,6 +112,10 @@ components:
           type: number
         profitMargin:
           type: number
+        debtToEquity:
+          type: number
+        currentRatio:
+          type: number
         sector:
           type: string
         marketCap:
@@ -121,6 +131,8 @@ components:
         - forwardPE
         - priceToBook
         - profitMargin
+        - debtToEquity
+        - currentRatio
     ScreenerResponse:
       type: object
       properties:
@@ -185,6 +197,10 @@ components:
         priceToBook:
           type: number
         profitMargin:
+          type: number
+        debtToEquity:
+          type: number
+        currentRatio:
           type: number
         sector:
           type: string

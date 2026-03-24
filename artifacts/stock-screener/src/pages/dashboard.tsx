@@ -20,6 +20,8 @@ export default function Dashboard() {
       data: {
         tickers: state.tickers,
         maxPB: state.maxPB,
+        maxDebtToEquity: state.maxDebtToEquity,
+        minCurrentRatio: state.minCurrentRatio,
         minMargin: state.minMargin,
       },
     });
@@ -117,9 +119,13 @@ export default function Dashboard() {
             addTicker={state.addTicker}
             removeTicker={state.removeTicker}
           />
-          <CriteriaControls 
+          <CriteriaControls
             maxPB={state.maxPB}
             setMaxPB={state.setMaxPB}
+            maxDebtToEquity={state.maxDebtToEquity}
+            setMaxDebtToEquity={state.setMaxDebtToEquity}
+            minCurrentRatio={state.minCurrentRatio}
+            setMinCurrentRatio={state.setMinCurrentRatio}
             minMargin={state.minMargin}
             setMinMargin={state.setMinMargin}
           />

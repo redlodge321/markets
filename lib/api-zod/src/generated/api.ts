@@ -29,6 +29,14 @@ export const RunScreenerBody = zod.object({
     .number()
     .optional()
     .describe("Maximum price-to-book ratio (default 3)"),
+  maxDebtToEquity: zod
+    .number()
+    .optional()
+    .describe("Maximum debt-to-equity ratio as a percentage (default 100)"),
+  minCurrentRatio: zod
+    .number()
+    .optional()
+    .describe("Minimum current ratio (default 1.2)"),
   minMargin: zod
     .number()
     .optional()
@@ -44,6 +52,8 @@ export const RunScreenerResponse = zod.object({
       forwardPE: zod.number(),
       priceToBook: zod.number(),
       profitMargin: zod.number(),
+      debtToEquity: zod.number(),
+      currentRatio: zod.number(),
       sector: zod.string().optional(),
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),
@@ -81,6 +91,8 @@ export const GetStockQuotesResponse = zod.object({
       forwardPE: zod.number().optional(),
       priceToBook: zod.number().optional(),
       profitMargin: zod.number().optional(),
+      debtToEquity: zod.number().optional(),
+      currentRatio: zod.number().optional(),
       sector: zod.string().optional(),
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),

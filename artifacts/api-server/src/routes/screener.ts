@@ -22,7 +22,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
       fiftyTwoWeekLow?: number;
     };
     defaultKeyStatistics?: { forwardPE?: number; priceToBook?: number };
-    financialData?: { profitMargins?: number };
+    financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number };
   }>;
 };
 
@@ -33,6 +33,8 @@ interface StockData {
   forwardPE: number;
   priceToBook: number;
   profitMargin: number;
+  debtToEquity: number;
+  currentRatio: number;
   sector?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
@@ -53,6 +55,8 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
     const forwardPE = keyStats?.forwardPE ?? null;
     const priceToBook = keyStats?.priceToBook ?? null;
     const profitMargin = financial?.profitMargins ?? null;
+    const debtToEquity = financial?.debtToEquity ?? null;
+    const currentRatio = financial?.currentRatio ?? null;
     const companyName = price_data?.shortName ?? price_data?.longName ?? ticker;
     const sector = price_data?.sector;
     const marketCap = price_data?.marketCap;
@@ -70,6 +74,8 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       forwardPE: forwardPE ?? 0,
       priceToBook: priceToBook ?? 0,
       profitMargin: profitMargin ?? 0,
+      debtToEquity: debtToEquity ?? 0,
+      currentRatio: currentRatio ?? 0,
       sector,
       marketCap,
       fiftyTwoWeekHigh,
@@ -83,7 +89,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
 router.post("/screener/run", async (req, res) => {
   const body = RunScreenerBody.parse(req.body);
-  const { tickers, maxPE = 30, maxPB = 3, minMargin = 0.10 } = body;
+  const { tickers, maxPB = 3, maxDebtToEquity = 100, minCurrentRatio = 1.2, minMargin = 0.10 } = body;
 
   const results: StockData[] = [];
   const errors: { ticker: string; error: string }[] = [];
@@ -98,11 +104,15 @@ router.post("/screener/run", async (req, res) => {
 
       const pb = data.priceToBook;
       const margin = data.profitMargin;
+      const dte = data.debtToEquity;
+      const cr = data.currentRatio;
 
       const pbPass = pb <= 0 || pb < maxPB;
       const marginPass = margin > minMargin;
+      const dtePass = dte <= 0 || dte < maxDebtToEquity;
+      const crPass = cr <= 0 || cr > minCurrentRatio;
 
-      if (pbPass && marginPass) {
+      if (pbPass && marginPass && dtePass && crPass) {
         results.push(data);
       }
     })
@@ -114,7 +124,7 @@ router.post("/screener/run", async (req, res) => {
     results,
     screened: tickers.length,
     passed: results.length,
-    criteria: { maxPE, minMargin },
+    criteria: { maxPE: 0, minMargin },
     errors,
   });
 
@@ -131,7 +141,7 @@ router.post("/screener/quote", async (req, res) => {
     tickers.map(async (ticker) => {
       const data = await fetchStockData(ticker);
       if ("error" in data) {
-        quotes.push({ ticker: ticker.toUpperCase(), companyName: ticker, price: 0, forwardPE: 0, priceToBook: 0, profitMargin: 0, error: data.error });
+        quotes.push({ ticker: ticker.toUpperCase(), companyName: ticker, price: 0, forwardPE: 0, priceToBook: 0, profitMargin: 0, debtToEquity: 0, currentRatio: 0, error: data.error });
       } else {
         quotes.push(data);
       }

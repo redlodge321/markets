@@ -13,6 +13,8 @@ export interface StockQuote {
   forwardPE?: number;
   priceToBook?: number;
   profitMargin?: number;
+  debtToEquity?: number;
+  currentRatio?: number;
   sector?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;

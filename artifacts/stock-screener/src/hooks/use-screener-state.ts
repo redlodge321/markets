@@ -8,6 +8,8 @@ const INITIAL_UNIVERSE = [
 export function useScreenerState() {
   const [tickers, setTickers] = useState<string[]>(INITIAL_UNIVERSE);
   const [maxPB, setMaxPB] = useState<number>(3);
+  const [maxDebtToEquity, setMaxDebtToEquity] = useState<number>(100);
+  const [minCurrentRatio, setMinCurrentRatio] = useState<number>(1.2);
   const [minMargin, setMinMargin] = useState<number>(0.10);
   const [newTicker, setNewTicker] = useState("");
 
@@ -28,6 +30,10 @@ export function useScreenerState() {
     tickers,
     maxPB,
     setMaxPB,
+    maxDebtToEquity,
+    setMaxDebtToEquity,
+    minCurrentRatio,
+    setMinCurrentRatio,
     minMargin,
     setMinMargin,
     newTicker,

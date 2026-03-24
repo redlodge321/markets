@@ -13,6 +13,10 @@ export interface ScreenerRequest {
   maxPE?: number;
   /** Maximum price-to-book ratio (default 3) */
   maxPB?: number;
+  /** Maximum debt-to-equity ratio as a percentage (default 100) */
+  maxDebtToEquity?: number;
+  /** Minimum current ratio (default 1.2) */
+  minCurrentRatio?: number;
   /** Minimum profit margin as a decimal (default 0.10) */
   minMargin?: number;
 }
