@@ -1,0 +1,86 @@
+import yfinance as yf
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+# --- 1. THE SEARCH & DATA ENGINE ---
+def get_ticker(name):
+    """Converts a name like 'Boeing' to 'BA' or returns ticker if already valid."""
+    if "=" in name or (len(name) <= 5 and name.isupper()):
+        return name
+    try:
+        search = yf.Search(name, max_results=1)
+        return search.quotes[0]['symbol'] if search.quotes else None
+    except:
+        return None
+
+def run_master_screener(universe):
+    stock_data = []
+    commodity_data = []
+    
+    for item in universe:
+        symbol = get_ticker(item)
+        if not symbol: continue
+        
+        print(f"Agent analyzing: {symbol}...")
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        
+        # Common Data
+        price = info.get('currentPrice', info.get('regularMarketPrice', 0))
+        
+        # BRANCH: COMMODITIES
+        if "=" in symbol:
+            commodity_data.append({
+                "Asset": symbol,
+                "Price": price,
+                "Day Change %": round(((price - info.get('previousClose', price)) / price) * 100, 2) if price else 0
+            })
+            
+        # BRANCH: EQUITIES
+        else:
+            # Calculate Custom P/FCF Ratio
+            mkt_cap = info.get('marketCap', 0)
+            fcf = info.get('freeCashflow', 0)
+            p_fcf = round(mkt_cap / fcf, 2) if fcf and fcf > 0 else None
+            
+            stock_data.append({
+                "Ticker": symbol,
+                "Sector": info.get('sector', 'N/A'),
+                "Price": price,
+                "P/B Ratio": info.get('priceToBook'),
+                "P/FCF Ratio": p_fcf,
+                "Next Earnings": ticker.calendar.get('Earnings Date', [None])[0] if ticker.calendar else "N/A"
+            })
+            
+    return pd.DataFrame(stock_data), pd.DataFrame(commodity_data)
+
+# --- 2. THE VISUALIZATION ENGINE ---
+def create_report_chart(df):
+    if df.empty: return
+    plt.style.use('dark_background')
+    fig, ax = plt.subplots(figsize=(10, 5))
+    
+    # Filter out None values for the chart
+    chart_df = df.dropna(subset=['P/FCF Ratio'])
+    
+    ax.bar(chart_df['Ticker'], chart_df['P/FCF Ratio'], color='skyblue')
+    ax.axhline(y=15, color='red', linestyle='--', label='Value Benchmark (15x)')
+    ax.set_title("Equity Valuation Report (P/FCF)")
+    ax.set_ylabel("Ratio")
+    ax.legend()
+    plt.savefig('report_chart.png')
+    print("\nChart generated: 'report_chart.png'")
+
+# --- 3. EXECUTION ---
+my_universe = ["AAPL", "Microsoft", "Boeing", "GC=F", "CL=F", "JPMorgan", "XOM"]
+stocks_df, comms_df = run_master_screener(my_universe)
+
+print("\n" + "="*20 + " EQUITY REPORT " + "="*20)
+print(stocks_df.to_string(index=False))
+
+print("\n" + "="*20 + " COMMODITY WATCH " + "="*20)
+print(comms_df.to_string(index=False))
+
+create_report_chart(stocks_df)
