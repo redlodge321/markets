@@ -10,9 +10,9 @@ const INITIAL_COMMODITY_UNIVERSE = ["GC=F", "CL=F", "HG=F", "NG=F"];
 export function useScreenerState() {
   const [tickers, setTickers] = useState<string[]>(INITIAL_UNIVERSE);
   const [commodityTickers, setCommodityTickers] = useState<string[]>(INITIAL_COMMODITY_UNIVERSE);
-  const [maxPB, setMaxPB] = useState<number>(3);
-  const [maxDebtToEquity, setMaxDebtToEquity] = useState<number>(100);
-  const [minCurrentRatio, setMinCurrentRatio] = useState<number>(1.2);
+  const [maxPB, setMaxPB] = useState<number>(20);
+  const [maxDebtToEquity, setMaxDebtToEquity] = useState<number>(300);
+  const [minCurrentRatio, setMinCurrentRatio] = useState<number>(0.5);
   const [maxMarketCap, setMaxMarketCap] = useState<number>(2000000);
   const [filterCountry, setFilterCountry] = useState<string>("");
   const [filterState, setFilterState] = useState<string>("");
