@@ -24,6 +24,7 @@ export function TickerManager({
   const [suggestions, setSuggestions] = useState<TickerSearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIdx, setHighlightedIdx] = useState(-1);
+  const [nameCache, setNameCache] = useState<Record<string, string>>({});
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,6 +58,9 @@ export function TickerManager({
 
   const selectSuggestion = (result: TickerSearchResult) => {
     addTicker(undefined, result.symbol);
+    if (result.shortname) {
+      setNameCache((prev) => ({ ...prev, [result.symbol]: result.shortname! }));
+    }
     setNewTicker("");
     setSuggestions([]);
     setShowDropdown(false);
@@ -96,6 +100,9 @@ export function TickerManager({
       {
         onSuccess: (data) => {
           setTickers(data.stocks.map((s) => s.ticker));
+          const names: Record<string, string> = {};
+          data.stocks.forEach((s) => { if (s.name) names[s.ticker] = s.name; });
+          setNameCache((prev) => ({ ...prev, ...names }));
         },
       }
     );
@@ -243,8 +250,8 @@ export function TickerManager({
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary/50 border border-border hover:border-primary/50 transition-colors group"
                 >
-                  <span className="font-mono text-sm font-medium text-foreground tracking-wide">
-                    {ticker}
+                  <span className="text-sm font-medium text-foreground truncate max-w-[140px]" title={ticker}>
+                    {nameCache[ticker] ?? ticker}
                   </span>
                   <button
                     onClick={() => removeTicker(ticker)}
