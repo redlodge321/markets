@@ -155,14 +155,24 @@ export default function Dashboard() {
           />
         </section>
 
-        {/* Stock Universe — immediately below Equity Screen */}
-        <div className="mb-8">
+        {/* Stock Universe + Screener Criteria side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <TickerManager 
             tickers={state.tickers}
             newTicker={state.newTicker}
             setNewTicker={state.setNewTicker}
             addTicker={state.addTicker}
             removeTicker={state.removeTicker}
+          />
+          <CriteriaControls
+            maxPB={state.maxPB}
+            setMaxPB={state.setMaxPB}
+            maxDebtToEquity={state.maxDebtToEquity}
+            setMaxDebtToEquity={state.setMaxDebtToEquity}
+            minCurrentRatio={state.minCurrentRatio}
+            setMinCurrentRatio={state.setMinCurrentRatio}
+            maxMarketCap={state.maxMarketCap}
+            setMaxMarketCap={state.setMaxMarketCap}
           />
         </div>
 
@@ -182,19 +192,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Criteria Controls */}
-        <div className="mb-8">
-          <CriteriaControls
-            maxPB={state.maxPB}
-            setMaxPB={state.setMaxPB}
-            maxDebtToEquity={state.maxDebtToEquity}
-            setMaxDebtToEquity={state.setMaxDebtToEquity}
-            minCurrentRatio={state.minCurrentRatio}
-            setMinCurrentRatio={state.setMinCurrentRatio}
-            maxMarketCap={state.maxMarketCap}
-            setMaxMarketCap={state.setMaxMarketCap}
-          />
-        </div>
 
         {/* Main Actions Panel */}
         <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 shadow-xl">

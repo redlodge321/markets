@@ -1,8 +1,3 @@
 uploads = []
 generated = []
-
-[[outputs]]
-id = "k3rSj-yaoBAJwAaMHpwJ7"
-uri = "file://report_chart.png"
-type = "image"
-title = "Equity Valuation Report (P/FCF)"
+outputs = []
