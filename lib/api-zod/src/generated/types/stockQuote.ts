@@ -10,6 +10,8 @@ export interface StockQuote {
   ticker: string;
   companyName?: string;
   price?: number;
+  /** Regular market day change as a decimal (e.g. -0.023 = -2.3%) */
+  dayChangePercent?: number;
   forwardPE?: number;
   priceToBook?: number;
   profitMargin?: number;

@@ -61,6 +61,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-4">Sector</th>
               <th className="px-5 py-4">Industry</th>
               <th className="px-5 py-4 text-right">Price</th>
+              <th className="px-5 py-4 text-right">Day %</th>
               <th className="px-5 py-4 text-right">Fwd P/E</th>
               <th className="px-5 py-4 text-right">P/B</th>
               <th className="px-5 py-4 text-right">Debt/Eq</th>
@@ -100,6 +101,19 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                   </td>
                   <td className="px-5 py-4 text-right text-foreground">
                     {formatCurrency(stock.price)}
+                  </td>
+
+                  {/* Day Change % */}
+                  <td className={cn(
+                    "px-5 py-4 text-right tabular-nums font-medium",
+                    stock.dayChangePercent == null ? "text-muted-foreground"
+                      : stock.dayChangePercent > 0 ? "text-success"
+                      : stock.dayChangePercent < 0 ? "text-destructive"
+                      : "text-muted-foreground"
+                  )}>
+                    {stock.dayChangePercent != null
+                      ? `${stock.dayChangePercent >= 0 ? "+" : ""}${(stock.dayChangePercent * 100).toFixed(2)}%`
+                      : "—"}
                   </td>
 
                   {/* P/E */}

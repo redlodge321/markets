@@ -49,6 +49,12 @@ export const RunScreenerResponse = zod.object({
       ticker: zod.string(),
       companyName: zod.string(),
       price: zod.number(),
+      dayChangePercent: zod
+        .number()
+        .optional()
+        .describe(
+          "Regular market day change as a decimal (e.g. -0.023 = -2.3%)",
+        ),
       forwardPE: zod.number(),
       priceToBook: zod.number(),
       profitMargin: zod.number(),
@@ -105,6 +111,12 @@ export const GetStockQuotesResponse = zod.object({
       ticker: zod.string(),
       companyName: zod.string().optional(),
       price: zod.number().optional(),
+      dayChangePercent: zod
+        .number()
+        .optional()
+        .describe(
+          "Regular market day change as a decimal (e.g. -0.023 = -2.3%)",
+        ),
       forwardPE: zod.number().optional(),
       priceToBook: zod.number().optional(),
       profitMargin: zod.number().optional(),

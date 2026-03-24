@@ -14,6 +14,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
   ): Promise<{
     price?: {
       regularMarketPrice?: number;
+      regularMarketChangePercent?: number;
       shortName?: string;
       longName?: string;
       sector?: string;
@@ -38,6 +39,7 @@ interface StockData {
   ticker: string;
   companyName: string;
   price: number;
+  dayChangePercent?: number;
   forwardPE: number;
   priceToBook: number;
   profitMargin: number;
@@ -64,6 +66,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
     const keyStats = quote.defaultKeyStatistics;
 
     const price = price_data?.regularMarketPrice ?? null;
+    const dayChangePercent = price_data?.regularMarketChangePercent ?? undefined;
     const forwardPE = keyStats?.forwardPE ?? null;
     const priceToBook = keyStats?.priceToBook ?? null;
     const profitMargin = financial?.profitMargins ?? null;
@@ -92,6 +95,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       ticker: ticker.toUpperCase(),
       companyName: companyName ?? ticker,
       price,
+      dayChangePercent,
       forwardPE: forwardPE ?? 0,
       priceToBook: priceToBook ?? 0,
       profitMargin: profitMargin ?? 0,
