@@ -58,7 +58,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
           <thead>
             <tr className="border-b border-border/60 bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               <th className="px-5 py-4">Ticker</th>
-              <th className="px-5 py-4">Company</th>
               <th className="px-5 py-4 text-right">Price</th>
               <th className="px-5 py-4 text-right">Fwd P/E</th>
               <th className="px-5 py-4 text-right">P/B</th>
@@ -90,9 +89,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                     <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-secondary/50 border border-border/50 text-foreground font-bold group-hover:border-primary/30 transition-colors">
                       {stock.ticker}
                     </div>
-                  </td>
-                  <td className="px-5 py-4 font-sans text-muted-foreground truncate max-w-[150px]" title={stock.companyName}>
-                    {stock.companyName || '-'}
                   </td>
                   <td className="px-5 py-4 text-right text-foreground">
                     {formatCurrency(stock.price)}
