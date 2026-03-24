@@ -7,7 +7,6 @@ const INITIAL_UNIVERSE = [
 
 export function useScreenerState() {
   const [tickers, setTickers] = useState<string[]>(INITIAL_UNIVERSE);
-  const [maxPE, setMaxPE] = useState<number>(30);
   const [maxPB, setMaxPB] = useState<number>(3);
   const [minMargin, setMinMargin] = useState<number>(0.10);
   const [newTicker, setNewTicker] = useState("");
@@ -27,8 +26,6 @@ export function useScreenerState() {
 
   return {
     tickers,
-    maxPE,
-    setMaxPE,
     maxPB,
     setMaxPB,
     minMargin,

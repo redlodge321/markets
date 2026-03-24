@@ -96,15 +96,13 @@ router.post("/screener/run", async (req, res) => {
         return;
       }
 
-      const pe = data.forwardPE;
       const pb = data.priceToBook;
       const margin = data.profitMargin;
 
-      const pePass = pe > 0 && pe < maxPE;
       const pbPass = pb <= 0 || pb < maxPB;
       const marginPass = margin > minMargin;
 
-      if (pePass && pbPass && marginPass) {
+      if (pbPass && marginPass) {
         results.push(data);
       }
     })

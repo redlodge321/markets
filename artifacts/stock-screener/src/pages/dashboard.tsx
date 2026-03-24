@@ -19,7 +19,6 @@ export default function Dashboard() {
     screenerMutation.mutate({
       data: {
         tickers: state.tickers,
-        maxPE: state.maxPE,
         maxPB: state.maxPB,
         minMargin: state.minMargin,
       },
@@ -119,8 +118,6 @@ export default function Dashboard() {
             removeTicker={state.removeTicker}
           />
           <CriteriaControls 
-            maxPE={state.maxPE}
-            setMaxPE={state.setMaxPE}
             maxPB={state.maxPB}
             setMaxPB={state.setMaxPB}
             minMargin={state.minMargin}
