@@ -59,6 +59,10 @@ export interface CommodityResult {
   /** 6-month price change as a decimal */
   sixMonthChangePercent?: number;
   prevClose?: number;
+  /** True if this is the 3rd-month forward contract row */
+  isForwardContract?: boolean;
+  /** Front-month ticker this row belongs to (e.g. GC=F) */
+  baseGroup?: string;
 }
 
 export type ScreenerResponseCriteria = {

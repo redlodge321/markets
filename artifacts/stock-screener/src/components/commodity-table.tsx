@@ -60,59 +60,67 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                   </td>
                 </tr>
               ) : (
-                commodities.map((c, i) => (
-                  <motion.tr
-                    key={c.ticker}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="border-b border-border/30 hover:bg-secondary/30 transition-colors"
-                  >
-                    {/* Label */}
-                    <td className="px-5 py-4 font-semibold text-amber-400">
-                      {COMMODITY_LABELS[c.ticker] ?? c.ticker}
-                    </td>
+                commodities.map((c, i) => {
+                  const isFwd = c.isForwardContract === true;
+                  return (
+                    <motion.tr
+                      key={c.ticker}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}
+                      className={cn(
+                        "border-b border-border/30 hover:bg-secondary/30 transition-colors",
+                        isFwd && "bg-secondary/10"
+                      )}
+                    >
+                      {/* Label */}
+                      <td className={cn("px-5 py-4 font-semibold", isFwd ? "pl-10 text-amber-400/60 text-xs" : "text-amber-400")}>
+                        {isFwd
+                          ? `↳ ${COMMODITY_LABELS[c.baseGroup ?? ""] ?? c.baseGroup} 3M Fwd`
+                          : COMMODITY_LABELS[c.ticker] ?? c.ticker}
+                      </td>
 
-                    {/* Contract name from Yahoo */}
-                    <td className="px-5 py-4 font-mono text-xs text-muted-foreground">
-                      {c.name}
-                    </td>
+                      {/* Contract name from Yahoo */}
+                      <td className="px-5 py-4 font-mono text-xs text-muted-foreground">
+                        {c.name}
+                      </td>
 
-                    {/* Price */}
-                    <td className="px-5 py-4 text-right font-semibold text-foreground tabular-nums">
-                      {formatCurrency(c.price)}
-                    </td>
+                      {/* Price */}
+                      <td className={cn("px-5 py-4 text-right tabular-nums", isFwd ? "text-muted-foreground" : "font-semibold text-foreground")}>
+                        {formatCurrency(c.price)}
+                      </td>
 
-                    {/* Day % */}
-                    <td className={cn(
-                      "px-5 py-4 text-right tabular-nums font-medium",
-                      c.dayChangePercent == null ? "text-muted-foreground"
-                        : c.dayChangePercent > 0 ? "text-success"
-                        : c.dayChangePercent < 0 ? "text-destructive"
-                        : "text-muted-foreground"
-                    )}>
-                      {formatPct(c.dayChangePercent)}
-                    </td>
+                      {/* Day % */}
+                      <td className={cn(
+                        "px-5 py-4 text-right tabular-nums font-medium",
+                        c.dayChangePercent == null ? "text-muted-foreground"
+                          : c.dayChangePercent > 0 ? "text-success"
+                          : c.dayChangePercent < 0 ? "text-destructive"
+                          : "text-muted-foreground"
+                      )}>
+                        {formatPct(c.dayChangePercent)}
+                      </td>
 
-                    {/* 6M % */}
-                    <td className={cn(
-                      "px-5 py-4 text-right tabular-nums font-medium",
-                      c.sixMonthChangePercent == null ? "text-muted-foreground"
-                        : c.sixMonthChangePercent > 0 ? "text-success"
-                        : c.sixMonthChangePercent < 0 ? "text-destructive"
-                        : "text-muted-foreground"
-                    )}>
-                      {c.sixMonthChangePercent != null
-                        ? `${c.sixMonthChangePercent >= 0 ? "+" : ""}${(c.sixMonthChangePercent * 100).toFixed(1)}%`
-                        : "—"}
-                    </td>
+                      {/* 6M % */}
+                      <td className={cn(
+                        "px-5 py-4 text-right tabular-nums font-medium",
+                        c.sixMonthChangePercent == null ? "text-muted-foreground"
+                          : c.sixMonthChangePercent > 0 ? "text-success"
+                          : c.sixMonthChangePercent < 0 ? "text-destructive"
+                          : "text-muted-foreground"
+                      )}>
+                        {c.sixMonthChangePercent != null
+                          ? `${c.sixMonthChangePercent >= 0 ? "+" : ""}${(c.sixMonthChangePercent * 100).toFixed(1)}%`
+                          : "—"}
+                      </td>
 
-                    {/* Prev Close */}
-                    <td className="px-5 py-4 text-right tabular-nums text-muted-foreground">
-                      {c.prevClose != null ? formatCurrency(c.prevClose) : "—"}
-                    </td>
-                  </motion.tr>
-                ))
+                      {/* Prev Close */}
+                      <td className="px-5 py-4 text-right tabular-nums text-muted-foreground">
+                        {c.prevClose != null ? formatCurrency(c.prevClose) : "—"}
+                      </td>
+                    </motion.tr>
+                  );
+                })
               )}
             </tbody>
           </table>

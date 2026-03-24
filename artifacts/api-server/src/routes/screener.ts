@@ -42,6 +42,28 @@ interface CommodityData {
   dayChangePercent?: number;
   sixMonthChangePercent?: number;
   prevClose?: number;
+  isForwardContract?: boolean;
+  baseGroup?: string;
+}
+
+const MONTH_CODES = ['F','G','H','J','K','M','N','Q','U','V','X','Z'];
+
+// Exchange suffix by front-month base symbol
+const EXCHANGE_SUFFIX: Record<string, string> = {
+  'GC': '.CMX', 'SI': '.CMX', 'HG': '.CMX', 'PL': '.CMX', 'PA': '.CMX',
+  'CL': '.NYM', 'BZ': '.NYM', 'NG': '.NYM',
+};
+
+function get3MonthTicker(frontMonthTicker: string): string | null {
+  // frontMonthTicker looks like "GC=F" → base "GC"
+  const base = frontMonthTicker.replace('=F', '');
+  const suffix = EXCHANGE_SUFFIX[base];
+  if (!suffix) return null;
+  const target = new Date();
+  target.setMonth(target.getMonth() + 3);
+  const monthCode = MONTH_CODES[target.getMonth()];
+  const year = String(target.getFullYear()).slice(-2);
+  return `${base}${monthCode}${year}${suffix}`;
 }
 
 async function fetchCommodityData(ticker: string): Promise<CommodityData | { error: string }> {
@@ -210,11 +232,18 @@ router.post("/screener/run", async (req, res) => {
       if (pbPass && dtePass && crPass && mcapPass) results.push(data);
     }),
     ...futureTickers.map(async (ticker) => {
-      const data = await fetchCommodityData(ticker);
+      const fwdTicker = get3MonthTicker(ticker);
+      const [data, fwdData] = await Promise.all([
+        fetchCommodityData(ticker),
+        fwdTicker ? fetchCommodityData(fwdTicker) : Promise.resolve(null),
+      ]);
       if ("error" in data) {
         errors.push({ ticker: ticker.toUpperCase(), error: data.error });
       } else {
         commodities.push(data);
+        if (fwdData && !("error" in fwdData)) {
+          commodities.push({ ...fwdData, isForwardContract: true, baseGroup: ticker.toUpperCase() });
+        }
       }
     }),
   ]);

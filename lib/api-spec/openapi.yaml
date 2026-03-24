@@ -186,6 +186,12 @@ components:
           description: 6-month price change as a decimal
         prevClose:
           type: number
+        isForwardContract:
+          type: boolean
+          description: True if this is the 3rd-month forward contract row
+        baseGroup:
+          type: string
+          description: Front-month ticker this row belongs to (e.g. GC=F)
       required:
         - ticker
         - name

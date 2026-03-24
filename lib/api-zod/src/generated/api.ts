@@ -101,6 +101,14 @@ export const RunScreenerResponse = zod.object({
         .optional()
         .describe("6-month price change as a decimal"),
       prevClose: zod.number().optional(),
+      isForwardContract: zod
+        .boolean()
+        .optional()
+        .describe("True if this is the 3rd-month forward contract row"),
+      baseGroup: zod
+        .string()
+        .optional()
+        .describe("Front-month ticker this row belongs to (e.g. GC=F)"),
     }),
   ),
   screened: zod.number().describe("Total number of tickers screened"),
