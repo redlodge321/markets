@@ -24,6 +24,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
     defaultKeyStatistics?: { forwardPE?: number; priceToBook?: number };
     financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number };
     calendarEvents?: { earnings?: { earningsDate?: string[] } };
+    summaryProfile?: { sector?: string; industry?: string };
   }>;
 };
 
@@ -40,6 +41,7 @@ interface StockData {
   freeCashflow?: number;
   nextEarningsDate?: string;
   sector?: string;
+  industry?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
@@ -48,7 +50,7 @@ interface StockData {
 async function fetchStockData(ticker: string): Promise<StockData | { error: string }> {
   try {
     const quote = await yf.quoteSummary(ticker, {
-      modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents"],
+      modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents", "summaryProfile"],
     });
 
     const price_data = quote.price;
@@ -70,7 +72,8 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       ? (nextEarningsRaw instanceof Date ? nextEarningsRaw.toISOString() : String(nextEarningsRaw))
       : undefined;
     const companyName = price_data?.shortName ?? price_data?.longName ?? ticker;
-    const sector = price_data?.sector;
+    const sector = quote.summaryProfile?.sector;
+    const industry = quote.summaryProfile?.industry;
     const marketCap = price_data?.marketCap;
     const fiftyTwoWeekHigh = price_data?.fiftyTwoWeekHigh;
     const fiftyTwoWeekLow = price_data?.fiftyTwoWeekLow;
@@ -92,6 +95,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       freeCashflow: freeCashflow ?? undefined,
       nextEarningsDate,
       sector,
+      industry,
       marketCap,
       fiftyTwoWeekHigh,
       fiftyTwoWeekLow,

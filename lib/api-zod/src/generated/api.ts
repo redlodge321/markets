@@ -40,7 +40,7 @@ export const RunScreenerBody = zod.object({
   maxMarketCap: zod
     .number()
     .optional()
-    .describe("Maximum market cap in billions USD (default 2000)"),
+    .describe("Maximum market cap in millions USD (default 2000000)"),
 });
 
 export const RunScreenerResponse = zod.object({
@@ -71,6 +71,7 @@ export const RunScreenerResponse = zod.object({
           "ISO date string of next earnings date, or null if unavailable",
         ),
       sector: zod.string().optional(),
+      industry: zod.string().optional(),
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),
       fiftyTwoWeekLow: zod.number().optional(),
@@ -124,6 +125,7 @@ export const GetStockQuotesResponse = zod.object({
           "ISO date string of next earnings date, or null if unavailable",
         ),
       sector: zod.string().optional(),
+      industry: zod.string().optional(),
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),
       fiftyTwoWeekLow: zod.number().optional(),

@@ -22,6 +22,7 @@ export interface ScreenerResult {
   /** ISO date string of next earnings date, or null if unavailable */
   nextEarningsDate?: string;
   sector?: string;
+  industry?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;

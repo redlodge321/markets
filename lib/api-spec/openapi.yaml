@@ -127,6 +127,8 @@ components:
           description: ISO date string of next earnings date, or null if unavailable
         sector:
           type: string
+        industry:
+          type: string
         marketCap:
           type: number
         fiftyTwoWeekHigh:
@@ -221,6 +223,8 @@ components:
           type: string
           description: ISO date string of next earnings date, or null if unavailable
         sector:
+          type: string
+        industry:
           type: string
         marketCap:
           type: number

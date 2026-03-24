@@ -20,7 +20,7 @@ export interface ScreenerRequest {
   maxDebtToEquity?: number;
   /** Minimum current ratio (default 1.2) */
   minCurrentRatio?: number;
-  /** Maximum market cap in billions USD (default 2000) */
+  /** Maximum market cap in millions USD (default 2000000) */
   maxMarketCap?: number;
 }
 
@@ -40,6 +40,7 @@ export interface ScreenerResult {
   /** ISO date string of next earnings date, or null if unavailable */
   nextEarningsDate?: string;
   sector?: string;
+  industry?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
@@ -85,6 +86,7 @@ export interface StockQuote {
   /** ISO date string of next earnings date, or null if unavailable */
   nextEarningsDate?: string;
   sector?: string;
+  industry?: string;
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
