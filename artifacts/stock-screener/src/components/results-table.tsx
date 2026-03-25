@@ -67,9 +67,9 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-1.5 text-right">Debt/Eq</th>
               <th className="px-5 py-1.5 text-right">Curr Ratio</th>
               <th className="px-5 py-1.5 text-right">P/FCF</th>
+              <th className="px-5 py-1.5 text-right">Mkt Cap</th>
               <th className="px-5 py-1.5 text-center">Health</th>
               <th className="px-5 py-1.5 text-right">Next Earnings</th>
-              <th className="px-5 py-1.5 text-right">Mkt Cap</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40 font-mono text-sm">
@@ -173,6 +173,10 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                     {stock.pfcfRatio ? stock.pfcfRatio.toFixed(1) : '—'}
                   </td>
 
+                  <td className="px-5 py-1.5 text-right text-foreground">
+                    {formatMarketCap(stock.marketCap)}
+                  </td>
+
                   {/* Health Badge */}
                   <td className="px-5 py-1.5 text-center">
                     {isStrongBalance ? (
@@ -206,9 +210,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                     )}
                   </td>
 
-                  <td className="px-5 py-1.5 text-right text-foreground">
-                    {formatMarketCap(stock.marketCap)}
-                  </td>
                 </motion.tr>
               );
             })}
