@@ -57,19 +57,19 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-border/60 bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-              <th className="px-5 py-2">Ticker</th>
-              <th className="px-5 py-2">Sector</th>
-              <th className="px-5 py-2">Industry</th>
-              <th className="px-5 py-2 text-right">Price</th>
-              <th className="px-5 py-2 text-right">Day %</th>
-              <th className="px-5 py-2 text-right">6M %</th>
-              <th className="px-5 py-2 text-right">P/B</th>
-              <th className="px-5 py-2 text-right">Debt/Eq</th>
-              <th className="px-5 py-2 text-right">Curr Ratio</th>
-              <th className="px-5 py-2 text-right">P/FCF</th>
-              <th className="px-5 py-2 text-center">Health</th>
-              <th className="px-5 py-2 text-right">Next Earnings</th>
-              <th className="px-5 py-2 text-right">Mkt Cap</th>
+              <th className="px-5 py-1.5">Ticker</th>
+              <th className="px-5 py-1.5">Sector</th>
+              <th className="px-5 py-1.5">Industry</th>
+              <th className="px-5 py-1.5 text-right">Price</th>
+              <th className="px-5 py-1.5 text-right">Day %</th>
+              <th className="px-5 py-1.5 text-right">6M %</th>
+              <th className="px-5 py-1.5 text-right">P/B</th>
+              <th className="px-5 py-1.5 text-right">Debt/Eq</th>
+              <th className="px-5 py-1.5 text-right">Curr Ratio</th>
+              <th className="px-5 py-1.5 text-right">P/FCF</th>
+              <th className="px-5 py-1.5 text-center">Health</th>
+              <th className="px-5 py-1.5 text-right">Next Earnings</th>
+              <th className="px-5 py-1.5 text-right">Mkt Cap</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40 font-mono text-sm">
@@ -88,24 +88,24 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                   key={stock.ticker}
                   className="group hover:bg-secondary/30 transition-colors"
                 >
-                  <td className="px-5 py-2 whitespace-nowrap">
+                  <td className="px-5 py-1.5 whitespace-nowrap">
                     <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-secondary/50 border border-border/50 text-foreground font-bold group-hover:border-primary/30 transition-colors">
                       {stock.ticker}
                     </div>
                   </td>
-                  <td className="px-5 py-2 font-sans text-muted-foreground text-sm whitespace-nowrap">
+                  <td className="px-5 py-1.5 font-sans text-muted-foreground text-sm whitespace-nowrap">
                     {stock.sector || '—'}
                   </td>
-                  <td className="px-5 py-2 font-sans text-muted-foreground text-sm whitespace-nowrap max-w-[160px] truncate" title={stock.industry}>
+                  <td className="px-5 py-1.5 font-sans text-muted-foreground text-sm whitespace-nowrap max-w-[160px] truncate" title={stock.industry}>
                     {stock.industry || '—'}
                   </td>
-                  <td className="px-5 py-2 text-right text-foreground">
+                  <td className="px-5 py-1.5 text-right text-foreground">
                     {formatCurrency(stock.price)}
                   </td>
 
                   {/* Day Change % */}
                   <td className={cn(
-                    "px-5 py-2 text-right tabular-nums font-medium",
+                    "px-5 py-1.5 text-right tabular-nums font-medium",
                     stock.dayChangePercent == null ? "text-muted-foreground"
                       : stock.dayChangePercent > 0 ? "text-success"
                       : stock.dayChangePercent < 0 ? "text-destructive"
@@ -118,7 +118,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
 
                   {/* 6-Month Change % */}
                   <td className={cn(
-                    "px-5 py-2 text-right tabular-nums font-medium",
+                    "px-5 py-1.5 text-right tabular-nums font-medium",
                     stock.sixMonthChangePercent == null ? "text-muted-foreground"
                       : stock.sixMonthChangePercent > 0 ? "text-success"
                       : stock.sixMonthChangePercent < 0 ? "text-destructive"
@@ -131,7 +131,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
 
                   {/* P/B */}
                   <td className={cn(
-                    "px-5 py-2 text-right tabular-nums",
+                    "px-5 py-1.5 text-right tabular-nums",
                     !stock.priceToBook || stock.priceToBook <= 0 ? "text-muted-foreground"
                       : stock.priceToBook > 5 ? "text-destructive"
                       : stock.priceToBook < 1.5 ? "text-success"
@@ -142,7 +142,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
 
                   {/* Debt/Equity */}
                   <td className={cn(
-                    "px-5 py-2 text-right tabular-nums",
+                    "px-5 py-1.5 text-right tabular-nums",
                     !stock.debtToEquity || stock.debtToEquity <= 0 ? "text-muted-foreground"
                       : stock.debtToEquity > 150 ? "text-destructive"
                       : stock.debtToEquity < 50 ? "text-success"
@@ -153,7 +153,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
 
                   {/* Current Ratio */}
                   <td className={cn(
-                    "px-5 py-2 text-right tabular-nums",
+                    "px-5 py-1.5 text-right tabular-nums",
                     !stock.currentRatio || stock.currentRatio <= 0 ? "text-muted-foreground"
                       : stock.currentRatio < 1 ? "text-destructive"
                       : stock.currentRatio > 2 ? "text-success"
@@ -164,7 +164,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
 
                   {/* P/FCF */}
                   <td className={cn(
-                    "px-5 py-2 text-right tabular-nums",
+                    "px-5 py-1.5 text-right tabular-nums",
                     !stock.pfcfRatio ? "text-muted-foreground"
                       : stock.pfcfRatio > 40 ? "text-destructive"
                       : stock.pfcfRatio < 15 ? "text-success"
@@ -174,7 +174,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                   </td>
 
                   {/* Health Badge */}
-                  <td className="px-5 py-2 text-center">
+                  <td className="px-5 py-1.5 text-center">
                     {isStrongBalance ? (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
                         <ShieldCheck className="w-3 h-3" /> Strong
@@ -187,7 +187,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                   </td>
 
                   {/* Next Earnings */}
-                  <td className="px-5 py-2 text-right whitespace-nowrap">
+                  <td className="px-5 py-1.5 text-right whitespace-nowrap">
                     {daysAway !== null ? (
                       <div className={cn(
                         "inline-flex items-center gap-1.5",
@@ -206,7 +206,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                     )}
                   </td>
 
-                  <td className="px-5 py-2 text-right text-foreground">
+                  <td className="px-5 py-1.5 text-right text-foreground">
                     {formatMarketCap(stock.marketCap)}
                   </td>
                 </motion.tr>
