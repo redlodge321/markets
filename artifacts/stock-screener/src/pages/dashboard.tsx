@@ -77,10 +77,10 @@ export default function Dashboard() {
         className="fixed inset-0 w-full h-full object-cover opacity-30 pointer-events-none z-[-1] mix-blend-screen"
       />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         
         {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-border/50 pb-6">
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-4 border-b border-border/50 pb-3">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 border border-primary/30 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.2)]">
               <TerminalSquare className="w-6 h-6 text-primary" />
@@ -130,7 +130,7 @@ export default function Dashboard() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="mb-8"
+              className="mb-4"
             >
               <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-4 flex gap-3">
                 <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
@@ -150,7 +150,7 @@ export default function Dashboard() {
         </AnimatePresence>
 
         {/* Equity Results Table */}
-        <section className="mb-8">
+        <section className="mb-4">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-bold text-foreground">
               {viewMode === "screener" ? "Equity Screen" : "Live Quotes"}
@@ -165,7 +165,7 @@ export default function Dashboard() {
         </section>
 
         {/* Stock Universe + Screener Criteria side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
           <TickerManager 
             tickers={state.tickers}
             newTicker={state.newTicker}
@@ -199,7 +199,7 @@ export default function Dashboard() {
 
         {/* Commodity Universe Manager */}
         {viewMode === "screener" && (
-          <div className="mb-8">
+          <div className="mb-4">
             <CommodityTickerManager
               tickers={state.commodityTickers}
               addTicker={state.addCommodityTicker}
@@ -212,7 +212,7 @@ export default function Dashboard() {
         <RatesPanel />
 
         {/* Main Actions Panel */}
-        <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 shadow-xl">
+        <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 shadow-xl">
           <div className="flex items-center gap-4 text-sm font-mono text-muted-foreground pl-2">
             {viewMode === "screener" ? (
               <>

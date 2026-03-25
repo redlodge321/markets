@@ -31,7 +31,7 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
   if (!isLoading && commodities.length === 0) return null;
 
   return (
-    <section className="mb-8">
+    <section className="mb-4">
       <div className="mb-4 flex items-center gap-3">
         <h3 className="text-lg font-bold text-foreground">Commodity Watchlist</h3>
         <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 tracking-widest">

@@ -90,7 +90,7 @@ export function RatesPanel() {
   });
 
   return (
-    <section className="mb-8">
+    <section className="mb-4">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">Rates &amp; Fixed Income</h3>
         <button
