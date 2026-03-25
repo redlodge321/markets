@@ -36,6 +36,7 @@ function SingleCurve({
   data,
   isLoading,
   noData,
+  fixedDomain,
 }: {
   title: string;
   flag: string;
@@ -45,10 +46,11 @@ function SingleCurve({
   data: Record<string, string | number | undefined>[];
   isLoading: boolean;
   noData: boolean;
+  fixedDomain?: [number, number];
 }) {
   const yields = data.map((d) => d[dataKey]).filter((v) => v != null) as number[];
-  const minY = yields.length ? Math.max(0, Math.min(...yields) - 0.3) : 0;
-  const maxY = yields.length ? Math.max(...yields) + 0.3 : 6;
+  const minY = fixedDomain ? fixedDomain[0] : (yields.length ? Math.max(0, Math.min(...yields) - 0.3) : 0);
+  const maxY = fixedDomain ? fixedDomain[1] : (yields.length ? Math.max(...yields) + 0.3 : 6);
 
   return (
     <div className="flex-1 min-w-0">
@@ -159,6 +161,7 @@ export function YieldCurveChart() {
           data={chartData}
           isLoading={isLoading}
           noData={!isLoading && !hasUs}
+          fixedDomain={[0.25, 10.5]}
         />
         <div className="w-px bg-zinc-700/50 self-stretch" />
         <SingleCurve
