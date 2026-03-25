@@ -200,6 +200,9 @@ export default function Dashboard() {
         </div>
         </div>
 
+        {/* TradingView Chart */}
+        <TradingViewChart />
+
         {/* Commodity Watchlist */}
         {viewMode === "screener" && (
           <CommodityTable commodities={commodityResults} isLoading={isLoading} />
@@ -218,9 +221,6 @@ export default function Dashboard() {
 
         {/* Yield Curve Comparison */}
         <YieldCurveChart />
-
-        {/* TradingView Chart */}
-        <TradingViewChart />
 
         {/* Main Actions Panel */}
         <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 shadow-xl">
