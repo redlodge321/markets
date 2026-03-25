@@ -5,7 +5,7 @@ import { CriteriaControls } from "@/components/criteria-controls";
 import { ResultsTable } from "@/components/results-table";
 import { CommodityTable } from "@/components/commodity-table";
 import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
-import { RatesPanel } from "@/components/rates-panel";
+
 import { MarketBenchmarks } from "@/components/market-benchmarks";
 import { YieldCurveChart } from "@/components/yield-curve-chart";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
@@ -214,9 +214,6 @@ export default function Dashboard() {
             />
           </div>
         )}
-
-        {/* Rates & Fixed Income Monitor */}
-        <RatesPanel />
 
         {/* Yield Curve Comparison */}
         <YieldCurveChart />
