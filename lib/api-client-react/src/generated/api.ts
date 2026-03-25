@@ -28,6 +28,7 @@ import type {
   TickerSearchRequest,
   TickerSearchResponse,
   TopMarketCapResponse,
+  YieldCurveResponse,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -461,6 +462,82 @@ export const useSearchFutures = <
 > => {
   return useMutation(getSearchFuturesMutationOptions(options));
 };
+
+/**
+ * Returns spot yields for 3M, 2Y, 5Y, 10Y, and 30Y maturities for both US Treasuries and Euro Area AAA bonds
+ * @summary Get US vs Euro Area yield curve data
+ */
+export const getGetYieldCurveUrl = () => {
+  return `/api/screener/yield-curve`;
+};
+
+export const getYieldCurve = async (
+  options?: RequestInit,
+): Promise<YieldCurveResponse> => {
+  return customFetch<YieldCurveResponse>(getGetYieldCurveUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetYieldCurveQueryKey = () => {
+  return [`/api/screener/yield-curve`] as const;
+};
+
+export const getGetYieldCurveQueryOptions = <
+  TData = Awaited<ReturnType<typeof getYieldCurve>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getYieldCurve>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetYieldCurveQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getYieldCurve>>> = ({
+    signal,
+  }) => getYieldCurve({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getYieldCurve>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetYieldCurveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getYieldCurve>>
+>;
+export type GetYieldCurveQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get US vs Euro Area yield curve data
+ */
+
+export function useGetYieldCurve<
+  TData = Awaited<ReturnType<typeof getYieldCurve>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getYieldCurve>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetYieldCurveQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * Returns current price and day change for S&P 500, DJIA, Nasdaq, and Russell 2000

@@ -100,6 +100,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TickerSearchResponse"
+  /screener/yield-curve:
+    get:
+      operationId: getYieldCurve
+      tags: [screener]
+      summary: Get US vs Euro Area yield curve data
+      description: Returns spot yields for 3M, 2Y, 5Y, 10Y, and 30Y maturities for both US Treasuries and Euro Area AAA bonds
+      responses:
+        "200":
+          description: Yield curve data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YieldCurveResponse"
   /screener/benchmarks:
     get:
       operationId: getBenchmarks
@@ -467,6 +480,36 @@ components:
         - quoteType
         - value
         - displayValue
+    YieldPoint:
+      type: object
+      properties:
+        maturity:
+          type: string
+          description: Label e.g. "3M", "2Y", "10Y"
+        maturityYears:
+          type: number
+          description: Numeric years for axis positioning
+        usYield:
+          type: number
+          nullable: true
+        euYield:
+          type: number
+          nullable: true
+      required:
+        - maturity
+        - maturityYears
+    YieldCurveResponse:
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: "#/components/schemas/YieldPoint"
+        asOf:
+          type: string
+      required:
+        - points
+        - asOf
     BenchmarkResult:
       type: object
       properties:

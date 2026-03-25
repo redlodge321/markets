@@ -183,6 +183,20 @@ export interface RateResult {
   dayChangePercent?: number;
 }
 
+export interface YieldPoint {
+  /** Label e.g. "3M", "2Y", "10Y" */
+  maturity: string;
+  /** Numeric years for axis positioning */
+  maturityYears: number;
+  usYield?: number | null;
+  euYield?: number | null;
+}
+
+export interface YieldCurveResponse {
+  points: YieldPoint[];
+  asOf: string;
+}
+
 export interface BenchmarkResult {
   symbol: string;
   name: string;

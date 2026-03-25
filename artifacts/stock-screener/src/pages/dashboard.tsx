@@ -7,6 +7,7 @@ import { CommodityTable } from "@/components/commodity-table";
 import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
 import { RatesPanel } from "@/components/rates-panel";
 import { MarketBenchmarks } from "@/components/market-benchmarks";
+import { YieldCurveChart } from "@/components/yield-curve-chart";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -216,6 +217,9 @@ export default function Dashboard() {
 
         {/* Rates & Fixed Income Monitor */}
         <RatesPanel />
+
+        {/* Yield Curve Comparison */}
+        <YieldCurveChart />
 
         {/* Main Actions Panel */}
         <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 shadow-xl">

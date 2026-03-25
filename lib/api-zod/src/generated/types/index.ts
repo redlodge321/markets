@@ -27,3 +27,5 @@ export * from "./tickerSearchResponse";
 export * from "./tickerSearchResult";
 export * from "./topMarketCapResponse";
 export * from "./topStock";
+export * from "./yieldCurveResponse";
+export * from "./yieldPoint";

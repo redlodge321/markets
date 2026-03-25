@@ -224,6 +224,24 @@ export const SearchFuturesResponse = zod.object({
 });
 
 /**
+ * Returns spot yields for 3M, 2Y, 5Y, 10Y, and 30Y maturities for both US Treasuries and Euro Area AAA bonds
+ * @summary Get US vs Euro Area yield curve data
+ */
+export const GetYieldCurveResponse = zod.object({
+  points: zod.array(
+    zod.object({
+      maturity: zod.string().describe('Label e.g. \"3M\", \"2Y\", \"10Y\"'),
+      maturityYears: zod
+        .number()
+        .describe("Numeric years for axis positioning"),
+      usYield: zod.number().nullish(),
+      euYield: zod.number().nullish(),
+    }),
+  ),
+  asOf: zod.string(),
+});
+
+/**
  * Returns current price and day change for S&P 500, DJIA, Nasdaq, and Russell 2000
  * @summary Get major U.S. equity benchmark quotes
  */
