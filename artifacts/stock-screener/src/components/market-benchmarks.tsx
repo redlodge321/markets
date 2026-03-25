@@ -31,7 +31,7 @@ export function MarketBenchmarks() {
             </span>
             <div className="flex items-baseline gap-1">
               <span className="text-xs font-semibold text-foreground tabular-nums">
-                {b.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {b.price.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
               <span
                 className={cn(
