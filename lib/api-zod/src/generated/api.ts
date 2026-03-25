@@ -235,7 +235,6 @@ export const GetYieldCurveResponse = zod.object({
         .number()
         .describe("Numeric years for axis positioning"),
       usYield: zod.number().nullish(),
-      euYield: zod.number().nullish(),
     }),
   ),
   asOf: zod.string(),

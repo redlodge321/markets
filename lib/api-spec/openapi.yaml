@@ -492,9 +492,6 @@ components:
         usYield:
           type: number
           nullable: true
-        euYield:
-          type: number
-          nullable: true
       required:
         - maturity
         - maturityYears

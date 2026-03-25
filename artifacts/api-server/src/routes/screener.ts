@@ -431,54 +431,21 @@ const US_YIELD_TICKERS = [
   { maturity: "30Y", maturityYears: 30,   symbol: "^TYX",  scale: "div10" },
 ] as const;
 
-const ECB_MATURITIES = [
-  { maturity: "3M",  code: "SR_0.25" },
-  { maturity: "2Y",  code: "SR_2"    },
-  { maturity: "5Y",  code: "SR_5"    },
-  { maturity: "10Y", code: "SR_10"   },
-  { maturity: "30Y", code: "SR_30"   },
-];
-
-async function fetchEcbYield(code: string): Promise<number | null> {
-  try {
-    const seriesKey = `B.U2.EUR.4F.G_N_A.SV_C_YM.${code}`;
-    const url = `https://data-api.ecb.europa.eu/service/data/YC/${seriesKey}?format=jsondata&lastNObservations=1`;
-    const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if (!r.ok) return null;
-    const json = await r.json() as {
-      dataSets?: Array<{ series?: Record<string, { observations?: Record<string, [number]> }> }>;
-    };
-    const series = json.dataSets?.[0]?.series;
-    if (!series) return null;
-    const firstSeries = Object.values(series)[0];
-    const obs = firstSeries?.observations;
-    if (!obs) return null;
-    const lastObs = Object.values(obs)[Object.values(obs).length - 1];
-    return typeof lastObs?.[0] === "number" ? lastObs[0] : null;
-  } catch {
-    return null;
-  }
-}
-
 router.get("/screener/yield-curve", async (_req, res) => {
-  const [usResults, euResults] = await Promise.all([
-    Promise.allSettled(
-      US_YIELD_TICKERS.map(async (t) => {
-        const q = await yf.quoteSummary(t.symbol, { modules: ["price"] });
-        const raw = q.price?.regularMarketPrice ?? null;
-        if (raw === null) return null;
-        if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
-        return raw / 10; // div10 for ^IRX, ^FVX, ^TNX, ^TYX
-      })
-    ),
-    Promise.all(ECB_MATURITIES.map((m) => fetchEcbYield(m.code))),
-  ]);
+  const usResults = await Promise.allSettled(
+    US_YIELD_TICKERS.map(async (t) => {
+      const q = await yf.quoteSummary(t.symbol, { modules: ["price"] });
+      const raw = q.price?.regularMarketPrice ?? null;
+      if (raw === null) return null;
+      if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
+      return raw / 10; // div10 for ^IRX, ^FVX, ^TNX, ^TYX
+    })
+  );
 
   const points = US_YIELD_TICKERS.map((t, i) => ({
     maturity: t.maturity,
     maturityYears: t.maturityYears,
     usYield: usResults[i].status === "fulfilled" ? (usResults[i] as PromiseFulfilledResult<number | null>).value : null,
-    euYield: euResults[i],
   }));
 
   res.json({ points, asOf: new Date().toISOString().slice(0, 10) });

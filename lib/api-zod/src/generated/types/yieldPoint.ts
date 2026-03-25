@@ -12,5 +12,4 @@ export interface YieldPoint {
   /** Numeric years for axis positioning */
   maturityYears: number;
   usYield?: number | null;
-  euYield?: number | null;
 }
