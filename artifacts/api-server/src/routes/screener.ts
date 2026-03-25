@@ -46,6 +46,10 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
       }>;
     };
   }>;
+  historical(
+    symbol: string,
+    opts: { period1: Date; period2?: Date; interval?: string }
+  ): Promise<Array<{ date: Date; close: number | null }>>;
   search(
     query: string,
     opts?: { quotesCount?: number; newsCount?: number }
@@ -569,6 +573,58 @@ router.get("/screener/rates", async (_req, res) => {
   );
 
   res.json({ rates: rates.filter(Boolean) });
+});
+
+// ── OLS Regression ──────────────────────────────────────────────────────────
+
+function periodToStartDate(period: string): Date {
+  const now = new Date();
+  if (period === "1y")  return new Date(now.getFullYear() - 1,  now.getMonth(), now.getDate());
+  if (period === "5y")  return new Date(now.getFullYear() - 5,  now.getMonth(), now.getDate());
+  if (period === "10y") return new Date(now.getFullYear() - 10, now.getMonth(), now.getDate());
+  return new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+}
+
+function computeOLS(closes: number[]) {
+  const n = closes.length;
+  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+  for (let i = 0; i < n; i++) {
+    sumX  += i; sumY  += closes[i];
+    sumXY += i * closes[i]; sumX2 += i * i;
+  }
+  const slope     = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
+  const meanY = sumY / n;
+  let ssTot = 0, ssRes = 0;
+  for (let i = 0; i < n; i++) {
+    const fitted = intercept + slope * i;
+    ssTot += (closes[i] - meanY) ** 2;
+    ssRes += (closes[i] - fitted) ** 2;
+  }
+  const r2 = ssTot === 0 ? 0 : 1 - ssRes / ssTot;
+  const annualisedReturn = intercept !== 0 ? (slope / intercept) * 252 * 100 : 0;
+  return { slope, intercept, r2, annualisedReturn };
+}
+
+router.get("/screener/regression", async (req, res) => {
+  const symbol = (req.query.symbol as string | undefined)?.toUpperCase()?.trim();
+  const period = (req.query.period as string | undefined) ?? "1y";
+  if (!symbol) { res.status(400).json({ error: "symbol is required" }); return; }
+  try {
+    const rows = await yf.historical(symbol, { period1: periodToStartDate(period), interval: "1d" });
+    const valid = rows.filter((r) => r.close != null)
+      .map((r) => ({ date: r.date.toISOString().slice(0, 10), close: r.close as number }));
+    if (valid.length < 5) { res.status(404).json({ error: `No historical data for ${symbol}` }); return; }
+    const closes = valid.map((v) => v.close);
+    const { slope, intercept, r2, annualisedReturn } = computeOLS(closes);
+    const points = valid.map((v, i) => ({
+      date: v.date, close: v.close,
+      fitted: parseFloat((intercept + slope * i).toFixed(4)),
+    }));
+    res.json({ symbol, period, points, stats: { slope, intercept, r2, annualisedReturn } });
+  } catch (err) {
+    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+  }
 });
 
 export default router;

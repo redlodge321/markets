@@ -208,8 +208,42 @@ export interface BenchmarksResponse {
   benchmarks: BenchmarkResult[];
 }
 
+export interface RegressionPoint {
+  date: string;
+  close: number;
+  fitted: number;
+}
+
+export interface RegressionStats {
+  slope: number;
+  intercept: number;
+  r2: number;
+  annualisedReturn: number;
+}
+
+export interface RegressionResponse {
+  symbol: string;
+  period: string;
+  points: RegressionPoint[];
+  stats: RegressionStats;
+}
+
 export interface RatesResponse {
   rates: RateResult[];
 }
 
 export type GetTopByMarketCapBody = { [key: string]: unknown };
+
+export type GetRegressionChartParams = {
+  symbol: string;
+  period: GetRegressionChartPeriod;
+};
+
+export type GetRegressionChartPeriod =
+  (typeof GetRegressionChartPeriod)[keyof typeof GetRegressionChartPeriod];
+
+export const GetRegressionChartPeriod = {
+  "1y": "1y",
+  "5y": "5y",
+  "10y": "10y",
+} as const;
