@@ -1,4 +1,4 @@
-import { X, Plus, Flame, Search, Loader2 } from "lucide-react";
+import { X, Flame, Search, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useSearchFutures } from "@workspace/api-client-react";
@@ -199,9 +199,8 @@ export function CommodityTickerManager({ tickers, addTicker, removeTicker }: Com
           <button
             type="submit"
             disabled={!input.trim()}
-            className="bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 px-4 py-2.5 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+            className="bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 px-4 py-2.5 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
-            <Plus className="w-4 h-4" />
             Add
           </button>
         </form>
@@ -214,7 +213,7 @@ export function CommodityTickerManager({ tickers, addTicker, removeTicker }: Com
               onClick={() => { if (!tickers.includes(q.ticker)) addTicker(q.ticker); }}
               className="px-2.5 py-1 rounded-md border border-amber-500/20 text-amber-400/70 hover:text-amber-400 hover:border-amber-500/50 text-xs font-mono transition-colors"
             >
-              + {q.label}
+              {q.label}
             </button>
           ))}
         </div>
