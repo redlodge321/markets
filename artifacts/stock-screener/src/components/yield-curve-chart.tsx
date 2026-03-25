@@ -6,31 +6,107 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   ReferenceLine,
+  Area,
+  AreaChart,
 } from "recharts";
 
-const MATURITIES = ["3M", "2Y", "5Y", "10Y", "30Y"];
-
-function CustomTooltip({ active, payload, label }: {
+function CurveTooltip({ active, payload, label, color }: {
   active?: boolean;
-  payload?: Array<{ name: string; value: number; color: string }>;
+  payload?: Array<{ value: number }>;
   label?: string;
+  color: string;
 }) {
-  if (!active || !payload?.length) return null;
+  if (!active || !payload?.length || payload[0]?.value == null) return null;
   return (
     <div className="glass-panel border border-zinc-500/40 rounded-lg px-3 py-2 text-xs font-mono shadow-xl">
-      <p className="text-muted-foreground mb-1 uppercase tracking-wider">{label}</p>
-      {payload.map((p) => (
-        <div key={p.name} className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full inline-block" style={{ background: p.color }} />
-          <span className="text-foreground">{p.name}:</span>
-          <span style={{ color: p.color }} className="font-semibold">
-            {p.value != null ? `${p.value.toFixed(3)}%` : "—"}
-          </span>
-        </div>
-      ))}
+      <p className="text-muted-foreground mb-0.5 uppercase tracking-wider text-[10px]">{label}</p>
+      <p style={{ color }} className="font-semibold text-sm">{payload[0].value.toFixed(3)}%</p>
+    </div>
+  );
+}
+
+function SingleCurve({
+  title,
+  flag,
+  dataKey,
+  color,
+  gradientId,
+  data,
+  isLoading,
+  noData,
+}: {
+  title: string;
+  flag: string;
+  dataKey: string;
+  color: string;
+  gradientId: string;
+  data: Record<string, string | number | undefined>[];
+  isLoading: boolean;
+  noData: boolean;
+}) {
+  const yields = data.map((d) => d[dataKey]).filter((v) => v != null) as number[];
+  const minY = yields.length ? Math.max(0, Math.min(...yields) - 0.3) : 0;
+  const maxY = yields.length ? Math.max(...yields) + 0.3 : 6;
+
+  return (
+    <div className="flex-1 min-w-0">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-base">{flag}</span>
+        <h4 className="text-sm font-bold text-foreground">{title}</h4>
+      </div>
+      <div className="h-52">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full text-xs font-mono text-muted-foreground uppercase tracking-widest animate-pulse">
+            Loading…
+          </div>
+        ) : noData ? (
+          <div className="flex items-center justify-center h-full text-xs font-mono text-muted-foreground text-center px-4">
+            Data unavailable
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 6, right: 12, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={color} stopOpacity={0.25} />
+                  <stop offset="95%" stopColor={color} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis
+                dataKey="maturity"
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontFamily: "monospace" }}
+                tickLine={false}
+                axisLine={{ stroke: "rgba(255,255,255,0.08)" }}
+              />
+              <YAxis
+                domain={[minY, maxY]}
+                tickFormatter={(v) => `${v.toFixed(1)}%`}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontFamily: "monospace" }}
+                tickLine={false}
+                axisLine={false}
+                width={42}
+              />
+              <Tooltip content={(props) => (
+                <CurveTooltip {...props} color={color} />
+              )} />
+              <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
+              <Area
+                type="monotone"
+                dataKey={dataKey}
+                stroke={color}
+                strokeWidth={2.5}
+                fill={`url(#${gradientId})`}
+                dot={{ fill: color, r: 4, strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: color }}
+                connectNulls
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
+      </div>
     </div>
   );
 }
@@ -40,25 +116,20 @@ export function YieldCurveChart() {
     query: { refetchInterval: 5 * 60_000 },
   });
 
-  const chartData = (data?.points ?? MATURITIES.map((m) => ({
-    maturity: m, maturityYears: 0, usYield: null, euYield: null,
-  }))).map((p) => ({
+  const points = data?.points ?? [];
+  const chartData = points.map((p) => ({
     maturity: p.maturity,
-    "US Treasury": p.usYield ?? undefined,
-    "Euro Area AAA": p.euYield ?? undefined,
+    "US Yield": p.usYield ?? undefined,
+    "EU Yield": p.euYield ?? undefined,
   }));
 
-  const hasEu = data?.points?.some((p) => p.euYield != null);
+  const hasUs = points.some((p) => p.usYield != null);
+  const hasEu = points.some((p) => p.euYield != null);
 
   return (
     <section className="mb-4 border border-zinc-500/70 rounded-xl p-4">
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h3 className="text-lg font-bold text-foreground">Yield Curve Comparison</h3>
-          <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-primary/10 text-primary border border-primary/20 tracking-widest">
-            US vs EU
-          </span>
-        </div>
+        <h3 className="text-lg font-bold text-foreground">Yield Curves</h3>
         <div className="flex items-center gap-3">
           {data?.asOf && (
             <span className="text-xs font-mono text-muted-foreground">as of {data.asOf}</span>
@@ -78,66 +149,29 @@ export function YieldCurveChart() {
         </div>
       )}
 
-      <div className="h-64">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full text-xs font-mono text-muted-foreground uppercase tracking-widest animate-pulse">
-            Fetching yield data…
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 8, right: 20, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-              <XAxis
-                dataKey="maturity"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11, fontFamily: "monospace" }}
-                tickLine={false}
-                axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
-              />
-              <YAxis
-                tickFormatter={(v) => `${v.toFixed(2)}%`}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11, fontFamily: "monospace" }}
-                tickLine={false}
-                axisLine={false}
-                width={52}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend
-                wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }}
-                formatter={(value) => (
-                  <span style={{ color: "hsl(var(--muted-foreground))" }}>{value}</span>
-                )}
-              />
-              <ReferenceLine y={0} stroke="rgba(255,255,255,0.15)" strokeDasharray="4 4" />
-              <Line
-                type="monotone"
-                dataKey="US Treasury"
-                stroke="#3b82f6"
-                strokeWidth={2}
-                dot={{ fill: "#3b82f6", r: 4, strokeWidth: 0 }}
-                activeDot={{ r: 6 }}
-                connectNulls
-              />
-              {hasEu && (
-                <Line
-                  type="monotone"
-                  dataKey="Euro Area AAA"
-                  stroke="#f59e0b"
-                  strokeWidth={2}
-                  dot={{ fill: "#f59e0b", r: 4, strokeWidth: 0 }}
-                  activeDot={{ r: 6 }}
-                  connectNulls
-                />
-              )}
-            </LineChart>
-          </ResponsiveContainer>
-        )}
+      <div className="flex gap-6">
+        <SingleCurve
+          title="US Treasury"
+          flag="🇺🇸"
+          dataKey="US Yield"
+          color="#3b82f6"
+          gradientId="usGrad"
+          data={chartData}
+          isLoading={isLoading}
+          noData={!isLoading && !hasUs}
+        />
+        <div className="w-px bg-zinc-700/50 self-stretch" />
+        <SingleCurve
+          title="Euro Area AAA"
+          flag="🇪🇺"
+          dataKey="EU Yield"
+          color="#f59e0b"
+          gradientId="euGrad"
+          data={chartData}
+          isLoading={isLoading}
+          noData={!isLoading && !hasEu}
+        />
       </div>
-
-      {!isLoading && !hasEu && data && (
-        <p className="text-[10px] font-mono text-muted-foreground mt-2 text-center">
-          Euro Area data unavailable (ECB API) — showing US curve only
-        </p>
-      )}
     </section>
   );
 }
