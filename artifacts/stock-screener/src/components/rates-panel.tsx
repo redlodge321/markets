@@ -33,11 +33,14 @@ function RateCard({ rate }: { rate: RateResult }) {
 
   const changeColor = isUp ? "text-success" : isDown ? "text-destructive" : "text-muted-foreground";
 
-  const subtitle = rate.quoteType === "yield"
-    ? "Treasury Yield"
-    : rate.quoteType === "futures"
-    ? "Futures Price"
-    : "ETF";
+  const subtitleMap: Record<string, string> = {
+    "^ZT=F": "2Y Implied Yield",
+    "^FVX": "Treasury Yield",
+    "^TNX": "Treasury Yield",
+    "^TYX": "Treasury Yield",
+    "MBB": "MBS ETF Yield",
+  };
+  const subtitle = subtitleMap[rate.symbol] ?? "Yield";
 
   return (
     <div className="flex-1 min-w-[140px] glass-panel rounded-xl p-4 border border-border/60 hover:border-border transition-colors">

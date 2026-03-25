@@ -28,6 +28,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
     financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number; totalRevenue?: number };
     calendarEvents?: { earnings?: { earningsDate?: string[] } };
     summaryProfile?: { sector?: string; industry?: string; country?: string; state?: string; city?: string };
+    summaryDetail?: { yield?: number };
     balanceSheetHistory?: {
       balanceSheetStatements?: Array<{
         totalAssets?: number;
@@ -421,20 +422,42 @@ router.post("/screener/search", async (req, res) => {
   res.json(SearchTickersResponse.parse({ results }));
 });
 
-// Fixed income / rates monitor (replicates the Python yfinance script)
-const RATE_TICKERS = [
-  { name: "2 Year UST",  symbol: "^ZT=F", type: "futures" as const },
-  { name: "5 Year UST",  symbol: "^FVX",  type: "yield"   as const },
-  { name: "10 Year UST", symbol: "^TNX",  type: "yield"   as const },
-  { name: "30 Year UST", symbol: "^TYX",  type: "yield"   as const },
-  { name: "30 YR FNMA",  symbol: "MBB",   type: "etf"     as const },
+// Fixed income / rates monitor
+// Compute implied yield from CBOT 2-Year T-Note futures price.
+// ZT contracts use a 6% notional coupon, 2-year maturity, semi-annual payments.
+function computeZTImpliedYield(price: number): number {
+  let y = 0.05;
+  for (let i = 0; i < 60; i++) {
+    const r = 1 + y / 2;
+    let P = 0, dP = 0;
+    for (let k = 1; k <= 4; k++) {
+      P += 3 / r ** k;
+      dP += (-k * 3) / (2 * r ** (k + 1));
+    }
+    P += 100 / r ** 4;
+    dP += (-4 * 100) / (2 * r ** 5);
+    const f = P - price;
+    if (Math.abs(f) < 1e-10) break;
+    y -= f / dP;
+  }
+  return y; // decimal, e.g. 0.0421 = 4.21%
+}
+
+type RateTickerType = "yield" | "futures_yield" | "etf_yield";
+const RATE_TICKERS: Array<{ name: string; symbol: string; type: RateTickerType }> = [
+  { name: "2 Year UST",  symbol: "^ZT=F", type: "futures_yield" },
+  { name: "5 Year UST",  symbol: "^FVX",  type: "yield" },
+  { name: "10 Year UST", symbol: "^TNX",  type: "yield" },
+  { name: "30 Year UST", symbol: "^TYX",  type: "yield" },
+  { name: "30 YR FNMA",  symbol: "MBB",   type: "etf_yield" },
 ];
 
 router.get("/screener/rates", async (_req, res) => {
   const rates = await Promise.all(
     RATE_TICKERS.map(async ({ name, symbol, type }) => {
       try {
-        const quote = await yf.quoteSummary(symbol, { modules: ["price"] });
+        const modules = type === "etf_yield" ? ["price", "summaryDetail"] : ["price"];
+        const quote = await yf.quoteSummary(symbol, { modules });
         const p = quote.price;
         const raw = p?.regularMarketPrice ?? 0;
         const rawChange = p?.regularMarketChange ?? 0;
@@ -442,25 +465,45 @@ router.get("/screener/rates", async (_req, res) => {
 
         let value: number;
         let displayValue: string;
-        let dayChange: number;
+        let dayChange: number | undefined;
 
         if (type === "yield") {
-          // Yahoo Treasury yield indices are scaled ×10 (e.g. 43.21 = 4.321%)
+          // Yahoo yield indices are scaled ×10 (43.21 → 4.321%)
           value = raw / 10;
           displayValue = `${value.toFixed(2)}%`;
           dayChange = rawChange / 10; // change in percentage points
-        } else if (type === "futures") {
-          value = raw;
-          displayValue = raw.toFixed(3);
-          dayChange = rawChange;
+        } else if (type === "futures_yield") {
+          // Derive implied yield from 2Y T-Note futures price
+          const yld = computeZTImpliedYield(raw);
+          const yldPrev = raw > rawChange ? computeZTImpliedYield(raw - rawChange) : yld;
+          value = yld * 100; // percentage, e.g. 4.21
+          displayValue = `${value.toFixed(2)}%`;
+          dayChange = (yld - yldPrev) * 100; // change in percentage points
         } else {
-          // ETF – show as dollar price
-          value = raw;
-          displayValue = `$${raw.toFixed(2)}`;
-          dayChange = rawChange;
+          // MBB ETF: use trailing yield from summaryDetail
+          const etfYield = quote.summaryDetail?.yield;
+          if (etfYield != null && etfYield > 0) {
+            value = etfYield * 100; // decimal → percentage
+            displayValue = `${value.toFixed(2)}%`;
+            // Approximate bps change: inverse price move / modified duration (MBB ~5.5yr)
+            dayChange = -(dayChangePercent ?? 0) * 100 / 5.5;
+          } else {
+            // Fallback: show price if yield unavailable
+            value = raw;
+            displayValue = `$${raw.toFixed(2)}`;
+            dayChange = rawChange;
+          }
         }
 
-        return { name, symbol, quoteType: type, value, displayValue, dayChange, dayChangePercent };
+        return {
+          name,
+          symbol,
+          quoteType: "yield" as const,
+          value,
+          displayValue,
+          dayChange,
+          dayChangePercent,
+        };
       } catch {
         return null;
       }
