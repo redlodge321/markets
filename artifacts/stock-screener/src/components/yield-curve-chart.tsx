@@ -121,7 +121,7 @@ export function YieldCurveChart() {
   const points = data?.points ?? [];
   const chartData = points.map((p) => ({
     maturity: p.maturity,
-    "US Yield": p.usYield != null ? p.usYield * 100 : undefined,
+    "US Yield": p.usYield ?? undefined,
     "EU Yield": p.euYield ?? undefined,
   }));
 
