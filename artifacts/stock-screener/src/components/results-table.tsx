@@ -67,7 +67,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-4 text-right">Debt/Eq</th>
               <th className="px-5 py-4 text-right">Curr Ratio</th>
               <th className="px-5 py-4 text-right">P/FCF</th>
-              <th className="px-5 py-4 text-right" title="Altman Z-Score: >2.99 Safe, 1.81–2.99 Grey, <1.81 Distress">Altman Z</th>
               <th className="px-5 py-4 text-center">Health</th>
               <th className="px-5 py-4 text-right">Next Earnings</th>
               <th className="px-5 py-4 text-right">Mkt Cap</th>
@@ -172,20 +171,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                       : "text-foreground"
                   )}>
                     {stock.pfcfRatio ? stock.pfcfRatio.toFixed(1) : '—'}
-                  </td>
-
-                  {/* Altman Z-Score */}
-                  <td className="px-5 py-4 text-right tabular-nums whitespace-nowrap">
-                    {stock.altmanZScore != null ? (() => {
-                      const z = stock.altmanZScore;
-                      const colorClass = z > 2.99 ? "text-success" : z >= 1.81 ? "text-yellow-400" : "text-destructive";
-                      const zone = z > 2.99 ? "Safe" : z >= 1.81 ? "Grey" : "Distress";
-                      return (
-                        <span className={colorClass} title={`${zone} zone (${z.toFixed(2)})`}>
-                          {z.toFixed(2)}
-                        </span>
-                      );
-                    })() : <span className="text-muted-foreground">—</span>}
                   </td>
 
                   {/* Health Badge */}
