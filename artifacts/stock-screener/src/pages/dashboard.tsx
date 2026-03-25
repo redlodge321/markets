@@ -150,7 +150,7 @@ export default function Dashboard() {
         </AnimatePresence>
 
         {/* Equity Results Table */}
-        <section className="mb-4">
+        <section className="mb-4 border border-border/30 rounded-xl p-4">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-bold text-foreground">
               {viewMode === "screener" ? "Equity Screen" : "Live Quotes"}
@@ -165,7 +165,8 @@ export default function Dashboard() {
         </section>
 
         {/* Stock Universe + Screener Criteria side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+        <div className="mb-4 border border-border/30 rounded-xl p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TickerManager 
             tickers={state.tickers}
             newTicker={state.newTicker}
@@ -191,6 +192,7 @@ export default function Dashboard() {
             }}
           />
         </div>
+        </div>
 
         {/* Commodity Watchlist */}
         {viewMode === "screener" && (
@@ -199,7 +201,7 @@ export default function Dashboard() {
 
         {/* Commodity Universe Manager */}
         {viewMode === "screener" && (
-          <div className="mb-4">
+          <div className="mb-4 border border-border/30 rounded-xl p-4">
             <CommodityTickerManager
               tickers={state.commodityTickers}
               addTicker={state.addCommodityTicker}
