@@ -100,6 +100,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TickerSearchResponse"
+  /screener/rates:
+    get:
+      operationId: getRates
+      tags: [screener]
+      summary: Get current fixed income and rates quotes
+      description: Returns current quotes for US Treasury yields and MBS proxy
+      responses:
+        "200":
+          description: Current rates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RatesResponse"
   /screener/search:
     post:
       operationId: searchTickers
@@ -410,3 +423,43 @@ components:
             $ref: "#/components/schemas/TickerSearchResult"
       required:
         - results
+    RateResult:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Human-readable instrument name (e.g. "10 Year UST")
+        symbol:
+          type: string
+          description: Yahoo Finance ticker symbol
+        quoteType:
+          type: string
+          enum: [yield, futures, etf]
+          description: "yield: treasury yield index; futures: price of futures contract; etf: ETF price"
+        value:
+          type: number
+          description: "Display value in natural units: yield in %, futures price, ETF price"
+        displayValue:
+          type: string
+          description: Pre-formatted display string (e.g. '4.321%' or '$97.45')
+        dayChange:
+          type: number
+          description: Absolute change in display units (yield pp, futures pts, ETF $)
+        dayChangePercent:
+          type: number
+          description: Percentage change from previous close as a decimal
+      required:
+        - name
+        - symbol
+        - quoteType
+        - value
+        - displayValue
+    RatesResponse:
+      type: object
+      properties:
+        rates:
+          type: array
+          items:
+            $ref: "#/components/schemas/RateResult"
+      required:
+        - rates

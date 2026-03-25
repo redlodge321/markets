@@ -224,6 +224,44 @@ export const SearchFuturesResponse = zod.object({
 });
 
 /**
+ * Returns current quotes for US Treasury yields and MBS proxy
+ * @summary Get current fixed income and rates quotes
+ */
+export const GetRatesResponse = zod.object({
+  rates: zod.array(
+    zod.object({
+      name: zod
+        .string()
+        .describe('Human-readable instrument name (e.g. \"10 Year UST\")'),
+      symbol: zod.string().describe("Yahoo Finance ticker symbol"),
+      quoteType: zod
+        .enum(["yield", "futures", "etf"])
+        .describe(
+          "yield: treasury yield index; futures: price of futures contract; etf: ETF price",
+        ),
+      value: zod
+        .number()
+        .describe(
+          "Display value in natural units: yield in %, futures price, ETF price",
+        ),
+      displayValue: zod
+        .string()
+        .describe("Pre-formatted display string (e.g. '4.321%' or '$97.45')"),
+      dayChange: zod
+        .number()
+        .optional()
+        .describe(
+          "Absolute change in display units (yield pp, futures pts, ETF $)",
+        ),
+      dayChangePercent: zod
+        .number()
+        .optional()
+        .describe("Percentage change from previous close as a decimal"),
+    }),
+  ),
+});
+
+/**
  * Returns matching ticker symbols for a given company name query
  * @summary Search for ticker symbols by company name
  */

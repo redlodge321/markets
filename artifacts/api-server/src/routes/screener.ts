@@ -14,7 +14,9 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
   ): Promise<{
     price?: {
       regularMarketPrice?: number;
+      regularMarketChange?: number;
       regularMarketChangePercent?: number;
+      regularMarketPreviousClose?: number;
       shortName?: string;
       longName?: string;
       sector?: string;
@@ -417,6 +419,55 @@ router.post("/screener/search", async (req, res) => {
       quoteType: q.quoteType,
     }));
   res.json(SearchTickersResponse.parse({ results }));
+});
+
+// Fixed income / rates monitor (replicates the Python yfinance script)
+const RATE_TICKERS = [
+  { name: "2 Year UST",  symbol: "^ZT=F", type: "futures" as const },
+  { name: "5 Year UST",  symbol: "^FVX",  type: "yield"   as const },
+  { name: "10 Year UST", symbol: "^TNX",  type: "yield"   as const },
+  { name: "30 Year UST", symbol: "^TYX",  type: "yield"   as const },
+  { name: "30 YR FNMA",  symbol: "MBB",   type: "etf"     as const },
+];
+
+router.get("/screener/rates", async (_req, res) => {
+  const rates = await Promise.all(
+    RATE_TICKERS.map(async ({ name, symbol, type }) => {
+      try {
+        const quote = await yf.quoteSummary(symbol, { modules: ["price"] });
+        const p = quote.price;
+        const raw = p?.regularMarketPrice ?? 0;
+        const rawChange = p?.regularMarketChange ?? 0;
+        const dayChangePercent = p?.regularMarketChangePercent ?? undefined;
+
+        let value: number;
+        let displayValue: string;
+        let dayChange: number;
+
+        if (type === "yield") {
+          // Yahoo Treasury yield indices are scaled ×10 (e.g. 43.21 = 4.321%)
+          value = raw / 10;
+          displayValue = `${value.toFixed(3)}%`;
+          dayChange = rawChange / 10; // change in percentage points
+        } else if (type === "futures") {
+          value = raw;
+          displayValue = raw.toFixed(3);
+          dayChange = rawChange;
+        } else {
+          // ETF – show as dollar price
+          value = raw;
+          displayValue = `$${raw.toFixed(2)}`;
+          dayChange = rawChange;
+        }
+
+        return { name, symbol, quoteType: type, value, displayValue, dayChange, dayChangePercent };
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  res.json({ rates: rates.filter(Boolean) });
 });
 
 export default router;

@@ -21,6 +21,7 @@ import type {
   HealthStatus,
   QuoteRequest,
   QuoteResponse,
+  RatesResponse,
   ScreenerRequest,
   ScreenerResponse,
   TickerSearchRequest,
@@ -459,6 +460,74 @@ export const useSearchFutures = <
 > => {
   return useMutation(getSearchFuturesMutationOptions(options));
 };
+
+/**
+ * Returns current quotes for US Treasury yields and MBS proxy
+ * @summary Get current fixed income and rates quotes
+ */
+export const getGetRatesUrl = () => {
+  return `/api/screener/rates`;
+};
+
+export const getRates = async (
+  options?: RequestInit,
+): Promise<RatesResponse> => {
+  return customFetch<RatesResponse>(getGetRatesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetRatesQueryKey = () => {
+  return [`/api/screener/rates`] as const;
+};
+
+export const getGetRatesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRates>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getRates>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetRatesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getRates>>> = ({
+    signal,
+  }) => getRates({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getRates>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetRatesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRates>>
+>;
+export type GetRatesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get current fixed income and rates quotes
+ */
+
+export function useGetRates<
+  TData = Awaited<ReturnType<typeof getRates>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getRates>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetRatesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * Returns matching ticker symbols for a given company name query

@@ -5,6 +5,7 @@ import { CriteriaControls } from "@/components/criteria-controls";
 import { ResultsTable } from "@/components/results-table";
 import { CommodityTable } from "@/components/commodity-table";
 import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
+import { RatesPanel } from "@/components/rates-panel";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -207,6 +208,8 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Rates & Fixed Income Monitor */}
+        <RatesPanel />
 
         {/* Main Actions Panel */}
         <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 shadow-xl">

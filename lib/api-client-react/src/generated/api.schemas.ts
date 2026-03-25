@@ -154,4 +154,37 @@ export interface TickerSearchResponse {
   results: TickerSearchResult[];
 }
 
+/**
+ * yield: treasury yield index; futures: price of futures contract; etf: ETF price
+ */
+export type RateResultQuoteType =
+  (typeof RateResultQuoteType)[keyof typeof RateResultQuoteType];
+
+export const RateResultQuoteType = {
+  yield: "yield",
+  futures: "futures",
+  etf: "etf",
+} as const;
+
+export interface RateResult {
+  /** Human-readable instrument name (e.g. "10 Year UST") */
+  name: string;
+  /** Yahoo Finance ticker symbol */
+  symbol: string;
+  /** yield: treasury yield index; futures: price of futures contract; etf: ETF price */
+  quoteType: RateResultQuoteType;
+  /** Display value in natural units: yield in %, futures price, ETF price */
+  value: number;
+  /** Pre-formatted display string (e.g. '4.321%' or '$97.45') */
+  displayValue: string;
+  /** Absolute change in display units (yield pp, futures pts, ETF $) */
+  dayChange?: number;
+  /** Percentage change from previous close as a decimal */
+  dayChangePercent?: number;
+}
+
+export interface RatesResponse {
+  rates: RateResult[];
+}
+
 export type GetTopByMarketCapBody = { [key: string]: unknown };
