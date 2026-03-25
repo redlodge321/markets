@@ -447,7 +447,7 @@ router.get("/screener/rates", async (_req, res) => {
         if (type === "yield") {
           // Yahoo Treasury yield indices are scaled ×10 (e.g. 43.21 = 4.321%)
           value = raw / 10;
-          displayValue = `${value.toFixed(3)}%`;
+          displayValue = `${value.toFixed(2)}%`;
           dayChange = rawChange / 10; // change in percentage points
         } else if (type === "futures") {
           value = raw;
