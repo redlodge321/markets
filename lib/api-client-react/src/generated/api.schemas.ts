@@ -183,6 +183,18 @@ export interface RateResult {
   dayChangePercent?: number;
 }
 
+export interface BenchmarkResult {
+  symbol: string;
+  name: string;
+  price: number;
+  dayChange: number;
+  dayChangePercent: number;
+}
+
+export interface BenchmarksResponse {
+  benchmarks: BenchmarkResult[];
+}
+
 export interface RatesResponse {
   rates: RateResult[];
 }

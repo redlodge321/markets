@@ -17,6 +17,7 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  BenchmarksResponse,
   GetTopByMarketCapBody,
   HealthStatus,
   QuoteRequest,
@@ -460,6 +461,82 @@ export const useSearchFutures = <
 > => {
   return useMutation(getSearchFuturesMutationOptions(options));
 };
+
+/**
+ * Returns current price and day change for S&P 500, DJIA, Nasdaq, and Russell 2000
+ * @summary Get major U.S. equity benchmark quotes
+ */
+export const getGetBenchmarksUrl = () => {
+  return `/api/screener/benchmarks`;
+};
+
+export const getBenchmarks = async (
+  options?: RequestInit,
+): Promise<BenchmarksResponse> => {
+  return customFetch<BenchmarksResponse>(getGetBenchmarksUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetBenchmarksQueryKey = () => {
+  return [`/api/screener/benchmarks`] as const;
+};
+
+export const getGetBenchmarksQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBenchmarks>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getBenchmarks>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetBenchmarksQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBenchmarks>>> = ({
+    signal,
+  }) => getBenchmarks({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBenchmarks>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetBenchmarksQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBenchmarks>>
+>;
+export type GetBenchmarksQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get major U.S. equity benchmark quotes
+ */
+
+export function useGetBenchmarks<
+  TData = Awaited<ReturnType<typeof getBenchmarks>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getBenchmarks>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetBenchmarksQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * Returns current quotes for US Treasury yields and MBS proxy

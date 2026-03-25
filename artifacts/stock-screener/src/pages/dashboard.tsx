@@ -6,6 +6,7 @@ import { ResultsTable } from "@/components/results-table";
 import { CommodityTable } from "@/components/commodity-table";
 import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
 import { RatesPanel } from "@/components/rates-panel";
+import { MarketBenchmarks } from "@/components/market-benchmarks";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -93,6 +94,8 @@ export default function Dashboard() {
             </div>
           </div>
 
+          <div className="flex flex-col items-end gap-2">
+          <MarketBenchmarks />
           <div className="flex items-center gap-3 bg-secondary/40 p-1.5 rounded-xl border border-border backdrop-blur-sm">
             <button
               onClick={handleRunScreener}
@@ -120,6 +123,7 @@ export default function Dashboard() {
               <LayoutGrid className="w-4 h-4" />
               Raw Quotes
             </button>
+          </div>
           </div>
         </header>
 

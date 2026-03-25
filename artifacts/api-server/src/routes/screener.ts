@@ -422,6 +422,35 @@ router.post("/screener/search", async (req, res) => {
   res.json(SearchTickersResponse.parse({ results }));
 });
 
+// Major U.S. equity benchmark quotes
+const BENCHMARK_TICKERS = [
+  { symbol: "^GSPC", name: "S&P 500" },
+  { symbol: "^DJI",  name: "DJIA" },
+  { symbol: "^IXIC", name: "NASDAQ" },
+  { symbol: "^RUT",  name: "Russell 2000" },
+];
+
+router.get("/screener/benchmarks", async (_req, res) => {
+  const benchmarks = await Promise.all(
+    BENCHMARK_TICKERS.map(async ({ symbol, name }) => {
+      try {
+        const quote = await yf.quoteSummary(symbol, { modules: ["price"] });
+        const p = quote.price;
+        return {
+          symbol,
+          name,
+          price: p?.regularMarketPrice ?? 0,
+          dayChange: p?.regularMarketChange ?? 0,
+          dayChangePercent: p?.regularMarketChangePercent ?? 0,
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+  res.json({ benchmarks: benchmarks.filter(Boolean) });
+});
+
 // Fixed income / rates monitor
 // Compute implied yield from CBOT 2-Year T-Note futures price.
 // ZT contracts use a 6% notional coupon, 2-year maturity, semi-annual payments.

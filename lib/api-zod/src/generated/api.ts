@@ -224,6 +224,22 @@ export const SearchFuturesResponse = zod.object({
 });
 
 /**
+ * Returns current price and day change for S&P 500, DJIA, Nasdaq, and Russell 2000
+ * @summary Get major U.S. equity benchmark quotes
+ */
+export const GetBenchmarksResponse = zod.object({
+  benchmarks: zod.array(
+    zod.object({
+      symbol: zod.string(),
+      name: zod.string(),
+      price: zod.number(),
+      dayChange: zod.number(),
+      dayChangePercent: zod.number(),
+    }),
+  ),
+});
+
+/**
  * Returns current quotes for US Treasury yields and MBS proxy
  * @summary Get current fixed income and rates quotes
  */

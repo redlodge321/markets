@@ -100,6 +100,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TickerSearchResponse"
+  /screener/benchmarks:
+    get:
+      operationId: getBenchmarks
+      tags: [screener]
+      summary: Get major U.S. equity benchmark quotes
+      description: Returns current price and day change for S&P 500, DJIA, Nasdaq, and Russell 2000
+      responses:
+        "200":
+          description: Benchmark quotes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BenchmarksResponse"
   /screener/rates:
     get:
       operationId: getRates
@@ -454,6 +467,34 @@ components:
         - quoteType
         - value
         - displayValue
+    BenchmarkResult:
+      type: object
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        dayChange:
+          type: number
+        dayChangePercent:
+          type: number
+      required:
+        - symbol
+        - name
+        - price
+        - dayChange
+        - dayChangePercent
+    BenchmarksResponse:
+      type: object
+      properties:
+        benchmarks:
+          type: array
+          items:
+            $ref: "#/components/schemas/BenchmarkResult"
+      required:
+        - benchmarks
     RatesResponse:
       type: object
       properties:
