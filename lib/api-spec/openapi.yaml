@@ -100,33 +100,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TickerSearchResponse"
-  /screener/regression:
-    get:
-      operationId: getRegressionChart
-      tags: [screener]
-      summary: OLS regression on historical close prices
-      description: Fetches daily close prices for a symbol over a given period and returns actual prices alongside the OLS linear regression trend line
-      parameters:
-        - in: query
-          name: symbol
-          required: true
-          schema:
-            type: string
-          description: Ticker symbol e.g. AAPL
-        - in: query
-          name: period
-          required: true
-          schema:
-            type: string
-            enum: [1y, 5y, 10y]
-          description: Lookback period
-      responses:
-        "200":
-          description: Regression chart data
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RegressionResponse"
   /screener/yield-curve:
     get:
       operationId: getYieldCurve
@@ -562,56 +535,6 @@ components:
             $ref: "#/components/schemas/BenchmarkResult"
       required:
         - benchmarks
-    RegressionPoint:
-      type: object
-      properties:
-        date:
-          type: string
-        close:
-          type: number
-        fitted:
-          type: number
-      required:
-        - date
-        - close
-        - fitted
-    RegressionStats:
-      type: object
-      properties:
-        slope:
-          type: number
-          description: Daily price change implied by the regression
-        intercept:
-          type: number
-        r2:
-          type: number
-          description: R-squared goodness of fit (0–1)
-        annualisedReturn:
-          type: number
-          description: Annualised % return from the regression slope
-      required:
-        - slope
-        - intercept
-        - r2
-        - annualisedReturn
-    RegressionResponse:
-      type: object
-      properties:
-        symbol:
-          type: string
-        period:
-          type: string
-        points:
-          type: array
-          items:
-            $ref: "#/components/schemas/RegressionPoint"
-        stats:
-          $ref: "#/components/schemas/RegressionStats"
-      required:
-        - symbol
-        - period
-        - points
-        - stats
     RatesResponse:
       type: object
       properties:

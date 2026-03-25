@@ -224,37 +224,6 @@ export const SearchFuturesResponse = zod.object({
 });
 
 /**
- * Fetches daily close prices for a symbol over a given period and returns actual prices alongside the OLS linear regression trend line
- * @summary OLS regression on historical close prices
- */
-export const GetRegressionChartQueryParams = zod.object({
-  symbol: zod.coerce.string().describe("Ticker symbol e.g. AAPL"),
-  period: zod.enum(["1y", "5y", "10y"]).describe("Lookback period"),
-});
-
-export const GetRegressionChartResponse = zod.object({
-  symbol: zod.string(),
-  period: zod.string(),
-  points: zod.array(
-    zod.object({
-      date: zod.string(),
-      close: zod.number(),
-      fitted: zod.number(),
-    }),
-  ),
-  stats: zod.object({
-    slope: zod
-      .number()
-      .describe("Daily price change implied by the regression"),
-    intercept: zod.number(),
-    r2: zod.number().describe("R-squared goodness of fit (0–1)"),
-    annualisedReturn: zod
-      .number()
-      .describe("Annualised % return from the regression slope"),
-  }),
-});
-
-/**
  * Returns spot yields for 3M, 2Y, 5Y, 10Y, and 30Y maturities for both US Treasuries and Euro Area AAA bonds
  * @summary Get US vs Euro Area yield curve data
  */
