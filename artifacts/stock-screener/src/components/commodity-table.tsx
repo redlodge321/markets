@@ -49,7 +49,6 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                 <th className="px-5 py-1.5 text-right">Price</th>
                 <th className="px-5 py-1.5 text-right">Day %</th>
                 <th className="px-5 py-1.5 text-right">6M %</th>
-                <th className="px-5 py-1.5 text-right">Prev Close</th>
               </tr>
             </thead>
             <tbody>
@@ -114,10 +113,6 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                           : "—"}
                       </td>
 
-                      {/* Prev Close */}
-                      <td className="px-5 py-1.5 text-right tabular-nums text-muted-foreground">
-                        {c.prevClose != null ? formatCurrency(c.prevClose) : "—"}
-                      </td>
                     </motion.tr>
                   );
                 })
