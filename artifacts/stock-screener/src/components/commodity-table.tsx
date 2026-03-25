@@ -44,12 +44,12 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-                <th className="px-5 py-4 text-left">Commodity</th>
-                <th className="px-5 py-4 text-left">Contract</th>
-                <th className="px-5 py-4 text-right">Price</th>
-                <th className="px-5 py-4 text-right">Day %</th>
-                <th className="px-5 py-4 text-right">6M %</th>
-                <th className="px-5 py-4 text-right">Prev Close</th>
+                <th className="px-5 py-1.5 text-left">Commodity</th>
+                <th className="px-5 py-1.5 text-left">Contract</th>
+                <th className="px-5 py-1.5 text-right">Price</th>
+                <th className="px-5 py-1.5 text-right">Day %</th>
+                <th className="px-5 py-1.5 text-right">6M %</th>
+                <th className="px-5 py-1.5 text-right">Prev Close</th>
               </tr>
             </thead>
             <tbody>
@@ -74,25 +74,25 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                       )}
                     >
                       {/* Label */}
-                      <td className={cn("px-5 py-4 font-semibold", isFwd ? "pl-10 text-amber-400/60 text-xs" : "text-amber-400")}>
+                      <td className={cn("px-5 py-1.5 font-semibold", isFwd ? "pl-10 text-amber-400/60 text-xs" : "text-amber-400")}>
                         {isFwd
                           ? `↳ ${COMMODITY_LABELS[c.baseGroup ?? ""] ?? c.baseGroup} 3M Fwd`
                           : COMMODITY_LABELS[c.ticker] ?? c.ticker}
                       </td>
 
                       {/* Contract name from Yahoo */}
-                      <td className="px-5 py-4 font-mono text-xs text-muted-foreground">
+                      <td className="px-5 py-1.5 font-mono text-xs text-muted-foreground">
                         {c.name}
                       </td>
 
                       {/* Price */}
-                      <td className={cn("px-5 py-4 text-right tabular-nums", isFwd ? "text-muted-foreground" : "font-semibold text-foreground")}>
+                      <td className={cn("px-5 py-1.5 text-right tabular-nums", isFwd ? "text-muted-foreground" : "font-semibold text-foreground")}>
                         {formatCurrency(c.price)}
                       </td>
 
                       {/* Day % */}
                       <td className={cn(
-                        "px-5 py-4 text-right tabular-nums font-medium",
+                        "px-5 py-1.5 text-right tabular-nums font-medium",
                         c.dayChangePercent == null ? "text-muted-foreground"
                           : c.dayChangePercent > 0 ? "text-success"
                           : c.dayChangePercent < 0 ? "text-destructive"
@@ -103,7 +103,7 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
 
                       {/* 6M % */}
                       <td className={cn(
-                        "px-5 py-4 text-right tabular-nums font-medium",
+                        "px-5 py-1.5 text-right tabular-nums font-medium",
                         c.sixMonthChangePercent == null ? "text-muted-foreground"
                           : c.sixMonthChangePercent > 0 ? "text-success"
                           : c.sixMonthChangePercent < 0 ? "text-destructive"
@@ -115,7 +115,7 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                       </td>
 
                       {/* Prev Close */}
-                      <td className="px-5 py-4 text-right tabular-nums text-muted-foreground">
+                      <td className="px-5 py-1.5 text-right tabular-nums text-muted-foreground">
                         {c.prevClose != null ? formatCurrency(c.prevClose) : "—"}
                       </td>
                     </motion.tr>
