@@ -43,7 +43,7 @@ function RateCard({ rate }: { rate: RateResult }) {
   const subtitle = subtitleMap[rate.symbol] ?? "Yield";
 
   return (
-    <div className="flex-1 min-w-[140px] glass-panel rounded-xl p-4 border border-border/60 hover:border-border transition-colors">
+    <div className="flex-1 min-w-[140px] glass-panel rounded-xl p-4 border border-zinc-500/70 hover:border-border transition-colors">
       <div className="flex flex-col gap-2">
         <div className="flex items-start justify-between gap-1">
           <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground leading-tight">
@@ -90,7 +90,7 @@ export function RatesPanel() {
   });
 
   return (
-    <section className="mb-4 border border-border/60 rounded-xl p-4">
+    <section className="mb-4 border border-zinc-500/70 rounded-xl p-4">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">Rates &amp; Fixed Income</h3>
         <button
@@ -104,7 +104,7 @@ export function RatesPanel() {
       </div>
 
       {isLoading ? (
-        <div className="glass-panel rounded-xl p-6 flex items-center justify-center gap-3 border border-border/60">
+        <div className="glass-panel rounded-xl p-6 flex items-center justify-center gap-3 border border-zinc-500/70">
           <RefreshCw className="w-4 h-4 text-muted-foreground animate-spin" />
           <span className="text-sm text-muted-foreground font-mono">Fetching rates...</span>
         </div>
