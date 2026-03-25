@@ -128,7 +128,7 @@ export function CommodityTickerManager({ tickers, addTicker, removeTicker }: Com
   }, []);
 
   return (
-    <div className="glass-panel rounded-2xl p-6 flex flex-col gap-6 border border-amber-500/10">
+    <div className="glass-panel rounded-2xl p-6 flex flex-col gap-3 border border-amber-500/10">
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
           <Flame className="w-5 h-5 text-amber-400" />
@@ -139,7 +139,7 @@ export function CommodityTickerManager({ tickers, addTicker, removeTicker }: Com
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <form onSubmit={handleSubmit} className="flex gap-2" autoComplete="off">
           <div className="relative flex-1">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -176,7 +176,7 @@ export function CommodityTickerManager({ tickers, addTicker, removeTicker }: Com
                       type="button"
                       onMouseEnter={() => setHighlightedIdx(idx)}
                       onMouseDown={(e) => { e.preventDefault(); selectSuggestion(r); }}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors ${
+                      className={`w-full flex items-center justify-between px-4 py-1.5 text-left transition-colors ${
                         idx === highlightedIdx ? "bg-amber-500/10" : "hover:bg-secondary/50"
                       } ${idx > 0 ? "border-t border-border/40" : ""}`}
                     >
