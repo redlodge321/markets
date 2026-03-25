@@ -87,7 +87,7 @@ export default function Dashboard() {
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
-                Agentic Screener <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-primary text-primary-foreground tracking-widest shadow-[0_0_10px_rgba(37,99,235,0.4)]">Pro</span>
+                MVC Market Screen <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-primary text-primary-foreground tracking-widest shadow-[0_0_10px_rgba(37,99,235,0.4)]">Pro</span>
               </h1>
               <p className="text-muted-foreground text-sm mt-1">Autonomous financial filtering terminal.</p>
             </div>
