@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { formatCurrency, formatMarketCap, cn } from "@/lib/utils";
 import type { ScreenerResult } from "@workspace/api-client-react/src/generated/api.schemas";
-import { Minus, ShieldCheck, ShieldAlert, CalendarClock } from "lucide-react";
+import { Minus, CalendarClock } from "lucide-react";
 
 interface ResultsTableProps {
   results: ScreenerResult[];
@@ -67,7 +67,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-1.5 text-right">Curr Ratio</th>
               <th className="px-5 py-1.5 text-right">P/FCF</th>
               <th className="px-5 py-1.5 text-right">Mkt Cap</th>
-              <th className="px-5 py-1.5 text-center">Health</th>
               <th className="px-5 py-1.5 text-right">Next Earnings</th>
             </tr>
           </thead>
@@ -171,19 +170,6 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
 
                   <td className="px-5 py-1.5 text-right text-foreground">
                     {formatMarketCap(stock.marketCap)}
-                  </td>
-
-                  {/* Health Badge */}
-                  <td className="px-5 py-1.5 text-center">
-                    {isStrongBalance ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
-                        <ShieldCheck className="w-3 h-3" /> Strong
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-muted/30 text-muted-foreground border border-border/50">
-                        <ShieldAlert className="w-3 h-3" /> Watch
-                      </span>
-                    )}
                   </td>
 
                   {/* Next Earnings */}
