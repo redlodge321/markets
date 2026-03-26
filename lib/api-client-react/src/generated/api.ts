@@ -18,13 +18,11 @@ import type {
 
 import type {
   BenchmarksResponse,
-  GetRegressionChartParams,
   GetTopByMarketCapBody,
   HealthStatus,
   QuoteRequest,
   QuoteResponse,
   RatesResponse,
-  RegressionResponse,
   ScreenerRequest,
   ScreenerResponse,
   TickerSearchRequest,
@@ -464,104 +462,6 @@ export const useSearchFutures = <
 > => {
   return useMutation(getSearchFuturesMutationOptions(options));
 };
-
-/**
- * Fetches daily close prices for a symbol over a given period and returns actual prices alongside the OLS linear regression trend line
- * @summary OLS regression on historical close prices
- */
-export const getGetRegressionChartUrl = (params: GetRegressionChartParams) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/api/screener/regression?${stringifiedParams}`
-    : `/api/screener/regression`;
-};
-
-export const getRegressionChart = async (
-  params: GetRegressionChartParams,
-  options?: RequestInit,
-): Promise<RegressionResponse> => {
-  return customFetch<RegressionResponse>(getGetRegressionChartUrl(params), {
-    ...options,
-    method: "GET",
-  });
-};
-
-export const getGetRegressionChartQueryKey = (
-  params?: GetRegressionChartParams,
-) => {
-  return [`/api/screener/regression`, ...(params ? [params] : [])] as const;
-};
-
-export const getGetRegressionChartQueryOptions = <
-  TData = Awaited<ReturnType<typeof getRegressionChart>>,
-  TError = ErrorType<unknown>,
->(
-  params: GetRegressionChartParams,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof getRegressionChart>>,
-      TError,
-      TData
-    >;
-    request?: SecondParameter<typeof customFetch>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ?? getGetRegressionChartQueryKey(params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getRegressionChart>>
-  > = ({ signal }) => getRegressionChart(params, { signal, ...requestOptions });
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getRegressionChart>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey };
-};
-
-export type GetRegressionChartQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getRegressionChart>>
->;
-export type GetRegressionChartQueryError = ErrorType<unknown>;
-
-/**
- * @summary OLS regression on historical close prices
- */
-
-export function useGetRegressionChart<
-  TData = Awaited<ReturnType<typeof getRegressionChart>>,
-  TError = ErrorType<unknown>,
->(
-  params: GetRegressionChartParams,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof getRegressionChart>>,
-      TError,
-      TData
-    >;
-    request?: SecondParameter<typeof customFetch>;
-  },
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getGetRegressionChartQueryOptions(params, options);
-
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey;
-  };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
 
 /**
  * Returns spot yields for 3M, 2Y, 5Y, 10Y, and 30Y maturities for both US Treasuries and Euro Area AAA bonds

@@ -9,7 +9,6 @@ import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
 import { MarketBenchmarks } from "@/components/market-benchmarks";
 import { YieldCurveChart } from "@/components/yield-curve-chart";
 import { TradingViewChart } from "@/components/tradingview-chart";
-import { RegressionChart } from "@/components/regression-chart";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -246,9 +245,6 @@ export default function Dashboard() {
             )}
           </div>
         </div>
-
-        {/* Regression Analysis */}
-        <RegressionChart />
 
       </div>
     </div>
