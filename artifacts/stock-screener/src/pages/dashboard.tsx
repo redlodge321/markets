@@ -29,6 +29,7 @@ export default function Dashboard() {
       maxDebtToEquity: state.maxDebtToEquity,
       minCurrentRatio: state.minCurrentRatio,
       maxMarketCap: state.maxMarketCap,
+      minMarketCap: state.minMarketCap,
     });
     screenerMutation.mutate({
       data: {
@@ -37,6 +38,7 @@ export default function Dashboard() {
         maxDebtToEquity: state.maxDebtToEquity,
         minCurrentRatio: state.minCurrentRatio,
         maxMarketCap: state.maxMarketCap,
+        minMarketCap: state.minMarketCap,
       },
     });
   };
@@ -190,11 +192,14 @@ export default function Dashboard() {
             setMinCurrentRatio={state.setMinCurrentRatio}
             maxMarketCap={state.maxMarketCap}
             setMaxMarketCap={state.setMaxMarketCap}
+            minMarketCap={state.minMarketCap}
+            setMinMarketCap={state.setMinMarketCap}
             onClear={() => {
               state.setMaxPB(20);
               state.setMaxDebtToEquity(1000);
               state.setMinCurrentRatio(0.5);
               state.setMaxMarketCap(2000000);
+              state.setMinMarketCap(0);
             }}
           />
         </div>

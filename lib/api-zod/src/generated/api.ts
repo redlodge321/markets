@@ -41,6 +41,10 @@ export const RunScreenerBody = zod.object({
     .number()
     .optional()
     .describe("Maximum market cap in millions USD (default 2000000)"),
+  minMarketCap: zod
+    .number()
+    .optional()
+    .describe("Minimum market cap in millions USD (default 0 = no filter)"),
 });
 
 export const RunScreenerResponse = zod.object({

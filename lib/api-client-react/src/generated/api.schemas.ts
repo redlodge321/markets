@@ -22,6 +22,8 @@ export interface ScreenerRequest {
   minCurrentRatio?: number;
   /** Maximum market cap in millions USD (default 2000000) */
   maxMarketCap?: number;
+  /** Minimum market cap in millions USD (default 0 = no filter) */
+  minMarketCap?: number;
 }
 
 export interface ScreenerResult {

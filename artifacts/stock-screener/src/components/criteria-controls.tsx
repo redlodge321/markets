@@ -10,6 +10,8 @@ interface CriteriaControlsProps {
   setMinCurrentRatio: (val: number) => void;
   maxMarketCap: number;
   setMaxMarketCap: (val: number) => void;
+  minMarketCap: number;
+  setMinMarketCap: (val: number) => void;
   onClear: () => void;
 }
 
@@ -84,6 +86,8 @@ export function CriteriaControls({
   setMinCurrentRatio,
   maxMarketCap,
   setMaxMarketCap,
+  minMarketCap,
+  setMinMarketCap,
   onClear,
 }: CriteriaControlsProps) {
   return (
@@ -142,6 +146,18 @@ export function CriteriaControls({
           onChange={setMinCurrentRatio}
           minLabel="0.5x"
           maxLabel="5x"
+        />
+        <Slider
+          label="Min Market Cap"
+          tooltip="Minimum market capitalization. Raise this to filter out micro or small caps. At $0 the filter is off."
+          value={minMarketCap}
+          displayValue={minMarketCap <= 0 ? "Any" : formatMarketCapLabel(minMarketCap)}
+          min={0}
+          max={2000000}
+          step={10000}
+          onChange={setMinMarketCap}
+          minLabel="Any"
+          maxLabel="$2T"
         />
         <Slider
           label="Max Market Cap"

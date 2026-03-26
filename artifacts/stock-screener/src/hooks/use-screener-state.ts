@@ -16,6 +16,7 @@ interface SavedState {
   maxDebtToEquity?: number;
   minCurrentRatio?: number;
   maxMarketCap?: number;
+  minMarketCap?: number;
 }
 
 function loadSaved(): SavedState {
@@ -47,6 +48,9 @@ export function useScreenerState() {
   const [maxMarketCap, setMaxMarketCap] = useState<number>(() => {
     const s = loadSaved(); return s.maxMarketCap ?? 2000000;
   });
+  const [minMarketCap, setMinMarketCap] = useState<number>(() => {
+    const s = loadSaved(); return s.minMarketCap ?? 0;
+  });
   const [newTicker, setNewTicker] = useState("");
 
   const saveLastRun = (snapshot: {
@@ -56,6 +60,7 @@ export function useScreenerState() {
     maxDebtToEquity: number;
     minCurrentRatio: number;
     maxMarketCap: number;
+    minMarketCap: number;
   }) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
@@ -100,6 +105,8 @@ export function useScreenerState() {
     setMinCurrentRatio,
     maxMarketCap,
     setMaxMarketCap,
+    minMarketCap,
+    setMinMarketCap,
     newTicker,
     setNewTicker,
     addTicker,

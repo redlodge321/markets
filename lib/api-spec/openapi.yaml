@@ -190,6 +190,9 @@ components:
         maxMarketCap:
           type: number
           description: Maximum market cap in millions USD (default 2000000)
+        minMarketCap:
+          type: number
+          description: Minimum market cap in millions USD (default 0 = no filter)
       required:
         - tickers
     ScreenerResult:
