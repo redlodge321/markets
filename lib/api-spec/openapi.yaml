@@ -193,6 +193,9 @@ components:
         minMarketCap:
           type: number
           description: Minimum market cap in millions USD (default 0 = no filter)
+        minDividendYield:
+          type: number
+          description: Minimum trailing annual dividend yield as a decimal (e.g. 0.02 = 2%). Default 0 = no filter.
       required:
         - tickers
     ScreenerResult:

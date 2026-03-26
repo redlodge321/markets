@@ -45,6 +45,12 @@ export const RunScreenerBody = zod.object({
     .number()
     .optional()
     .describe("Minimum market cap in millions USD (default 0 = no filter)"),
+  minDividendYield: zod
+    .number()
+    .optional()
+    .describe(
+      "Minimum trailing annual dividend yield as a decimal (e.g. 0.02 = 2%). Default 0 = no filter.",
+    ),
 });
 
 export const RunScreenerResponse = zod.object({

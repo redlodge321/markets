@@ -30,6 +30,7 @@ export default function Dashboard() {
       minCurrentRatio: state.minCurrentRatio,
       maxMarketCap: state.maxMarketCap,
       minMarketCap: state.minMarketCap,
+      minDividendYield: state.minDividendYield,
     });
     screenerMutation.mutate({
       data: {
@@ -39,6 +40,7 @@ export default function Dashboard() {
         minCurrentRatio: state.minCurrentRatio,
         maxMarketCap: state.maxMarketCap,
         minMarketCap: state.minMarketCap,
+        minDividendYield: state.minDividendYield,
       },
     });
   };
@@ -194,12 +196,15 @@ export default function Dashboard() {
             setMaxMarketCap={state.setMaxMarketCap}
             minMarketCap={state.minMarketCap}
             setMinMarketCap={state.setMinMarketCap}
+            minDividendYield={state.minDividendYield}
+            setMinDividendYield={state.setMinDividendYield}
             onClear={() => {
               state.setMaxPB(20);
               state.setMaxDebtToEquity(1000);
               state.setMinCurrentRatio(0.5);
               state.setMaxMarketCap(2000000);
               state.setMinMarketCap(0);
+              state.setMinDividendYield(0);
             }}
           />
         </div>

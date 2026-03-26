@@ -17,6 +17,7 @@ interface SavedState {
   minCurrentRatio?: number;
   maxMarketCap?: number;
   minMarketCap?: number;
+  minDividendYield?: number;
 }
 
 function loadSaved(): SavedState {
@@ -51,6 +52,9 @@ export function useScreenerState() {
   const [minMarketCap, setMinMarketCap] = useState<number>(() => {
     const s = loadSaved(); return s.minMarketCap ?? 0;
   });
+  const [minDividendYield, setMinDividendYield] = useState<number>(() => {
+    const s = loadSaved(); return s.minDividendYield ?? 0;
+  });
   const [newTicker, setNewTicker] = useState("");
 
   const saveLastRun = (snapshot: {
@@ -61,6 +65,7 @@ export function useScreenerState() {
     minCurrentRatio: number;
     maxMarketCap: number;
     minMarketCap: number;
+    minDividendYield: number;
   }) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
@@ -107,6 +112,8 @@ export function useScreenerState() {
     setMaxMarketCap,
     minMarketCap,
     setMinMarketCap,
+    minDividendYield,
+    setMinDividendYield,
     newTicker,
     setNewTicker,
     addTicker,

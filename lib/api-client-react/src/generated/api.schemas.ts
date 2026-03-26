@@ -24,6 +24,8 @@ export interface ScreenerRequest {
   maxMarketCap?: number;
   /** Minimum market cap in millions USD (default 0 = no filter) */
   minMarketCap?: number;
+  /** Minimum trailing annual dividend yield as a decimal (e.g. 0.02 = 2%). Default 0 = no filter. */
+  minDividendYield?: number;
 }
 
 export interface ScreenerResult {

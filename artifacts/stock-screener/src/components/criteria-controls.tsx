@@ -12,6 +12,8 @@ interface CriteriaControlsProps {
   setMaxMarketCap: (val: number) => void;
   minMarketCap: number;
   setMinMarketCap: (val: number) => void;
+  minDividendYield: number;
+  setMinDividendYield: (val: number) => void;
   onClear: () => void;
 }
 
@@ -88,6 +90,8 @@ export function CriteriaControls({
   setMaxMarketCap,
   minMarketCap,
   setMinMarketCap,
+  minDividendYield,
+  setMinDividendYield,
   onClear,
 }: CriteriaControlsProps) {
   return (
@@ -170,6 +174,18 @@ export function CriteriaControls({
           onChange={setMaxMarketCap}
           minLabel="$0"
           maxLabel="Any"
+        />
+        <Slider
+          label="Min Dividend Yield"
+          tooltip="Trailing annual dividend yield. Set above 0% to filter for dividend-paying stocks only. At 0% the filter is off."
+          value={minDividendYield * 100}
+          displayValue={minDividendYield <= 0 ? "Any" : `${(minDividendYield * 100).toFixed(2)}%`}
+          min={0}
+          max={10}
+          step={0.25}
+          onChange={(v) => setMinDividendYield(v / 100)}
+          minLabel="Any"
+          maxLabel="10%"
         />
       </div>
     </div>
