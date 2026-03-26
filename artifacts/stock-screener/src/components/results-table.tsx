@@ -62,6 +62,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
               <th className="px-5 py-1.5 text-right">Price</th>
               <th className="px-5 py-1.5 text-right">Day %</th>
               <th className="px-5 py-1.5 text-right">6M %</th>
+              <th className="px-5 py-1.5 text-right">Div Yield</th>
               <th className="px-5 py-1.5 text-right">P/B</th>
               <th className="px-5 py-1.5 text-right">Debt/Eq</th>
               <th className="px-5 py-1.5 text-right">Curr Ratio</th>
@@ -121,6 +122,16 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                   )}>
                     {stock.sixMonthChangePercent != null
                       ? `${stock.sixMonthChangePercent >= 0 ? "+" : ""}${(stock.sixMonthChangePercent * 100).toFixed(1)}%`
+                      : "—"}
+                  </td>
+
+                  {/* Dividend Yield */}
+                  <td className={cn(
+                    "px-5 py-1.5 text-right tabular-nums font-medium",
+                    stock.dividendYield == null || stock.dividendYield === 0 ? "text-muted-foreground" : "text-success"
+                  )}>
+                    {stock.dividendYield != null && stock.dividendYield > 0
+                      ? `${(stock.dividendYield * 100).toFixed(2)}%`
                       : "—"}
                   </td>
 

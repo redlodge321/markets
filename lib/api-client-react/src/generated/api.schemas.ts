@@ -50,6 +50,8 @@ export interface ScreenerResult {
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
+  /** Trailing annual dividend yield as a decimal (e.g. 0.025 = 2.5%) */
+  dividendYield?: number;
   /** Altman Z-score: >2.99 safe zone, 1.81-2.99 grey zone, <1.81 distress zone */
   altmanZScore?: number;
   country?: string;

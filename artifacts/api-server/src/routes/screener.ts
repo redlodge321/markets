@@ -28,7 +28,7 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
     financialData?: { profitMargins?: number; debtToEquity?: number; currentRatio?: number; freeCashflow?: number; totalRevenue?: number };
     calendarEvents?: { earnings?: { earningsDate?: string[] } };
     summaryProfile?: { sector?: string; industry?: string; country?: string; state?: string; city?: string };
-    summaryDetail?: { yield?: number };
+    summaryDetail?: { yield?: number; dividendYield?: number; trailingAnnualDividendYield?: number };
     balanceSheetHistory?: {
       balanceSheetStatements?: Array<{
         totalAssets?: number;
@@ -167,6 +167,7 @@ interface StockData {
   marketCap?: number;
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
+  dividendYield?: number;
   altmanZScore?: number;
   country?: string;
   state?: string;
@@ -180,7 +181,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
 
     const [quote, chartData] = await Promise.all([
       yf.quoteSummary(ticker, {
-        modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents", "summaryProfile", "balanceSheetHistory", "incomeStatementHistory"],
+        modules: ["price", "defaultKeyStatistics", "financialData", "calendarEvents", "summaryProfile", "summaryDetail", "balanceSheetHistory", "incomeStatementHistory"],
       }),
       yf.chart(ticker, { period1: sixMonthsAgo, period2: new Date(), interval: '1mo' }).catch(() => null),
     ]);
@@ -206,6 +207,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
     const debtToEquity = financial?.debtToEquity ?? null;
     const currentRatio = financial?.currentRatio ?? null;
     const freeCashflow = financial?.freeCashflow ?? null;
+    const dividendYield = quote.summaryDetail?.trailingAnnualDividendYield ?? quote.summaryDetail?.dividendYield ?? undefined;
     const mcapRaw = price_data?.marketCap ?? null;
     const pfcfRatio = freeCashflow && freeCashflow > 0 && mcapRaw ? mcapRaw / freeCashflow : null;
     const earningsDates = quote.calendarEvents?.earnings?.earningsDate;
@@ -275,6 +277,7 @@ async function fetchStockData(ticker: string): Promise<StockData | { error: stri
       marketCap,
       fiftyTwoWeekHigh,
       fiftyTwoWeekLow,
+      dividendYield,
       altmanZScore,
     };
   } catch (err: unknown) {

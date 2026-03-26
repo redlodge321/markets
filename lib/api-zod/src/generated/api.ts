@@ -89,6 +89,12 @@ export const RunScreenerResponse = zod.object({
       marketCap: zod.number().optional(),
       fiftyTwoWeekHigh: zod.number().optional(),
       fiftyTwoWeekLow: zod.number().optional(),
+      dividendYield: zod
+        .number()
+        .optional()
+        .describe(
+          "Trailing annual dividend yield as a decimal (e.g. 0.025 = 2.5%)",
+        ),
       altmanZScore: zod
         .number()
         .optional()
