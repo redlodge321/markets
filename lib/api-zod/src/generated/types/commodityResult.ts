@@ -14,6 +14,8 @@ export interface CommodityResult {
   dayChangePercent?: number;
   /** 6-month price change as a decimal */
   sixMonthChangePercent?: number;
+  /** Volume change vs. 1 week ago as a decimal (e.g. 0.15 = +15%) */
+  volumeChangePercent?: number;
   prevClose?: number;
   /** True if this is the 3rd-month forward contract row */
   isForwardContract?: boolean;

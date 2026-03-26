@@ -49,12 +49,13 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                 <th className="px-5 py-1.5 text-right">Price</th>
                 <th className="px-5 py-1.5 text-right">Day %</th>
                 <th className="px-5 py-1.5 text-right">6M %</th>
+                <th className="px-5 py-1.5 text-right">Vol Chg (1W)</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-muted-foreground font-mono text-xs tracking-widest uppercase">
+                  <td colSpan={6} className="px-5 py-12 text-center text-muted-foreground font-mono text-xs tracking-widest uppercase">
                     Fetching commodity data...
                   </td>
                 </tr>
@@ -110,6 +111,19 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                       )}>
                         {c.sixMonthChangePercent != null
                           ? `${c.sixMonthChangePercent >= 0 ? "+" : ""}${(c.sixMonthChangePercent * 100).toFixed(1)}%`
+                          : "—"}
+                      </td>
+
+                      {/* Vol Chg 1W */}
+                      <td className={cn(
+                        "px-5 py-1.5 text-right tabular-nums font-medium",
+                        c.volumeChangePercent == null ? "text-muted-foreground"
+                          : c.volumeChangePercent > 0 ? "text-success"
+                          : c.volumeChangePercent < 0 ? "text-destructive"
+                          : "text-muted-foreground"
+                      )}>
+                        {c.volumeChangePercent != null
+                          ? `${c.volumeChangePercent >= 0 ? "+" : ""}${(c.volumeChangePercent * 100).toFixed(1)}%`
                           : "—"}
                       </td>
 

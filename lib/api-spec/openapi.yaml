@@ -272,6 +272,9 @@ components:
         sixMonthChangePercent:
           type: number
           description: 6-month price change as a decimal
+        volumeChangePercent:
+          type: number
+          description: Volume change vs. 1 week ago as a decimal (e.g. 0.15 = +15%)
         prevClose:
           type: number
         isForwardContract:

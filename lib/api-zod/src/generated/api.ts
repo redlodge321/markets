@@ -113,6 +113,12 @@ export const RunScreenerResponse = zod.object({
         .number()
         .optional()
         .describe("6-month price change as a decimal"),
+      volumeChangePercent: zod
+        .number()
+        .optional()
+        .describe(
+          "Volume change vs. 1 week ago as a decimal (e.g. 0.15 = +15%)",
+        ),
       prevClose: zod.number().optional(),
       isForwardContract: zod
         .boolean()

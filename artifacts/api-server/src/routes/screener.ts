@@ -68,6 +68,7 @@ interface CommodityData {
   price: number;
   dayChangePercent?: number;
   sixMonthChangePercent?: number;
+  volumeChangePercent?: number;
   prevClose?: number;
   isForwardContract?: boolean;
   baseGroup?: string;
@@ -98,9 +99,13 @@ async function fetchCommodityData(ticker: string): Promise<CommodityData | { err
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    const [quote, chartData] = await Promise.all([
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+    const [quote, chartData, weeklyData] = await Promise.all([
       yf.quoteSummary(ticker, { modules: ["price"] }),
       yf.chart(ticker, { period1: sixMonthsAgo, period2: new Date(), interval: '1mo' }).catch(() => null),
+      yf.chart(ticker, { period1: twoWeeksAgo, period2: new Date(), interval: '1d' }).catch(() => null),
     ]);
 
     const p = quote.price;
@@ -116,12 +121,25 @@ async function fetchCommodityData(ticker: string): Promise<CommodityData | { err
       }
     }
 
+    let volumeChangePercent: number | undefined;
+    if (weeklyData?.quotes) {
+      const volQuotes = weeklyData.quotes.filter((q: { volume?: number | null }) => q.volume != null && (q.volume as number) > 0);
+      if (volQuotes.length >= 6) {
+        const currentVol  = volQuotes[volQuotes.length - 1].volume as number;
+        const weekAgoVol  = volQuotes[volQuotes.length - 6].volume as number;
+        if (weekAgoVol > 0) {
+          volumeChangePercent = (currentVol - weekAgoVol) / weekAgoVol;
+        }
+      }
+    }
+
     return {
       ticker: ticker.toUpperCase(),
       name: p?.shortName ?? p?.longName ?? ticker,
       price,
       dayChangePercent: p?.regularMarketChangePercent ?? undefined,
       sixMonthChangePercent,
+      volumeChangePercent,
       prevClose: p?.regularMarketPreviousClose ?? undefined,
     };
   } catch (err: unknown) {
