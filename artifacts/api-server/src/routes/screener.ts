@@ -459,6 +459,7 @@ const BENCHMARK_TICKERS = [
   { symbol: "^DJI",  name: "DJIA" },
   { symbol: "^IXIC", name: "NASDAQ" },
   { symbol: "^RUT",  name: "Russell 2000" },
+  { symbol: "^VIX",  name: "VIX" },
 ];
 
 router.get("/screener/benchmarks", async (_req, res) => {
