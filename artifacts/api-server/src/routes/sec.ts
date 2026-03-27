@@ -35,6 +35,8 @@ router.get("/sec/bankruptcies", async (_req, res) => {
 
     const filings: { date: string; company: string; link: string }[] = [];
 
+    const twoWeeksAgo = new Date(now - 14 * 24 * 60 * 60 * 1000);
+
     for (const entry of entries) {
       const summaryRaw = entry.summary;
       const summary: string =
@@ -44,12 +46,16 @@ router.get("/sec/bankruptcies", async (_req, res) => {
 
       if (!summary.includes("1.03")) continue;
 
+      const updated = String(entry.updated ?? "");
+      const date = updated.split("T")[0] ?? updated;
+
+      // Skip filings older than 2 weeks
+      const filingDate = new Date(date);
+      if (!isNaN(filingDate.getTime()) && filingDate < twoWeeksAgo) continue;
+
       const title = String(entry.title ?? "");
       // Title format: "COMPANY NAME (0001234567) (8-K)"
       const company = title.split(" (0")[0].trim() || title;
-
-      const updated = String(entry.updated ?? "");
-      const date = updated.split("T")[0] ?? updated;
 
       const rawLink = entry.link;
       const links: Record<string, string>[] = Array.isArray(rawLink)
