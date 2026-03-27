@@ -141,6 +141,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RatesResponse"
+  /screener/commodity-chart/{ticker}:
+    get:
+      operationId: getCommodityChart
+      tags: [screener]
+      summary: Get 6-month daily price history for a commodity ticker
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Daily close price history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommodityChartResponse"
   /sec/bankruptcies:
     get:
       operationId: getBankruptcyFilings
@@ -571,6 +589,33 @@ components:
             $ref: "#/components/schemas/RateResult"
       required:
         - rates
+    CommodityChartPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Date in YYYY-MM-DD format
+        close:
+          type: number
+          description: Closing price
+      required:
+        - date
+        - close
+    CommodityChartResponse:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: "#/components/schemas/CommodityChartPoint"
+      required:
+        - ticker
+        - name
+        - points
     BankruptcyFiling:
       type: object
       properties:

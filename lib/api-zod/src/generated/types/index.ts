@@ -10,6 +10,8 @@ export * from "./bankruptciesResponse";
 export * from "./bankruptcyFiling";
 export * from "./benchmarkResult";
 export * from "./benchmarksResponse";
+export * from "./commodityChartPoint";
+export * from "./commodityChartResponse";
 export * from "./commodityResult";
 export * from "./getTopByMarketCapBody";
 export * from "./healthStatus";

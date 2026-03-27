@@ -10,6 +10,7 @@ import { MarketBenchmarks } from "@/components/market-benchmarks";
 import { YieldCurveChart } from "@/components/yield-curve-chart";
 import { TradingViewChart } from "@/components/tradingview-chart";
 import { BankruptcyFilings } from "@/components/bankruptcy-filings";
+import { CommodityHistoryChart } from "@/components/commodity-history-chart";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const quotesMutation = useGetStockQuotes();
   
   const [viewMode, setViewMode] = useState<"screener" | "quotes">("screener");
+  const [activeCommodity, setActiveCommodity] = useState<{ ticker: string; label: string } | null>(null);
 
   const handleRunScreener = () => {
     setViewMode("screener");
@@ -216,7 +218,20 @@ export default function Dashboard() {
 
         {/* Commodity Watchlist */}
         {viewMode === "screener" && (
-          <CommodityTable commodities={commodityResults} isLoading={isLoading} />
+          <CommodityTable
+            commodities={commodityResults}
+            isLoading={isLoading}
+            onLongHover={(ticker, label) => setActiveCommodity({ ticker, label })}
+          />
+        )}
+
+        {/* Commodity 6M History Chart (shown after 10s hover on a commodity name) */}
+        {activeCommodity && (
+          <CommodityHistoryChart
+            ticker={activeCommodity.ticker}
+            label={activeCommodity.label}
+            onClose={() => setActiveCommodity(null)}
+          />
         )}
 
         {/* Commodity Universe Manager */}

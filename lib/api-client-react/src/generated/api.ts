@@ -19,6 +19,7 @@ import type {
 import type {
   BankruptciesResponse,
   BenchmarksResponse,
+  CommodityChartResponse,
   GetTopByMarketCapBody,
   HealthStatus,
   QuoteRequest,
@@ -676,6 +677,94 @@ export function useGetRates<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetRatesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get 6-month daily price history for a commodity ticker
+ */
+export const getGetCommodityChartUrl = (ticker: string) => {
+  return `/api/screener/commodity-chart/${ticker}`;
+};
+
+export const getCommodityChart = async (
+  ticker: string,
+  options?: RequestInit,
+): Promise<CommodityChartResponse> => {
+  return customFetch<CommodityChartResponse>(getGetCommodityChartUrl(ticker), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetCommodityChartQueryKey = (ticker: string) => {
+  return [`/api/screener/commodity-chart/${ticker}`] as const;
+};
+
+export const getGetCommodityChartQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCommodityChart>>,
+  TError = ErrorType<unknown>,
+>(
+  ticker: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getCommodityChart>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCommodityChartQueryKey(ticker);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCommodityChart>>
+  > = ({ signal }) => getCommodityChart(ticker, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!ticker,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCommodityChart>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetCommodityChartQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCommodityChart>>
+>;
+export type GetCommodityChartQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get 6-month daily price history for a commodity ticker
+ */
+
+export function useGetCommodityChart<
+  TData = Awaited<ReturnType<typeof getCommodityChart>>,
+  TError = ErrorType<unknown>,
+>(
+  ticker: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getCommodityChart>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetCommodityChartQueryOptions(ticker, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

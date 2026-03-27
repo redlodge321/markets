@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { formatCurrency, cn } from "@/lib/utils";
 import type { CommodityResult } from "@workspace/api-client-react/src/generated/api.schemas";
@@ -5,6 +6,7 @@ import type { CommodityResult } from "@workspace/api-client-react/src/generated/
 interface CommodityTableProps {
   commodities: CommodityResult[];
   isLoading: boolean;
+  onLongHover?: (ticker: string, label: string) => void;
 }
 
 const COMMODITY_LABELS: Record<string, string> = {
@@ -27,7 +29,22 @@ function formatPct(val?: number | null) {
   return `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`;
 }
 
-export function CommodityTable({ commodities, isLoading }: CommodityTableProps) {
+export function CommodityTable({ commodities, isLoading, onLongHover }: CommodityTableProps) {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMouseEnter = (ticker: string, label: string) => {
+    timerRef.current = setTimeout(() => {
+      onLongHover?.(ticker, label);
+    }, 10000);
+  };
+
+  const handleMouseLeave = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
   if (!isLoading && commodities.length === 0) return null;
 
   return (
@@ -37,6 +54,11 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
         <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 tracking-widest">
           Futures
         </span>
+        {onLongHover && (
+          <span className="text-[10px] text-muted-foreground/50 ml-auto">
+            Hover a commodity name for 10s to view chart
+          </span>
+        )}
       </div>
 
       <div className="glass-panel rounded-xl overflow-hidden">
@@ -62,6 +84,7 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
               ) : (
                 commodities.map((c, i) => {
                   const isFwd = c.isForwardContract === true;
+                  const label = COMMODITY_LABELS[c.ticker] ?? c.ticker;
                   return (
                     <motion.tr
                       key={c.ticker}
@@ -73,11 +96,20 @@ export function CommodityTable({ commodities, isLoading }: CommodityTableProps) 
                         isFwd && "bg-secondary/10"
                       )}
                     >
-                      {/* Label */}
-                      <td className={cn("px-5 py-1.5 font-semibold", isFwd ? "pl-10 text-amber-400/60 text-xs" : "text-amber-400")}>
+                      {/* Label — hover triggers chart after 10s (front-month rows only) */}
+                      <td
+                        className={cn(
+                          "px-5 py-1.5 font-semibold",
+                          isFwd ? "pl-10 text-amber-400/60 text-xs" : "text-amber-400",
+                          !isFwd && onLongHover && "cursor-help"
+                        )}
+                        onMouseEnter={!isFwd ? () => handleMouseEnter(c.ticker, label) : undefined}
+                        onMouseLeave={!isFwd ? handleMouseLeave : undefined}
+                        title={!isFwd ? "Hover for 10s to view 6-month chart" : undefined}
+                      >
                         {isFwd
                           ? `↳ ${COMMODITY_LABELS[c.baseGroup ?? ""] ?? c.baseGroup} 3M Fwd`
-                          : COMMODITY_LABELS[c.ticker] ?? c.ticker}
+                          : label}
                       </td>
 
                       {/* Contract name from Yahoo */}

@@ -60,6 +60,12 @@ const yf = new (YahooFinanceCtor as any)({ suppressNotices: ["yahooSurvey"] }) a
     total?: number;
     count?: number;
   }>;
+  chart(
+    symbol: string,
+    opts: { period1: Date; period2: Date; interval: string }
+  ): Promise<{
+    quotes?: Array<{ date: Date | string; open?: number | null; high?: number | null; low?: number | null; close?: number | null; volume?: number | null }>;
+  }>;
 };
 
 interface CommodityData {
@@ -595,6 +601,37 @@ router.get("/screener/rates", async (_req, res) => {
   );
 
   res.json({ rates: rates.filter(Boolean) });
+});
+
+router.get("/screener/commodity-chart/:ticker", async (req, res) => {
+  const { ticker } = req.params;
+  try {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const [quote, chart] = await Promise.all([
+      yf.quoteSummary(ticker, { modules: ["price"] }),
+      yf.chart(ticker, { period1: sixMonthsAgo, period2: new Date(), interval: "1d" }),
+    ]);
+
+    const name = quote.price?.shortName ?? quote.price?.longName ?? ticker;
+
+    const points = (chart?.quotes ?? [])
+      .filter((q) => q.close != null)
+      .map((q) => {
+        const raw = q.date;
+        const dateStr =
+          raw instanceof Date
+            ? raw.toISOString().split("T")[0]
+            : String(raw).split("T")[0];
+        return { date: dateStr, close: q.close as number };
+      });
+
+    return res.json({ ticker: ticker.toUpperCase(), name, points });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    return res.status(500).json({ error: message });
+  }
 });
 
 export default router;

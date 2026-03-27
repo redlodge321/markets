@@ -317,6 +317,24 @@ export const GetRatesResponse = zod.object({
 });
 
 /**
+ * @summary Get 6-month daily price history for a commodity ticker
+ */
+export const GetCommodityChartParams = zod.object({
+  ticker: zod.coerce.string(),
+});
+
+export const GetCommodityChartResponse = zod.object({
+  ticker: zod.string(),
+  name: zod.string(),
+  points: zod.array(
+    zod.object({
+      date: zod.string().describe("Date in YYYY-MM-DD format"),
+      close: zod.number().describe("Closing price"),
+    }),
+  ),
+});
+
+/**
  * Returns 8-K filings containing Item 1.03 (Bankruptcy or Receivership) from the SEC EDGAR feed
  * @summary Get recent SEC bankruptcy filings
  */

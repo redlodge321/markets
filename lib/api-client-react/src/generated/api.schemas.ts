@@ -220,6 +220,19 @@ export interface RatesResponse {
   rates: RateResult[];
 }
 
+export interface CommodityChartPoint {
+  /** Date in YYYY-MM-DD format */
+  date: string;
+  /** Closing price */
+  close: number;
+}
+
+export interface CommodityChartResponse {
+  ticker: string;
+  name: string;
+  points: CommodityChartPoint[];
+}
+
 export interface BankruptcyFiling {
   /** Filing date (YYYY-MM-DD) */
   date: string;
