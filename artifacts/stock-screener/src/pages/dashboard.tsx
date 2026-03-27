@@ -9,6 +9,7 @@ import { CommodityTickerManager } from "@/components/commodity-ticker-manager";
 import { MarketBenchmarks } from "@/components/market-benchmarks";
 import { YieldCurveChart } from "@/components/yield-curve-chart";
 import { TradingViewChart } from "@/components/tradingview-chart";
+import { BankruptcyFilings } from "@/components/bankruptcy-filings";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
 import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -231,6 +232,9 @@ export default function Dashboard() {
 
         {/* Yield Curve Comparison */}
         <YieldCurveChart />
+
+        {/* SEC Bankruptcy Filings */}
+        <BankruptcyFilings />
 
         {/* Main Actions Panel */}
         <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 shadow-xl">

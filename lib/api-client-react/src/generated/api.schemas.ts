@@ -220,4 +220,19 @@ export interface RatesResponse {
   rates: RateResult[];
 }
 
+export interface BankruptcyFiling {
+  /** Filing date (YYYY-MM-DD) */
+  date: string;
+  /** Company name from the 8-K filing title */
+  company: string;
+  /** URL to the SEC EDGAR filing */
+  link: string;
+}
+
+export interface BankruptciesResponse {
+  filings: BankruptcyFiling[];
+  /** ISO timestamp of when the SEC feed was fetched */
+  fetchedAt: string;
+}
+
 export type GetTopByMarketCapBody = { [key: string]: unknown };

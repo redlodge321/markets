@@ -17,6 +17,7 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  BankruptciesResponse,
   BenchmarksResponse,
   GetTopByMarketCapBody,
   HealthStatus,
@@ -675,6 +676,82 @@ export function useGetRates<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetRatesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Returns 8-K filings containing Item 1.03 (Bankruptcy or Receivership) from the SEC EDGAR feed
+ * @summary Get recent SEC bankruptcy filings
+ */
+export const getGetBankruptcyFilingsUrl = () => {
+  return `/api/sec/bankruptcies`;
+};
+
+export const getBankruptcyFilings = async (
+  options?: RequestInit,
+): Promise<BankruptciesResponse> => {
+  return customFetch<BankruptciesResponse>(getGetBankruptcyFilingsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetBankruptcyFilingsQueryKey = () => {
+  return [`/api/sec/bankruptcies`] as const;
+};
+
+export const getGetBankruptcyFilingsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBankruptcyFilings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getBankruptcyFilings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetBankruptcyFilingsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getBankruptcyFilings>>
+  > = ({ signal }) => getBankruptcyFilings({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBankruptcyFilings>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetBankruptcyFilingsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBankruptcyFilings>>
+>;
+export type GetBankruptcyFilingsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get recent SEC bankruptcy filings
+ */
+
+export function useGetBankruptcyFilings<
+  TData = Awaited<ReturnType<typeof getBankruptcyFilings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getBankruptcyFilings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetBankruptcyFilingsQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

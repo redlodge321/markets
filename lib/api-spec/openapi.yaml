@@ -11,6 +11,8 @@ tags:
     description: Health operations
   - name: screener
     description: Stock screener operations
+  - name: sec
+    description: SEC EDGAR data
 paths:
   /healthz:
     get:
@@ -139,6 +141,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RatesResponse"
+  /sec/bankruptcies:
+    get:
+      operationId: getBankruptcyFilings
+      tags: [sec]
+      summary: Get recent SEC bankruptcy filings
+      description: Returns 8-K filings containing Item 1.03 (Bankruptcy or Receivership) from the SEC EDGAR feed
+      responses:
+        "200":
+          description: Recent bankruptcy filings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BankruptciesResponse"
   /screener/search:
     post:
       operationId: searchTickers
@@ -556,3 +571,32 @@ components:
             $ref: "#/components/schemas/RateResult"
       required:
         - rates
+    BankruptcyFiling:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Filing date (YYYY-MM-DD)
+        company:
+          type: string
+          description: Company name from the 8-K filing title
+        link:
+          type: string
+          description: URL to the SEC EDGAR filing
+      required:
+        - date
+        - company
+        - link
+    BankruptciesResponse:
+      type: object
+      properties:
+        filings:
+          type: array
+          items:
+            $ref: "#/components/schemas/BankruptcyFiling"
+        fetchedAt:
+          type: string
+          description: ISO timestamp of when the SEC feed was fetched
+      required:
+        - filings
+        - fetchedAt

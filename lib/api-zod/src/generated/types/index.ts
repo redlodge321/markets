@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./bankruptciesResponse";
+export * from "./bankruptcyFiling";
 export * from "./benchmarkResult";
 export * from "./benchmarksResponse";
 export * from "./commodityResult";

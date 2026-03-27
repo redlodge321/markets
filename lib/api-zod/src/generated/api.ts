@@ -317,6 +317,23 @@ export const GetRatesResponse = zod.object({
 });
 
 /**
+ * Returns 8-K filings containing Item 1.03 (Bankruptcy or Receivership) from the SEC EDGAR feed
+ * @summary Get recent SEC bankruptcy filings
+ */
+export const GetBankruptcyFilingsResponse = zod.object({
+  filings: zod.array(
+    zod.object({
+      date: zod.string().describe("Filing date (YYYY-MM-DD)"),
+      company: zod.string().describe("Company name from the 8-K filing title"),
+      link: zod.string().describe("URL to the SEC EDGAR filing"),
+    }),
+  ),
+  fetchedAt: zod
+    .string()
+    .describe("ISO timestamp of when the SEC feed was fetched"),
+});
+
+/**
  * Returns matching ticker symbols for a given company name query
  * @summary Search for ticker symbols by company name
  */
