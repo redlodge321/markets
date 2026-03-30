@@ -22,6 +22,7 @@ export default function Dashboard() {
   
   const [viewMode, setViewMode] = useState<"screener" | "quotes">("screener");
   const [activeCommodity, setActiveCommodity] = useState<{ ticker: string; label: string } | null>(null);
+  const [chartSymbol, setChartSymbol] = useState("AAPL");
 
   const handleRunScreener = () => {
     setViewMode("screener");
@@ -170,10 +171,11 @@ export default function Dashboard() {
             </h3>
           </div>
           
-          <ResultsTable 
-            results={currentResults as ScreenerResult[]} 
-            isLoading={isLoading} 
-            isQuotesMode={viewMode === "quotes"} 
+          <ResultsTable
+            results={currentResults as ScreenerResult[]}
+            isLoading={isLoading}
+            isQuotesMode={viewMode === "quotes"}
+            onLongHover={(ticker) => setChartSymbol(ticker)}
           />
         </section>
 
@@ -214,7 +216,7 @@ export default function Dashboard() {
         </div>
 
         {/* TradingView Chart */}
-        <TradingViewChart />
+        <TradingViewChart symbol={chartSymbol} />
 
         {/* Commodity Watchlist */}
         {viewMode === "screener" && (

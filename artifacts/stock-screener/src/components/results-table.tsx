@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { formatCurrency, formatMarketCap, cn } from "@/lib/utils";
 import type { ScreenerResult } from "@workspace/api-client-react/src/generated/api.schemas";
@@ -7,6 +8,7 @@ interface ResultsTableProps {
   results: ScreenerResult[];
   isLoading: boolean;
   isQuotesMode?: boolean;
+  onLongHover?: (ticker: string) => void;
 }
 
 function formatEarningsDate(iso?: string | null): { label: string; daysAway: number | null } {
@@ -20,7 +22,19 @@ function formatEarningsDate(iso?: string | null): { label: string; daysAway: num
   return { label, daysAway };
 }
 
-export function ResultsTable({ results, isLoading, isQuotesMode = false }: ResultsTableProps) {
+export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongHover }: ResultsTableProps) {
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const startHover = (ticker: string) => {
+    hoverTimer.current = setTimeout(() => onLongHover?.(ticker), 6000);
+  };
+
+  const cancelHover = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  };
   if (isLoading) {
     return (
       <div className="glass-panel rounded-2xl p-8 flex flex-col items-center justify-center min-h-[400px]">
@@ -87,8 +101,16 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false }: Resul
                   key={stock.ticker}
                   className="group hover:bg-secondary/30 transition-colors"
                 >
-                  <td className="px-5 py-1.5 whitespace-nowrap">
-                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-secondary/50 border border-border/50 text-foreground font-bold group-hover:border-primary/30 transition-colors">
+                  <td
+                    className="px-5 py-1.5 whitespace-nowrap"
+                    onMouseEnter={() => startHover(stock.ticker)}
+                    onMouseLeave={cancelHover}
+                    title={onLongHover ? "Hover 6s to load in Chart" : undefined}
+                  >
+                    <div className={cn(
+                      "inline-flex items-center gap-2 px-2.5 py-1 rounded bg-secondary/50 border border-border/50 text-foreground font-bold group-hover:border-primary/30 transition-colors",
+                      onLongHover && "cursor-help"
+                    )}>
                       {stock.ticker}
                     </div>
                   </td>
