@@ -67,9 +67,10 @@ export default function Dashboard() {
   const isLoading = screenerMutation.isPending || quotesMutation.isPending;
   
   // Extract results based on view mode
-  const currentResults = viewMode === "screener" 
-    ? screenerMutation.data?.results || [] 
-    : quotesMutation.data?.quotes || [];
+  const currentResults = (viewMode === "screener"
+    ? screenerMutation.data?.results || []
+    : quotesMutation.data?.quotes || []
+  ).slice().sort((a, b) => a.ticker.localeCompare(b.ticker));
 
   const commodityResults = screenerMutation.data?.commodities || [];
     
