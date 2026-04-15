@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { formatCurrency, formatMarketCap, cn } from "@/lib/utils";
 import type { ScreenerResult } from "@workspace/api-client-react/src/generated/api.schemas";
 import { Minus, CalendarClock } from "lucide-react";
@@ -24,16 +24,20 @@ function formatEarningsDate(iso?: string | null): { label: string; daysAway: num
 
 export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongHover }: ResultsTableProps) {
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nameTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [namePopup, setNamePopup] = useState<string | null>(null);
 
   const startHover = (ticker: string) => {
+    // 3s → show company name popup
+    nameTimer.current = setTimeout(() => setNamePopup(ticker), 3000);
+    // 6s → load in TradingView chart
     hoverTimer.current = setTimeout(() => onLongHover?.(ticker), 6000);
   };
 
   const cancelHover = () => {
-    if (hoverTimer.current) {
-      clearTimeout(hoverTimer.current);
-      hoverTimer.current = null;
-    }
+    if (nameTimer.current) { clearTimeout(nameTimer.current); nameTimer.current = null; }
+    if (hoverTimer.current) { clearTimeout(hoverTimer.current); hoverTimer.current = null; }
+    setNamePopup(null);
   };
   if (isLoading) {
     return (
@@ -102,17 +106,36 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongH
                   className="group hover:bg-secondary/30 transition-colors"
                 >
                   <td
-                    className="px-5 py-1.5 whitespace-nowrap"
+                    className="px-5 py-1.5 whitespace-nowrap relative"
                     onMouseEnter={() => startHover(stock.ticker)}
                     onMouseLeave={cancelHover}
-                    title={onLongHover ? "Hover 6s to load in Chart" : undefined}
                   >
                     <div className={cn(
                       "inline-flex items-center gap-2 px-2.5 py-1 rounded bg-secondary/50 border border-border/50 text-foreground font-bold group-hover:border-primary/30 transition-colors",
-                      onLongHover && "cursor-help"
+                      "cursor-help"
                     )}>
                       {stock.ticker}
                     </div>
+
+                    {/* Company name popup — appears after 3s hover */}
+                    <AnimatePresence>
+                      {namePopup === stock.ticker && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 4, scale: 0.96 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 4, scale: 0.96 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute left-0 top-full mt-1.5 z-50 min-w-max max-w-xs px-3 py-2 rounded-lg border border-primary/30 bg-card shadow-xl shadow-black/40 pointer-events-none"
+                        >
+                          <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-mono mb-0.5">
+                            {stock.ticker}
+                          </p>
+                          <p className="text-sm font-semibold text-foreground leading-snug">
+                            {stock.companyName}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </td>
                   <td className="px-5 py-1.5 font-sans text-muted-foreground text-sm whitespace-nowrap max-w-[160px] truncate" title={stock.industry}>
                     {stock.industry || '—'}
