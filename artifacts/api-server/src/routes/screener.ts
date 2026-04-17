@@ -487,7 +487,6 @@ const BENCHMARK_TICKERS = [
   { symbol: "^GSPC", name: "S&P 500" },
   { symbol: "^DJI",  name: "DJIA" },
   { symbol: "^IXIC", name: "NASDAQ" },
-  { symbol: "^RUT",  name: "Russell 2000" },
   { symbol: "^VIX",  name: "VIX" },
 ];
 
