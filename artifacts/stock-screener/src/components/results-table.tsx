@@ -106,7 +106,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongH
                   className="group hover:bg-secondary/30 transition-colors"
                 >
                   <td
-                    className="px-5 py-1.5 whitespace-nowrap relative"
+                    className="px-5 py-1.5 whitespace-nowrap relative text-center"
                     onMouseEnter={() => startHover(stock.ticker)}
                     onMouseLeave={cancelHover}
                   >
