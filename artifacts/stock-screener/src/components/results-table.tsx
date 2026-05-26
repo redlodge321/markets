@@ -236,7 +236,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongH
                         earningsSoon ? "text-yellow-400" : "text-muted-foreground"
                       )}>
                         {earningsSoon && <CalendarClock className="w-3.5 h-3.5 flex-shrink-0" />}
-                        <span className="font-sans text-xs">{earningsLabel}</span>
+                        <span className="font-sans text-sm">{earningsLabel}</span>
                         {earningsSoon && (
                           <span className="text-[10px] font-mono bg-yellow-400/10 border border-yellow-400/20 px-1 rounded">
                             {daysAway}d
