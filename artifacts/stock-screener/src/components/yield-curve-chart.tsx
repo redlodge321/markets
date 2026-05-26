@@ -125,7 +125,6 @@ export function YieldCurveChart() {
                 dataKey="1 Month Ago"
                 stroke="#ef4444"
                 strokeWidth={2}
-                strokeDasharray="5 3"
                 dot={{ fill: "#ef4444", r: 3, strokeWidth: 0 }}
                 activeDot={{ r: 5, fill: "#ef4444" }}
                 connectNulls
