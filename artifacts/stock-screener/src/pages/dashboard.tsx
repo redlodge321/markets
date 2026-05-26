@@ -12,7 +12,7 @@ import { TradingViewChart } from "@/components/tradingview-chart";
 import { BankruptcyFilings } from "@/components/bankruptcy-filings";
 import { CommodityHistoryChart } from "@/components/commodity-history-chart";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
-import { Zap, LayoutGrid, TerminalSquare, AlertTriangle } from "lucide-react";
+import { Zap, LayoutGrid, TerminalSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Dashboard() {
@@ -74,7 +74,6 @@ export default function Dashboard() {
 
   const commodityResults = screenerMutation.data?.commodities || [];
     
-  const errors = viewMode === "screener" ? screenerMutation.data?.errors || [] : [];
   
   // Stats
   const screenedCount = viewMode === "screener" ? screenerMutation.data?.screened : state.tickers.length;
@@ -138,31 +137,6 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Error Bar */}
-        <AnimatePresence>
-          {errors.length > 0 && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="mb-4"
-            >
-              <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-4 flex gap-3">
-                <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-semibold text-destructive">Could not fetch data for some tickers</h4>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {errors.map((err) => (
-                      <span key={err.ticker} className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-destructive/20 text-destructive text-xs font-mono border border-destructive/20">
-                        {err.ticker} <span className="opacity-70 font-sans">- {err.error}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Equity Results Table */}
         <section className="mb-4 border border-zinc-500/70 rounded-xl p-4">
