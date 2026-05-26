@@ -40,9 +40,7 @@ export function YieldCurveChart() {
   const chartData = points.map((p) => ({
     maturity: p.maturity,
     "Current": p.usYield != null ? +(p.usYield * 10).toFixed(3) : undefined,
-    "1 Month Ago": (p as { usYieldPrior?: number | null }).usYieldPrior != null
-      ? +((p as { usYieldPrior?: number | null }).usYieldPrior! * 10).toFixed(3)
-      : undefined,
+    "1 Month Ago": p.usYieldPrior != null ? +(p.usYieldPrior * 10).toFixed(3) : undefined,
   }));
 
   const hasUs = points.some((p) => p.usYield != null);
