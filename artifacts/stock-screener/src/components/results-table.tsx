@@ -74,7 +74,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongH
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-border/60 bg-secondary/40 text-xs uppercase tracking-wider text-blue-300 font-semibold">
+            <tr className="border-b border-border/60 bg-secondary/40 text-sm uppercase tracking-wider text-blue-300 font-semibold">
               <th className="px-5 py-1.5 text-center">Ticker</th>
               <th className="px-5 py-1.5 text-center">Industry</th>
               <th className="px-5 py-1.5 text-center">Price</th>
