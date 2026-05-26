@@ -1,8 +1,9 @@
-import { X, Flame, Search, Loader2 } from "lucide-react";
+import { X, Flame, Search, Loader2, ChevronDown, BarChart2, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useSearchFutures } from "@workspace/api-client-react";
 import type { TickerSearchResult } from "@workspace/api-client-react/src/generated/api.schemas";
+import { cn } from "@/lib/utils";
 
 const COMMODITY_LABELS: Record<string, string> = {
   "GC=F": "Gold",
@@ -29,13 +30,15 @@ interface CommodityTickerManagerProps {
   tickers: string[];
   addTicker: (symbol: string) => void;
   removeTicker: (symbol: string) => void;
+  onViewChart?: (ticker: string, label: string) => void;
 }
 
-export function CommodityTickerManager({ tickers, addTicker, removeTicker }: CommodityTickerManagerProps) {
+export function CommodityTickerManager({ tickers, addTicker, removeTicker, onViewChart }: CommodityTickerManagerProps) {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState<TickerSearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIdx, setHighlightedIdx] = useState(-1);
+  const [expandedTicker, setExpandedTicker] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -230,28 +233,89 @@ export function CommodityTickerManager({ tickers, addTicker, removeTicker }: Com
                 No commodity futures added yet.
               </motion.p>
             ) : (
-              tickers.map((ticker) => (
-                <motion.div
-                  key={ticker}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 transition-colors group"
-                >
-                  <span className="font-mono text-xs font-medium text-amber-400 tracking-wide">
-                    {COMMODITY_LABELS[ticker] ?? ticker}
-                  </span>
-                  <span className="font-mono text-[10px] text-amber-400/50">{ticker}</span>
-                  <button
-                    onClick={() => removeTicker(ticker)}
-                    className="text-amber-400/40 hover:text-destructive transition-colors focus:outline-none ml-0.5"
-                    aria-label={`Remove ${ticker}`}
+              tickers.map((ticker) => {
+                const label = COMMODITY_LABELS[ticker] ?? ticker;
+                const isOpen = expandedTicker === ticker;
+                return (
+                  <motion.div
+                    key={ticker}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    className="relative flex flex-col"
                   >
-                    <X className="w-3 h-3" />
-                  </button>
-                </motion.div>
-              ))
+                    {/* Chip row */}
+                    <div className={cn(
+                      "flex items-center gap-1 pl-3 pr-1 py-1.5 rounded-md border transition-colors group",
+                      isOpen
+                        ? "bg-amber-500/15 border-amber-500/50 rounded-b-none"
+                        : "bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40"
+                    )}>
+                      <span className="font-mono text-xs font-medium text-amber-400 tracking-wide">
+                        {label}
+                      </span>
+                      <span className="font-mono text-[10px] text-amber-400/50 mr-0.5">{ticker}</span>
+
+                      {/* Pull-down toggle */}
+                      <button
+                        onClick={() => setExpandedTicker(isOpen ? null : ticker)}
+                        className={cn(
+                          "p-1 rounded transition-colors focus:outline-none",
+                          isOpen
+                            ? "text-amber-400 bg-amber-500/20"
+                            : "text-amber-400/50 hover:text-amber-400 hover:bg-amber-500/10"
+                        )}
+                        aria-label={isOpen ? "Collapse" : "Expand"}
+                        title={isOpen ? "Collapse" : "Show options"}
+                      >
+                        <ChevronDown className={cn(
+                          "w-3 h-3 transition-transform duration-200",
+                          isOpen && "rotate-180"
+                        )} />
+                      </button>
+                    </div>
+
+                    {/* Pull-down panel */}
+                    <AnimatePresence>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.18 }}
+                          className="overflow-hidden absolute top-full left-0 z-30 min-w-full"
+                        >
+                          <div className="flex flex-col bg-card border border-t-0 border-amber-500/50 rounded-b-md shadow-lg overflow-hidden">
+                            {onViewChart && (
+                              <button
+                                onClick={() => {
+                                  onViewChart(ticker, label);
+                                  setExpandedTicker(null);
+                                }}
+                                className="flex items-center gap-2 px-3 py-1.5 text-xs text-amber-400 hover:bg-amber-500/10 transition-colors whitespace-nowrap border-b border-amber-500/20"
+                              >
+                                <BarChart2 className="w-3 h-3" />
+                                View Chart
+                              </button>
+                            )}
+                            <button
+                              onClick={() => {
+                                removeTicker(ticker);
+                                setExpandedTicker(null);
+                              }}
+                              className="flex items-center gap-2 px-3 py-1.5 text-xs text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-colors whitespace-nowrap"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              Remove
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })
             )}
           </AnimatePresence>
         </div>

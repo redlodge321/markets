@@ -213,6 +213,7 @@ export default function Dashboard() {
               tickers={state.commodityTickers}
               addTicker={state.addCommodityTicker}
               removeTicker={state.removeCommodityTicker}
+              onViewChart={(ticker, label) => setActiveCommodity({ ticker, label })}
             />
           </div>
         )}
