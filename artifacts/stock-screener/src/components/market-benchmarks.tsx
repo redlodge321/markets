@@ -28,8 +28,8 @@ export function MarketBenchmarks() {
         const pct = b.dayChangePercent ?? 0;
         const isPos = pct >= 0;
         return (
-          <div key={b.symbol} className="flex flex-col items-end leading-none gap-0.5">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wide">
+          <div key={b.symbol} className="flex flex-col items-center leading-none gap-0.5">
+            <span className="text-xs font-mono text-muted-foreground uppercase tracking-wide">
               {b.name}
             </span>
             <div className="flex items-baseline gap-1">
@@ -47,8 +47,8 @@ export function MarketBenchmarks() {
       {vix && (
         <>
           <div className="w-px h-6 bg-zinc-600/60 self-center" />
-          <div className="flex flex-col items-end leading-none gap-0.5">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wide">VIX</span>
+          <div className="flex flex-col items-center leading-none gap-0.5">
+            <span className="text-xs font-mono text-muted-foreground uppercase tracking-wide">VIX</span>
             <div className="flex items-baseline gap-1">
               <span className={cn(
                 "text-xs font-semibold tabular-nums",
