@@ -60,7 +60,7 @@ export function TradingViewChart({ symbol = "AAPL" }: TradingViewChartProps) {
   }, [symbol]);
 
   return (
-    <section className="mb-4 border border-zinc-500/70 rounded-xl p-4">
+    <section className="mb-2 border border-zinc-500/70 rounded-xl p-2">
       <div className="mb-3 flex items-center gap-2">
         <h3 className="text-lg font-bold text-foreground">Chart</h3>
         <span className="text-xs text-muted-foreground">

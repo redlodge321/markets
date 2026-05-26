@@ -38,7 +38,7 @@ export function YieldCurveChart() {
   const hasUs = points.some((p) => p.usYield != null);
 
   return (
-    <section className="mb-4 border border-zinc-500/70 rounded-xl p-4">
+    <section className="mb-2 border border-zinc-500/70 rounded-xl p-2">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-base">🇺🇸</span>

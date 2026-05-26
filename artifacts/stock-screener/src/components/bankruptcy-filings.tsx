@@ -14,7 +14,7 @@ export function BankruptcyFilings() {
     : null;
 
   return (
-    <div className="border border-zinc-500/70 rounded-xl p-4 glass-panel flex flex-col gap-3">
+    <div className="border border-zinc-500/70 rounded-xl p-2 glass-panel flex flex-col gap-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">

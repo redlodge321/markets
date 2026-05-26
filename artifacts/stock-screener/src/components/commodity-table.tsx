@@ -48,7 +48,7 @@ export function CommodityTable({ commodities, isLoading, onLongHover }: Commodit
   if (!isLoading && commodities.length === 0) return null;
 
   return (
-    <section className="mb-4 border border-zinc-500/70 rounded-xl p-4">
+    <section className="mb-2 border border-zinc-500/70 rounded-xl p-2">
       <div className="mb-4 flex items-center gap-3">
         <h3 className="text-lg font-bold text-foreground">Commodity Watchlist</h3>
         <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 tracking-widest">

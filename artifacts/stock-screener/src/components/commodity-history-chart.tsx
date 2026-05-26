@@ -61,7 +61,7 @@ export function CommodityHistoryChart({ ticker, label, onClose }: CommodityHisto
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
         transition={{ duration: 0.3 }}
-        className="mb-4 border border-amber-500/30 rounded-xl p-4 glass-panel"
+        className="mb-2 border border-amber-500/30 rounded-xl p-2 glass-panel"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
