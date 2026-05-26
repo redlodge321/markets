@@ -39,8 +39,9 @@ export function YieldCurveChart() {
   const points = data?.points ?? [];
   const chartData = points.map((p) => ({
     maturity: p.maturity,
-    "Current": p.usYield != null ? +(p.usYield * 10).toFixed(3) : undefined,
-    "1 Month Ago": p.usYieldPrior != null ? +(p.usYieldPrior * 10).toFixed(3) : undefined,
+    "UST Current": p.usYield != null ? +(p.usYield * 10).toFixed(3) : undefined,
+    "UST 1M Ago":  p.usYieldPrior != null ? +(p.usYieldPrior * 10).toFixed(3) : undefined,
+    "High Yield":  p.hyYield != null ? +(p.hyYield * 10).toFixed(3) : undefined,
   }));
 
   const hasUs = points.some((p) => p.usYield != null);
@@ -51,7 +52,7 @@ export function YieldCurveChart() {
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-base">🇺🇸</span>
-          <h3 className="text-lg font-bold text-foreground">US Treasury Yield Curve</h3>
+          <h3 className="text-lg font-bold text-foreground">US Treasury &amp; High Yield Curve</h3>
         </div>
         <div className="flex items-center gap-3">
           {data?.asOf && (
@@ -72,7 +73,7 @@ export function YieldCurveChart() {
         </div>
       )}
 
-      <div className="h-64">
+      <div className="h-72">
         {isLoading ? (
           <div className="flex items-center justify-center h-full text-xs font-mono text-muted-foreground uppercase tracking-widest animate-pulse">
             Fetching yield data…
@@ -92,9 +93,9 @@ export function YieldCurveChart() {
                 axisLine={{ stroke: "rgba(255,255,255,0.08)" }}
               />
               <YAxis
-                domain={[2, 6]}
-                ticks={[2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.25, 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0]}
-                tickFormatter={(v) => `${v.toFixed(2)}%`}
+                domain={[2, 10]}
+                ticks={[2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]}
+                tickFormatter={(v) => `${v.toFixed(1)}%`}
                 tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11, fontFamily: "monospace" }}
                 tickLine={false}
                 axisLine={false}
@@ -104,14 +105,14 @@ export function YieldCurveChart() {
               <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
               <Legend
                 formatter={(value) => {
-                  if (value === "1 Month Ago" && priorAsOf) return `1 Month Ago (${priorAsOf})`;
+                  if (value === "UST 1M Ago" && priorAsOf) return `UST 1M Ago (${priorAsOf})`;
                   return value;
                 }}
                 wrapperStyle={{ fontSize: 11, fontFamily: "monospace", paddingTop: 4 }}
               />
               <Line
                 type="monotone"
-                dataKey="Current"
+                dataKey="UST Current"
                 stroke="#3b82f6"
                 strokeWidth={2.5}
                 dot={{ fill: "#3b82f6", r: 4, strokeWidth: 0 }}
@@ -120,11 +121,20 @@ export function YieldCurveChart() {
               />
               <Line
                 type="monotone"
-                dataKey="1 Month Ago"
+                dataKey="UST 1M Ago"
                 stroke="#ef4444"
                 strokeWidth={2}
                 dot={{ fill: "#ef4444", r: 3, strokeWidth: 0 }}
                 activeDot={{ r: 5, fill: "#ef4444" }}
+                connectNulls
+              />
+              <Line
+                type="monotone"
+                dataKey="High Yield"
+                stroke="#16a34a"
+                strokeWidth={2.5}
+                dot={{ fill: "#16a34a", r: 4, strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: "#16a34a" }}
                 connectNulls
               />
             </LineChart>

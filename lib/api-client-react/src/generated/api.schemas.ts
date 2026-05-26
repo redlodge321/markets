@@ -199,6 +199,8 @@ export interface YieldPoint {
   usYield?: number | null;
   /** Yield from approximately 1 month ago (for comparison curve) */
   usYieldPrior?: number | null;
+  /** High yield debt yield (Treasury yield + ICE BofA HY OAS spread) */
+  hyYield?: number | null;
 }
 
 export interface YieldCurveResponse {

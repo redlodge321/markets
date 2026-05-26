@@ -263,6 +263,12 @@ export const GetYieldCurveResponse = zod.object({
         .describe(
           "Yield from approximately 1 month ago (for comparison curve)",
         ),
+      hyYield: zod
+        .number()
+        .nullish()
+        .describe(
+          "High yield debt yield (Treasury yield + ICE BofA HY OAS spread)",
+        ),
     }),
   ),
   asOf: zod.string(),

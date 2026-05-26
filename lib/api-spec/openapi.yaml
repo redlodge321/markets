@@ -541,6 +541,10 @@ components:
           type: number
           nullable: true
           description: Yield from approximately 1 month ago (for comparison curve)
+        hyYield:
+          type: number
+          nullable: true
+          description: High yield debt yield (Treasury yield + ICE BofA HY OAS spread)
       required:
         - maturity
         - maturityYears

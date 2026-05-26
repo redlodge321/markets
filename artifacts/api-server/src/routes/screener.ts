@@ -462,41 +462,64 @@ const US_YIELD_TICKERS = [
   { maturity: "30Y", maturityYears: 30,   symbol: "^TYX",  scale: "div10" },
 ] as const;
 
-router.get("/screener/yield-curve", async (_req, res) => {
-  // Current yields
-  const usResults = await Promise.allSettled(
-    US_YIELD_TICKERS.map(async (t) => {
-      const q = await yf.quoteSummary(t.symbol, { modules: ["price"] });
-      const raw = q.price?.regularMarketPrice ?? null;
-      if (raw === null) return null;
-      if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
-      return raw / 10;
-    })
-  );
+// Fetch the ICE BofA US High Yield OAS spread from FRED (no API key required)
+// Returns the spread in percentage points (e.g. 3.22 = 3.22 pp above treasury)
+async function fetchFredHYSpread(startDate?: string, endDate?: string): Promise<number | null> {
+  try {
+    let url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2";
+    if (startDate && endDate) url += `&observation_start=${startDate}&observation_end=${endDate}`;
+    const resp = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+    const text = await resp.text();
+    const lines = text.trim().split("\n").filter((l) => !l.startsWith("DATE"));
+    if (!lines.length) return null;
+    const lastLine = lines[lines.length - 1];
+    const value = parseFloat(lastLine.split(",")[1] ?? "");
+    return isNaN(value) ? null : value;
+  } catch {
+    return null;
+  }
+}
 
-  // 1-month-ago yields — fetch ~5 days around the target date and take the most recent close
+router.get("/screener/yield-curve", async (_req, res) => {
+  // Current yields + HY spread (fetched in parallel)
   const oneMonthAgo = new Date();
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
   const priorDate = oneMonthAgo.toISOString().slice(0, 10);
   const priorDatePlusFive = new Date(oneMonthAgo.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-  const priorResults = await Promise.allSettled(
-    US_YIELD_TICKERS.map(async (t) => {
-      const history = await yf.historical(t.symbol, { period1: priorDate, period2: priorDatePlusFive });
-      if (!history || history.length === 0) return null;
-      const raw = history[0].close ?? null;
-      if (raw === null) return null;
-      if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
-      return raw / 10;
-    })
-  );
+  const [usResults, priorResults, hySpread] = await Promise.all([
+    Promise.allSettled(
+      US_YIELD_TICKERS.map(async (t) => {
+        const q = await yf.quoteSummary(t.symbol, { modules: ["price"] });
+        const raw = q.price?.regularMarketPrice ?? null;
+        if (raw === null) return null;
+        if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
+        return raw / 10;
+      })
+    ),
+    Promise.allSettled(
+      US_YIELD_TICKERS.map(async (t) => {
+        const history = await yf.historical(t.symbol, { period1: priorDate, period2: priorDatePlusFive });
+        if (!history || history.length === 0) return null;
+        const raw = history[0].close ?? null;
+        if (raw === null) return null;
+        if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
+        return raw / 10;
+      })
+    ),
+    fetchFredHYSpread(),
+  ]);
 
-  const points = US_YIELD_TICKERS.map((t, i) => ({
-    maturity: t.maturity,
-    maturityYears: t.maturityYears,
-    usYield: usResults[i].status === "fulfilled" ? (usResults[i] as PromiseFulfilledResult<number | null>).value : null,
-    usYieldPrior: priorResults[i].status === "fulfilled" ? (priorResults[i] as PromiseFulfilledResult<number | null>).value : null,
-  }));
+  // HY spread from FRED is in percentage points (e.g. 3.22).
+  // usYield is stored as Yahoo_raw/10, so we convert spread to same scale: spread/10
+  const hySpreadScaled = hySpread != null ? hySpread / 10 : null;
+
+  const points = US_YIELD_TICKERS.map((t, i) => {
+    const usYield = usResults[i].status === "fulfilled" ? (usResults[i] as PromiseFulfilledResult<number | null>).value : null;
+    const usYieldPrior = priorResults[i].status === "fulfilled" ? (priorResults[i] as PromiseFulfilledResult<number | null>).value : null;
+    const hyYield = usYield != null && hySpreadScaled != null ? usYield + hySpreadScaled : null;
+    return { maturity: t.maturity, maturityYears: t.maturityYears, usYield, usYieldPrior, hyYield };
+  });
 
   res.json({ points, asOf: new Date().toISOString().slice(0, 10), priorAsOf: priorDate });
 });
