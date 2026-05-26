@@ -11,7 +11,7 @@ import { YieldCurveChart } from "@/components/yield-curve-chart";
 import { TradingViewChart } from "@/components/tradingview-chart";
 import { CommodityHistoryChart } from "@/components/commodity-history-chart";
 import { useRunScreener, useGetStockQuotes } from "@workspace/api-client-react";
-import { Zap, LayoutGrid, TerminalSquare } from "lucide-react";
+import { Zap, LayoutGrid } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Dashboard() {
@@ -88,14 +88,10 @@ export default function Dashboard() {
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-4 border-b border-border/50 pb-3">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 border border-primary/30 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.2)]">
-              <TerminalSquare className="w-6 h-6 text-primary" />
-            </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
                 MVC Market Screen <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-primary text-primary-foreground tracking-widest shadow-[0_0_10px_rgba(37,99,235,0.4)]">Pro</span>
               </h1>
-              <p className="text-muted-foreground text-sm mt-1">Autonomous financial filtering terminal.</p>
             </div>
           </div>
 
