@@ -89,7 +89,8 @@ export function YieldCurveChart() {
                 axisLine={{ stroke: "rgba(255,255,255,0.08)" }}
               />
               <YAxis
-                domain={[0.25, 10.5]}
+                domain={[1, "auto"]}
+                ticks={[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0]}
                 tickFormatter={(v) => `${v.toFixed(1)}%`}
                 tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11, fontFamily: "monospace" }}
                 tickLine={false}
