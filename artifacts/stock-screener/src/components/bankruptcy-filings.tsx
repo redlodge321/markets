@@ -35,6 +35,14 @@ export function BankruptcyFilings() {
               Live 8-K Item 1.03 filings from SEC EDGAR
               {fetchedAt && <span className="ml-1 opacity-60">· as of {fetchedAt}</span>}
             </p>
+            <a
+              href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=8-K&owner=include&output=atom"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] font-mono text-muted-foreground/50 hover:text-muted-foreground transition-colors break-all leading-tight"
+            >
+              SEC EDGAR · action=getcurrent&amp;type=8-K&amp;owner=include&amp;output=atom
+            </a>
           </div>
         </div>
         <button
