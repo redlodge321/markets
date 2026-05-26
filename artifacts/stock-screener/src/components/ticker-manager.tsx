@@ -1,7 +1,7 @@
-import { X, Plus, Activity, Search, Loader2, TrendingUp } from "lucide-react";
+import { X, Plus, Activity, Search, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useSearchTickers, useGetTopByMarketCap } from "@workspace/api-client-react";
+import { useSearchTickers } from "@workspace/api-client-react";
 import type { TickerSearchResult } from "@workspace/api-client-react/src/generated/api.schemas";
 
 interface TickerManagerProps {
@@ -30,8 +30,6 @@ export function TickerManager({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const searchMutation = useSearchTickers();
-  const top1000Mutation = useGetTopByMarketCap();
-
   const runSearch = useCallback((query: string) => {
     if (query.length < 2) {
       setSuggestions([]);
@@ -94,20 +92,6 @@ export function TickerManager({
     }
   };
 
-  const handleLoadTop1000 = () => {
-    top1000Mutation.mutate(
-      { data: {} },
-      {
-        onSuccess: (data) => {
-          setTickers(data.stocks.map((s) => s.ticker));
-          const names: Record<string, string> = {};
-          data.stocks.forEach((s) => { if (s.name) names[s.ticker] = s.name; });
-          setNameCache((prev) => ({ ...prev, ...names }));
-        },
-      }
-    );
-  };
-
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -136,20 +120,6 @@ export function TickerManager({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={handleLoadTop1000}
-            disabled={top1000Mutation.isPending}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Load the top 1,000 US stocks by market cap"
-          >
-            {top1000Mutation.isPending ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <TrendingUp className="w-3.5 h-3.5" />
-            )}
-            {top1000Mutation.isPending ? "Loading…" : "Top 1000"}
-          </button>
           <button
             type="button"
             onClick={() => setTickers([])}
