@@ -257,6 +257,12 @@ export const GetYieldCurveResponse = zod.object({
         .number()
         .describe("Numeric years for axis positioning"),
       usYield: zod.number().nullish(),
+      usYieldPrior: zod
+        .number()
+        .nullish()
+        .describe(
+          "Yield from approximately 1 month ago (for comparison curve)",
+        ),
     }),
   ),
   asOf: zod.string(),

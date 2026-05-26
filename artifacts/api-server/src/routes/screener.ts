@@ -463,13 +463,31 @@ const US_YIELD_TICKERS = [
 ] as const;
 
 router.get("/screener/yield-curve", async (_req, res) => {
+  // Current yields
   const usResults = await Promise.allSettled(
     US_YIELD_TICKERS.map(async (t) => {
       const q = await yf.quoteSummary(t.symbol, { modules: ["price"] });
       const raw = q.price?.regularMarketPrice ?? null;
       if (raw === null) return null;
       if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
-      return raw / 10; // div10 for ^IRX, ^FVX, ^TNX, ^TYX
+      return raw / 10;
+    })
+  );
+
+  // 1-month-ago yields — fetch ~5 days around the target date and take the most recent close
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+  const priorDate = oneMonthAgo.toISOString().slice(0, 10);
+  const priorDatePlusFive = new Date(oneMonthAgo.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  const priorResults = await Promise.allSettled(
+    US_YIELD_TICKERS.map(async (t) => {
+      const history = await yf.historical(t.symbol, { period1: priorDate, period2: priorDatePlusFive });
+      if (!history || history.length === 0) return null;
+      const raw = history[0].close ?? null;
+      if (raw === null) return null;
+      if (t.scale === "zt_futures") return computeZTImpliedYield(raw) * 100;
+      return raw / 10;
     })
   );
 
@@ -477,9 +495,10 @@ router.get("/screener/yield-curve", async (_req, res) => {
     maturity: t.maturity,
     maturityYears: t.maturityYears,
     usYield: usResults[i].status === "fulfilled" ? (usResults[i] as PromiseFulfilledResult<number | null>).value : null,
+    usYieldPrior: priorResults[i].status === "fulfilled" ? (priorResults[i] as PromiseFulfilledResult<number | null>).value : null,
   }));
 
-  res.json({ points, asOf: new Date().toISOString().slice(0, 10) });
+  res.json({ points, asOf: new Date().toISOString().slice(0, 10), priorAsOf: priorDate });
 });
 
 // Major U.S. equity benchmark quotes

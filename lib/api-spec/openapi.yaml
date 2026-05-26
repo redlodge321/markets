@@ -537,6 +537,10 @@ components:
         usYield:
           type: number
           nullable: true
+        usYieldPrior:
+          type: number
+          nullable: true
+          description: Yield from approximately 1 month ago (for comparison curve)
       required:
         - maturity
         - maturityYears

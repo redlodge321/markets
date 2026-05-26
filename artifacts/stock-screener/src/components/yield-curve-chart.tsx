@@ -6,20 +6,27 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-  Area,
-  AreaChart,
+  Line,
+  LineChart,
+  Legend,
 } from "recharts";
 
 function CurveTooltip({ active, payload, label }: {
   active?: boolean;
-  payload?: Array<{ value: number }>;
+  payload?: Array<{ name: string; value: number; color: string }>;
   label?: string;
 }) {
-  if (!active || !payload?.length || payload[0]?.value == null) return null;
+  if (!active || !payload?.length) return null;
   return (
     <div className="glass-panel border border-zinc-500/40 rounded-lg px-3 py-2 text-xs font-mono shadow-xl">
-      <p className="text-muted-foreground mb-0.5 uppercase tracking-wider text-[10px]">{label}</p>
-      <p className="text-blue-400 font-semibold text-sm">{payload[0].value.toFixed(3)}%</p>
+      <p className="text-muted-foreground mb-1 uppercase tracking-wider text-[10px]">{label}</p>
+      {payload.map((entry) =>
+        entry.value != null ? (
+          <p key={entry.name} style={{ color: entry.color }} className="font-semibold text-sm">
+            {entry.name}: {entry.value.toFixed(3)}%
+          </p>
+        ) : null
+      )}
     </div>
   );
 }
@@ -32,10 +39,14 @@ export function YieldCurveChart() {
   const points = data?.points ?? [];
   const chartData = points.map((p) => ({
     maturity: p.maturity,
-    "US Yield": p.usYield != null ? p.usYield * 10 : undefined,
+    "Current": p.usYield != null ? +(p.usYield * 10).toFixed(3) : undefined,
+    "1 Month Ago": (p as { usYieldPrior?: number | null }).usYieldPrior != null
+      ? +((p as { usYieldPrior?: number | null }).usYieldPrior! * 10).toFixed(3)
+      : undefined,
   }));
 
   const hasUs = points.some((p) => p.usYield != null);
+  const priorAsOf = (data as { priorAsOf?: string } | undefined)?.priorAsOf;
 
   return (
     <section className="mb-2 border border-zinc-500/70 rounded-xl p-2">
@@ -74,13 +85,7 @@ export function YieldCurveChart() {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 6, right: 12, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="usGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                </linearGradient>
-              </defs>
+            <LineChart data={chartData} margin={{ top: 6, right: 12, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
               <XAxis
                 dataKey="maturity"
@@ -99,17 +104,33 @@ export function YieldCurveChart() {
               />
               <Tooltip content={<CurveTooltip />} />
               <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
-              <Area
+              <Legend
+                formatter={(value) => {
+                  if (value === "1 Month Ago" && priorAsOf) return `1 Month Ago (${priorAsOf})`;
+                  return value;
+                }}
+                wrapperStyle={{ fontSize: 11, fontFamily: "monospace", paddingTop: 4 }}
+              />
+              <Line
                 type="monotone"
-                dataKey="US Yield"
+                dataKey="Current"
                 stroke="#3b82f6"
                 strokeWidth={2.5}
-                fill="url(#usGrad)"
                 dot={{ fill: "#3b82f6", r: 4, strokeWidth: 0 }}
                 activeDot={{ r: 6, fill: "#3b82f6" }}
                 connectNulls
               />
-            </AreaChart>
+              <Line
+                type="monotone"
+                dataKey="1 Month Ago"
+                stroke="#ef4444"
+                strokeWidth={2}
+                strokeDasharray="5 3"
+                dot={{ fill: "#ef4444", r: 3, strokeWidth: 0 }}
+                activeDot={{ r: 5, fill: "#ef4444" }}
+                connectNulls
+              />
+            </LineChart>
           </ResponsiveContainer>
         )}
       </div>

@@ -197,6 +197,8 @@ export interface YieldPoint {
   /** Numeric years for axis positioning */
   maturityYears: number;
   usYield?: number | null;
+  /** Yield from approximately 1 month ago (for comparison curve) */
+  usYieldPrior?: number | null;
 }
 
 export interface YieldCurveResponse {
