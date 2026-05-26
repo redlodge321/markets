@@ -229,7 +229,7 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongH
                   </td>
 
                   {/* Next Earnings */}
-                  <td className="px-5 py-1.5 text-right whitespace-nowrap">
+                  <td className="px-5 py-1.5 text-center whitespace-nowrap">
                     {daysAway !== null ? (
                       <div className={cn(
                         "inline-flex items-center gap-1.5",
