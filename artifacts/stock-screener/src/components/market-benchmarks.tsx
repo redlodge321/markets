@@ -36,7 +36,7 @@ export function MarketBenchmarks() {
               <span className="text-xs font-semibold text-foreground tabular-nums">
                 {b.price.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
-              <span className={cn("text-[10px] font-mono tabular-nums", isPos ? "text-emerald-400" : "text-red-400")}>
+              <span className={cn("text-xs font-mono tabular-nums", isPos ? "text-emerald-400" : "text-red-400")}>
                 {isPos ? "+" : ""}{(pct * 100).toFixed(2)}%
               </span>
             </div>
@@ -57,7 +57,7 @@ export function MarketBenchmarks() {
                 {vix.price.toFixed(2)}
               </span>
               <span className={cn(
-                "text-[10px] font-mono tabular-nums",
+                "text-xs font-mono tabular-nums",
                 (vix.dayChangePercent ?? 0) >= 0 ? "text-red-400" : "text-emerald-400"
               )}>
                 {(vix.dayChangePercent ?? 0) >= 0 ? "+" : ""}{((vix.dayChangePercent ?? 0) * 100).toFixed(2)}%
