@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { ShareButton } from "@/components/share-button";
 
 declare global {
   interface Window {
@@ -68,9 +69,12 @@ export function TradingViewChart({ symbol = "AAPL" }: TradingViewChartProps) {
             ? <span className="font-semibold text-primary">{symbol}</span>
             : "(search any symbol)"}
         </span>
-        <span className="text-[10px] text-muted-foreground/50 ml-auto">
+        <span className="text-[10px] text-muted-foreground/50">
           Hover any ticker for 6s to load it here
         </span>
+        <div className="ml-auto">
+          <ShareButton />
+        </div>
       </div>
       <div
         id={containerId}

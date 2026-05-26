@@ -1,4 +1,5 @@
 import { useGetYieldCurve } from "@workspace/api-client-react";
+import { ShareButton } from "@/components/share-button";
 import {
   XAxis,
   YAxis,
@@ -54,10 +55,11 @@ export function YieldCurveChart() {
           <span className="text-base">🇺🇸</span>
           <h3 className="text-lg font-bold text-foreground">US Treasury &amp; High Yield Curve</h3>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {data?.asOf && (
             <span className="text-xs font-mono text-muted-foreground">as of {data.asOf}</span>
           )}
+          <ShareButton />
           <button
             onClick={() => refetch()}
             className="text-xs font-mono text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded border border-border/30 hover:border-border/60"
