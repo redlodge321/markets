@@ -74,10 +74,6 @@ export default function Dashboard() {
   const commodityResults = screenerMutation.data?.commodities || [];
     
   
-  // Stats
-  const screenedCount = viewMode === "screener" ? screenerMutation.data?.screened : state.tickers.length;
-  const passedCount = viewMode === "screener" ? screenerMutation.data?.passed : quotesMutation.data?.quotes.length;
-
   return (
     <div className="min-h-screen pb-20 overflow-x-hidden relative">
       {/* Abstract Background Element */}
@@ -224,29 +220,6 @@ export default function Dashboard() {
         {/* Yield Curve Comparison */}
         <YieldCurveChart />
 
-        {/* Main Actions Panel */}
-        <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 shadow-xl">
-          <div className="flex items-center gap-4 text-sm font-mono text-muted-foreground pl-2">
-            {viewMode === "screener" ? (
-              <>
-                <div className="flex flex-col">
-                  <span className="text-xs uppercase opacity-70">Target Universe</span>
-                  <span className="text-foreground text-base">{screenedCount || 0}</span>
-                </div>
-                <div className="w-px h-8 bg-border"></div>
-                <div className="flex flex-col">
-                  <span className="text-xs uppercase opacity-70">Passed Filter</span>
-                  <span className="text-success text-base font-bold text-glow-success">{passedCount || 0}</span>
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col">
-                <span className="text-xs uppercase opacity-70">Showing Raw Quotes For</span>
-                <span className="text-foreground text-base">{passedCount || 0} Tickers</span>
-              </div>
-            )}
-          </div>
-        </div>
 
       </div>
     </div>
