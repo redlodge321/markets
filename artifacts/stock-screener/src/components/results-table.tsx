@@ -74,19 +74,19 @@ export function ResultsTable({ results, isLoading, isQuotesMode = false, onLongH
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-border/60 bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-              <th className="px-5 py-1.5">Ticker</th>
-              <th className="px-5 py-1.5">Industry</th>
-              <th className="px-5 py-1.5 text-right">Price</th>
-              <th className="px-5 py-1.5 text-right">Day %</th>
-              <th className="px-5 py-1.5 text-right">6M %</th>
-              <th className="px-5 py-1.5 text-right">Div Yield</th>
-              <th className="px-5 py-1.5 text-right">P/B</th>
-              <th className="px-5 py-1.5 text-right">Debt/Eq</th>
-              <th className="px-5 py-1.5 text-right">Curr Ratio</th>
-              <th className="px-5 py-1.5 text-right">P/FCF</th>
-              <th className="px-5 py-1.5 text-right">Mkt Cap</th>
-              <th className="px-5 py-1.5 text-right">Next Earnings</th>
+            <tr className="border-b border-border/60 bg-secondary/40 text-xs uppercase tracking-wider text-blue-300 font-semibold">
+              <th className="px-5 py-1.5 text-center">Ticker</th>
+              <th className="px-5 py-1.5 text-center">Industry</th>
+              <th className="px-5 py-1.5 text-center">Price</th>
+              <th className="px-5 py-1.5 text-center">Day %</th>
+              <th className="px-5 py-1.5 text-center">6M %</th>
+              <th className="px-5 py-1.5 text-center">Div Yield</th>
+              <th className="px-5 py-1.5 text-center">P/B</th>
+              <th className="px-5 py-1.5 text-center">Debt/Eq</th>
+              <th className="px-5 py-1.5 text-center">Curr Ratio</th>
+              <th className="px-5 py-1.5 text-center">P/FCF</th>
+              <th className="px-5 py-1.5 text-center">Mkt Cap</th>
+              <th className="px-5 py-1.5 text-center">Next Earnings</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40 font-mono text-sm">
